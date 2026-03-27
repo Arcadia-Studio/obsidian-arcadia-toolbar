@@ -1,0 +1,1026 @@
+/* ============================================================================
+   ARCADIA TOOLBAR v3.0 — TABBED RIBBON + TOC
+   ============================================================================ */
+
+/* ============================================================================
+   RIBBON CONTAINER
+   ============================================================================ */
+
+.arcadia-ribbon {
+	display: flex;
+	flex-direction: column;
+	background: var(--background-secondary);
+	border-bottom: 1px solid var(--background-modifier-border);
+	user-select: none;
+	position: sticky;
+	top: 0;
+	z-index: var(--layer-popover, 100);
+	flex-shrink: 0;
+}
+
+/* BUG FIX: Ensure editor content is pushed below the ribbon, not hidden under it.
+   The ribbon is inserted as the first child of .markdown-source-view's contentEl.
+   This ensures the sibling content container does not overlap. */
+.arcadia-ribbon + .cm-editor,
+.arcadia-ribbon + .markdown-preview-view,
+.arcadia-ribbon ~ .cm-editor,
+.arcadia-ribbon ~ .markdown-preview-view {
+	flex: 1;
+	min-height: 0;
+}
+
+/* ============================================================================
+   TAB BAR
+   ============================================================================ */
+
+.arcadia-ribbon-tabbar-wrapper {
+	display: flex;
+	align-items: stretch;
+	background: var(--background-secondary-alt);
+	border-bottom: 1px solid var(--background-modifier-border);
+	position: relative;
+}
+.arcadia-ribbon-tabbar {
+	display: flex;
+	gap: 2px;
+	padding: 4px 8px 0;
+	overflow-x: auto;
+	scrollbar-width: none; /* Firefox */
+	flex: 1;
+	min-width: 0;
+}
+.arcadia-ribbon-tabbar::-webkit-scrollbar {
+	display: none; /* Chrome */
+}
+.arcadia-tab-scroll-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	min-width: 22px;
+	background: var(--background-secondary-alt);
+	border: none;
+	cursor: pointer;
+	color: var(--text-muted);
+	padding: 0;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.15s;
+}
+.arcadia-tab-scroll-btn.arcadia-tab-scroll-visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+.arcadia-tab-scroll-btn:hover {
+	color: var(--text-normal);
+	background: var(--background-modifier-hover);
+}
+.arcadia-tab-scroll-btn svg {
+	width: 14px;
+	height: 14px;
+}
+
+.arcadia-ribbon-tab {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 14px;
+	border: none;
+	border-radius: 6px 6px 0 0;
+	background: transparent;
+	color: var(--text-muted);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	position: relative;
+	bottom: -1px;
+}
+
+.arcadia-ribbon-tab:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.arcadia-ribbon-tab-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	font-weight: 600;
+	border: 1px solid var(--interactive-accent);
+	border-bottom: 1px solid var(--interactive-accent);
+	border-radius: 4px 4px 0 0;
+}
+.arcadia-ribbon-tab-active .arcadia-ribbon-tab-icon svg {
+	color: var(--text-on-accent);
+}
+
+.arcadia-ribbon-tab-icon {
+	display: flex;
+	align-items: center;
+}
+
+.arcadia-ribbon-tab-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+/* ============================================================================
+   TAB CONTENT
+   ============================================================================ */
+
+.arcadia-ribbon-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 0;
+	padding: 6px 8px 4px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+}
+
+.arcadia-ribbon-content::-webkit-scrollbar {
+	height: 3px;
+}
+
+.arcadia-ribbon-content::-webkit-scrollbar-thumb {
+	background: var(--background-modifier-border);
+	border-radius: 3px;
+}
+
+/* ============================================================================
+   BUTTON GROUPS
+   ============================================================================ */
+
+.arcadia-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 0 4px;
+	min-width: 0;
+}
+
+.arcadia-group-buttons {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	flex-wrap: nowrap;
+}
+
+.arcadia-group-label {
+	font-size: 10px;
+	color: var(--text-faint);
+	text-align: center;
+	white-space: nowrap;
+	letter-spacing: 0.3px;
+	padding-bottom: 2px;
+}
+
+.arcadia-group-separator {
+	width: 1px;
+	height: 44px;
+	margin: 0 4px;
+	background: var(--background-modifier-border);
+	flex-shrink: 0;
+	align-self: center;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.arcadia-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 30px;
+	height: 30px;
+	padding: 0 4px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all 0.12s ease;
+	position: relative;
+}
+
+.arcadia-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--background-modifier-border);
+}
+
+.arcadia-btn:active {
+	background: var(--background-modifier-active-hover);
+	transform: scale(0.95);
+}
+
+.arcadia-btn-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.arcadia-btn-active:hover {
+	background: var(--interactive-accent-hover);
+	color: var(--text-on-accent);
+}
+
+.arcadia-btn-disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.arcadia-ai-btn {
+	position: relative;
+}
+.arcadia-ai-btn::after {
+	content: '✦';
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	font-size: 7px;
+	color: var(--interactive-accent);
+	line-height: 1;
+	pointer-events: none;
+}
+
+.arcadia-btn svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* ============================================================================
+   COLOR BUTTONS
+   ============================================================================ */
+
+.arcadia-color-btn {
+	gap: 2px;
+	padding: 0 6px;
+	flex-direction: column;
+}
+
+.arcadia-color-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.arcadia-color-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.arcadia-color-bar {
+	width: 18px;
+	height: 3px;
+	border-radius: 1px;
+	margin-top: -2px;
+}
+
+/* ============================================================================
+   HEADING BUTTON
+   ============================================================================ */
+
+.arcadia-heading-btn {
+	gap: 2px;
+	padding: 0 8px;
+}
+
+/* ============================================================================
+   SCRIPTURE BUTTON
+   ============================================================================ */
+
+.arcadia-scripture-btn {
+	gap: 4px;
+	padding: 0 8px;
+}
+
+.arcadia-scripture-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-muted);
+}
+
+/* ============================================================================
+   DROPDOWN ARROW
+   ============================================================================ */
+
+.arcadia-dropdown-arrow {
+	display: flex;
+	align-items: center;
+	opacity: 0.5;
+	margin-left: 1px;
+}
+
+.arcadia-dropdown-arrow svg {
+	width: 10px;
+	height: 10px;
+}
+
+/* ============================================================================
+   DROPDOWN WRAPPER
+   ============================================================================ */
+
+.arcadia-dropdown-wrapper {
+	position: relative;
+	display: inline-flex;
+}
+
+/* ============================================================================
+   DROPDOWN MENU
+   ============================================================================ */
+
+.arcadia-dropdown-menu {
+	position: fixed;
+	padding: 8px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	z-index: 99999;
+	min-width: 200px;
+}
+
+.arcadia-dropdown-title {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-bottom: 8px;
+	padding: 0 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+/* ============================================================================
+   COLOR GRID
+   ============================================================================ */
+
+.arcadia-color-grid {
+	display: grid;
+	grid-template-columns: repeat(10, 1fr);
+	gap: 3px;
+}
+
+.arcadia-color-swatch {
+	width: 20px;
+	height: 20px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 3px;
+	cursor: pointer;
+	transition: transform 0.1s ease, box-shadow 0.1s ease;
+	padding: 0;
+	font-size: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.arcadia-color-swatch:hover {
+	transform: scale(1.3);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	z-index: 1;
+	position: relative;
+}
+
+/* ============================================================================
+   HEADING DROPDOWN
+   ============================================================================ */
+
+.arcadia-heading-menu {
+	min-width: 180px;
+	padding: 4px;
+}
+
+.arcadia-heading-item {
+	display: block;
+	width: 100%;
+	padding: 6px 10px;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-normal);
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.1s ease;
+}
+
+.arcadia-heading-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.arcadia-heading-preview {
+	display: block;
+}
+
+.arcadia-h1 { font-size: 20px; font-weight: 700; }
+.arcadia-h2 { font-size: 17px; font-weight: 700; }
+.arcadia-h3 { font-size: 15px; font-weight: 600; }
+.arcadia-h4 { font-size: 13px; font-weight: 600; }
+.arcadia-h5 { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.arcadia-h6 { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+
+/* ============================================================================
+   ALIGNMENT GRID
+   ============================================================================ */
+
+.arcadia-align-grid {
+	display: flex;
+	gap: 4px;
+}
+
+.arcadia-align-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: var(--background-secondary);
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all 0.12s ease;
+}
+
+.arcadia-align-button:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+.arcadia-align-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+/* ============================================================================
+   SCRIPTURE DROPDOWN
+   ============================================================================ */
+
+.arcadia-scripture-menu {
+	min-width: 280px;
+	padding: 4px;
+}
+
+.arcadia-scripture-quick {
+	display: block;
+	width: 100%;
+	padding: 8px 10px;
+	border: none;
+	border-radius: 4px;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 13px;
+	text-align: left;
+	transition: opacity 0.12s ease;
+}
+
+.arcadia-scripture-quick:hover {
+	opacity: 0.9;
+}
+
+.arcadia-scripture-menu hr {
+	border: none;
+	border-top: 1px solid var(--background-modifier-border);
+	margin: 6px 0;
+}
+
+.arcadia-scripture-item {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	width: 100%;
+	padding: 6px 10px;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-normal);
+	cursor: pointer;
+	text-align: left;
+	font-size: 12px;
+	transition: background 0.1s ease;
+}
+
+.arcadia-scripture-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.arcadia-scripture-active {
+	background: var(--background-modifier-hover);
+	font-weight: 600;
+}
+
+.arcadia-scripture-item strong {
+	min-width: 40px;
+	color: var(--interactive-accent);
+}
+
+/* ============================================================================
+   WORD COUNT
+   ============================================================================ */
+
+.arcadia-word-count {
+	font-size: 11px;
+	color: var(--text-muted);
+	padding: 4px 8px;
+	white-space: nowrap;
+}
+
+/* ============================================================================
+   TABLE OF CONTENTS — SIDEBAR VIEW (Document Outline)
+   ============================================================================ */
+
+.arcadia-toc-container .view-content {
+	padding: 0;
+}
+
+.arcadia-toc-header {
+	padding: 12px 14px 8px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.arcadia-toc-title-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.arcadia-toc-header-icon {
+	display: flex;
+	color: var(--interactive-accent);
+}
+
+.arcadia-toc-header-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.arcadia-toc-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--text-normal);
+	letter-spacing: 0.3px;
+}
+
+.arcadia-toc-filename {
+	font-size: 11px;
+	color: var(--text-faint);
+	margin-top: 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* TOC List */
+.arcadia-toc-list {
+	padding: 6px 0;
+}
+
+.arcadia-toc-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 14px;
+	cursor: pointer;
+	transition: all 0.12s ease;
+	border-left: 3px solid transparent;
+}
+
+.arcadia-toc-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.arcadia-toc-active {
+	background: var(--background-modifier-hover);
+	border-left-color: var(--interactive-accent);
+}
+
+.arcadia-toc-active .arcadia-toc-text {
+	color: var(--interactive-accent);
+	font-weight: 600;
+}
+
+/* Heading level indentation */
+.arcadia-toc-level-1 { padding-left: 14px; }
+.arcadia-toc-level-2 { padding-left: 28px; }
+.arcadia-toc-level-3 { padding-left: 42px; }
+.arcadia-toc-level-4 { padding-left: 56px; }
+.arcadia-toc-level-5 { padding-left: 70px; }
+.arcadia-toc-level-6 { padding-left: 84px; }
+
+.arcadia-toc-bullet {
+	font-size: 7px;
+	color: var(--text-faint);
+	flex-shrink: 0;
+	width: 10px;
+	text-align: center;
+}
+
+.arcadia-toc-text {
+	font-size: 12px;
+	color: var(--text-normal);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.arcadia-toc-level-1 .arcadia-toc-text { font-weight: 600; font-size: 13px; }
+.arcadia-toc-level-2 .arcadia-toc-text { font-weight: 500; }
+
+/* Empty state */
+.arcadia-toc-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px;
+	gap: 8px;
+}
+
+.arcadia-toc-empty-icon {
+	color: var(--text-faint);
+	opacity: 0.5;
+}
+
+.arcadia-toc-empty-icon svg {
+	width: 32px;
+	height: 32px;
+}
+
+.arcadia-toc-empty-text {
+	font-size: 12px;
+	color: var(--text-faint);
+	text-align: center;
+}
+
+/* ============================================================================
+   TOOLBAR PIN BUTTON
+   ============================================================================ */
+
+.arcadia-toolbar-pin {
+	padding: 6px 8px !important;
+}
+
+.arcadia-toolbar-pin.arcadia-btn-active {
+	background: var(--interactive-accent) !important;
+	color: var(--text-on-accent) !important;
+}
+
+/* ============================================================================
+   READING VIEW NOTICE
+   ============================================================================ */
+
+.arcadia-reading-notice {
+	display: flex;
+	align-items: center;
+	padding: 6px 16px;
+	font-size: 12px;
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+/* ============================================================================
+   SYMBOLS DROPDOWN
+   ============================================================================ */
+
+.arcadia-symbols-grid {
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	gap: 2px;
+	padding: 4px;
+}
+
+.arcadia-symbol-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-normal);
+	cursor: pointer;
+	font-size: 16px;
+	transition: all 0.12s ease;
+}
+
+.arcadia-symbol-btn:hover {
+	background: var(--background-modifier-hover);
+	transform: scale(1.2);
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 700px) {
+	.arcadia-ribbon-tabbar {
+		padding: 3px 4px 0;
+	}
+
+	.arcadia-ribbon-tab {
+		padding: 4px 8px;
+		font-size: 11px;
+	}
+
+	.arcadia-ribbon-tab-icon {
+		display: none;
+	}
+
+	.arcadia-ribbon-content {
+		padding: 4px;
+	}
+
+	.arcadia-btn {
+		min-width: 26px;
+		height: 26px;
+	}
+
+	.arcadia-btn svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.arcadia-group-label {
+		font-size: 9px;
+	}
+
+	.arcadia-group-separator {
+		height: 36px;
+	}
+
+	.arcadia-color-grid {
+		grid-template-columns: repeat(6, 1fr);
+	}
+}
+
+/* ============================================================================
+   PRINT
+   ============================================================================ */
+
+@media print {
+	.arcadia-ribbon {
+		display: none !important;
+	}
+}
+
+/* ============================================================================
+   DARK THEME
+   ============================================================================ */
+
+.theme-dark .arcadia-dropdown-menu {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.theme-dark .arcadia-color-swatch {
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Template dropdown — scrollable list */
+.arcadia-template-menu {
+	max-height: 320px;
+	overflow-y: auto;
+	min-width: 240px;
+}
+
+/* Slide layout dropdown */
+.arcadia-layout-menu {
+	min-width: 260px;
+	max-height: 380px;
+	overflow-y: auto;
+}
+
+.arcadia-layout-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 4px;
+	padding: 4px;
+}
+
+.arcadia-layout-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	cursor: pointer;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 11px;
+	text-align: left;
+}
+
+.arcadia-layout-item:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.arcadia-layout-icon {
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+	opacity: 0.7;
+}
+
+.arcadia-layout-name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Button with label text */
+.arcadia-btn-label {
+	font-size: 11px;
+	margin-left: 2px;
+}
+
+/* ============================================================================
+   SCRIPTURE HOVER POPUP
+   ============================================================================ */
+
+.arcadia-scripture-ref {
+	text-decoration-line: underline;
+	text-decoration-style: dotted;
+	text-decoration-color: var(--interactive-accent);
+	text-underline-offset: 3px;
+	cursor: help;
+	border-radius: 2px;
+	transition: background 0.15s ease;
+}
+.arcadia-scripture-ref:hover {
+	background: var(--background-modifier-hover);
+}
+
+.arcadia-scripture-popup {
+	position: fixed;
+	z-index: 99999;
+	max-width: 420px;
+	min-width: 280px;
+	max-height: 320px;
+	overflow-y: auto;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 10px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+	padding: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--text-normal);
+}
+
+.arcadia-popup-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+	border-radius: 10px 10px 0 0;
+}
+
+.arcadia-popup-ref {
+	font-weight: 700;
+	font-size: 13px;
+	color: var(--text-normal);
+}
+
+.arcadia-popup-mode {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--interactive-accent);
+	background: var(--background-primary-alt);
+	padding: 2px 8px;
+	border-radius: 10px;
+}
+
+.arcadia-popup-content {
+	padding: 10px 14px;
+	font-size: 12.5px;
+	line-height: 1.65;
+}
+
+.arcadia-popup-content b {
+	color: var(--interactive-accent);
+	font-weight: 700;
+	margin-right: 2px;
+}
+
+.arcadia-popup-source {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 6px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.theme-dark .arcadia-scripture-popup {
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Active toggle button */
+.arcadia-btn-active {
+	background: var(--interactive-accent) !important;
+	color: var(--text-on-accent) !important;
+}
+.arcadia-btn-active svg {
+	color: var(--text-on-accent);
+}
+
+/* ===== TABLE SIZE PICKER ===== */
+.arcadia-table-picker-dropdown {
+	padding: 10px;
+	min-width: 220px;
+}
+.arcadia-table-picker-label {
+	font-size: 12px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: var(--text-normal);
+}
+.arcadia-table-picker-grid {
+	display: grid;
+	grid-template-columns: repeat(8, 24px);
+	grid-template-rows: repeat(8, 24px);
+	gap: 2px;
+}
+.arcadia-table-picker-cell {
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 2px;
+	cursor: pointer;
+	transition: background-color 0.05s;
+}
+.arcadia-table-picker-cell:hover,
+.arcadia-table-picker-cell-active {
+	background: var(--interactive-accent);
+	border-color: var(--interactive-accent);
+}
+.arcadia-table-picker-size {
+	text-align: center;
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 6px;
+}
+
+/* ===== TABLE TEMPLATE DROPDOWN ===== */
+.arcadia-table-template-dropdown {
+	padding: 4px;
+	min-width: 260px;
+	max-height: 340px;
+	overflow-y: auto;
+}
+.arcadia-table-template-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.1s;
+}
+.arcadia-table-template-item:hover {
+	background: var(--background-modifier-hover);
+}
+.arcadia-table-template-icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 4px;
+	background: var(--background-modifier-border);
+}
+.arcadia-table-template-icon svg {
+	width: 16px;
+	height: 16px;
+	color: var(--text-muted);
+}
+.arcadia-table-template-info {
+	flex: 1;
+	min-width: 0;
+}
+.arcadia-table-template-name {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-normal);
+}
+.arcadia-table-template-desc {
+	font-size: 11px;
+	color: var(--text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

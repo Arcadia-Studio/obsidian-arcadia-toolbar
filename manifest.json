@@ -1,0 +1,10 @@
+{
+	"id": "arcadia-toolbar",
+	"name": "Arcadia Toolbar",
+	"version": "3.0.0",
+	"minAppVersion": "1.0.0",
+	"description": "Word-like tabbed ribbon toolbar with formatting, insert, theology, and view tabs. Includes a pinnable OneNote-style Table of Contents sidebar.",
+	"author": "Peter J. Carter",
+	"authorUrl": "https://theologyinfocus.org",
+	"isDesktopOnly": true
+}
