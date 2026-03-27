@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, WorkspaceLeaf } from 'obsidian';
+import type { LicenseStatus } from './license';
 
 // ============================================================================
 // VIEW TYPE
@@ -366,6 +367,10 @@ export interface ArcadiaToolbarSettings {
 	defaultCommentary: string;
 	defaultDictionary: string;
 	hoverBibleTranslation: string;
+	// License
+	licenseKey: string;
+	licenseStatus: LicenseStatus | null;
+	isPro: boolean;
 }
 
 export const DEFAULT_SETTINGS: ArcadiaToolbarSettings = {
@@ -393,6 +398,9 @@ export const DEFAULT_SETTINGS: ArcadiaToolbarSettings = {
 	defaultCommentary: 'barnes',
 	defaultDictionary: 'eastons',
 	hoverBibleTranslation: 'kjv',
+	licenseKey: '',
+	licenseStatus: null,
+	isPro: false,
 };
 
 export interface TableContext {
@@ -418,6 +426,8 @@ export interface EditorContext {
 export interface ArcadiaPluginInterface {
 	app: App;
 	settings: ArcadiaToolbarSettings;
+	// Computed license convenience getter
+	get isPremium(): boolean;
 	toolbarEl: HTMLElement | null;
 	activeDropdown: HTMLElement | null;
 	scripturePopupEl: HTMLElement | null;

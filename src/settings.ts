@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import type { ArcadiaPluginInterface } from './types';
 import { BIBLE_TRANSLATIONS, COMMENTARIES, BIBLE_DICTIONARIES, AI_PROVIDERS } from './types';
+import { validateLicense } from './license';
 
 export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 	plugin: ArcadiaPluginInterface;
@@ -224,5 +225,60 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				});
 			});
+
+		// License Section
+		containerEl.createEl('h3', { text: 'License' });
+
+		const licenseStatus = this.plugin.settings.licenseStatus;
+		const isPro = this.plugin.settings.isPro && licenseStatus?.valid;
+		const statusDesc = isPro
+			? `Active${licenseStatus?.customerEmail ? ` (${licenseStatus.customerEmail})` : ''}${licenseStatus?.expiresAt ? ` - expires ${licenseStatus.expiresAt}` : ''}`
+			: 'No active license. Enter your license key and click Validate.';
+
+		const licenseStatusEl = containerEl.createEl('p', {
+			text: `License status: ${statusDesc}`,
+			cls: isPro ? 'mod-success' : 'mod-warning',
+		});
+
+		new Setting(containerEl)
+			.setName('License key')
+			.setDesc('Enter your Arcadia Toolbar Premium license key from Lemon Squeezy.')
+			.addText(t => {
+				t.setPlaceholder('XXXX-XXXX-XXXX-XXXX')
+					.setValue(this.plugin.settings.licenseKey)
+					.onChange(async v => {
+						this.plugin.settings.licenseKey = v.trim();
+						await this.plugin.saveSettings();
+					});
+			})
+			.addButton(btn => btn
+				.setButtonText('Validate')
+				.setCta()
+				.onClick(async () => {
+					const key = this.plugin.settings.licenseKey.trim();
+					if (!key) return;
+					btn.setButtonText('Checking...').setDisabled(true);
+					const status = await validateLicense(key);
+					this.plugin.settings.licenseStatus = status;
+					this.plugin.settings.isPro = status.valid;
+					await this.plugin.saveSettings();
+					btn.setButtonText('Validate').setDisabled(false);
+					if (status.valid) {
+						licenseStatusEl.textContent = `License status: Active${status.customerEmail ? ` (${status.customerEmail})` : ''}`;
+						licenseStatusEl.className = 'mod-success';
+					} else {
+						licenseStatusEl.textContent = 'License status: Invalid or expired. Check your key and try again.';
+						licenseStatusEl.className = 'mod-warning';
+					}
+				})
+			);
+
+		new Setting(containerEl)
+			.addButton(btn => btn
+				.setButtonText('Get Arcadia Toolbar Premium')
+				.onClick(() => {
+					window.open('https://arcadia-studio.lemonsqueezy.com', '_blank');
+				})
+			);
 	}
 }
