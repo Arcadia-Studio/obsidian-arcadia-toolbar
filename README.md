@@ -1,5 +1,7 @@
 # Arcadia Toolbar
 
+![Arcadia Toolbar](docs/screenshot.png)
+
 A Word-style tabbed ribbon toolbar for Obsidian with formatting commands, insert tools, a pinnable Table of Contents sidebar, and a Theology tab with scripture hover and commentary lookup.
 
 ![Version](https://img.shields.io/badge/version-3.0.0-blue)
