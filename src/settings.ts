@@ -15,10 +15,10 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Arcadia Toolbar Settings' });
+		new Setting(containerEl).setName('Arcadia Toolbar settings').setHeading();
 
 		// Tab Visibility
-		containerEl.createEl('h3', { text: 'Ribbon Tabs' });
+		new Setting(containerEl).setName('Ribbon tabs').setHeading();
 
 		const tabToggles: { key: string; name: string; desc: string }[] = [
 			{ key: 'showHomeTab', name: 'Show Home tab', desc: 'Text formatting, colors, headings, lists, alignment' },
@@ -38,18 +38,16 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			new Setting(containerEl)
 				.setName(tab.name)
 				.setDesc(tab.desc)
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			.addToggle(t => t.setValue((this.plugin.settings as any)[tab.key] as boolean)
+				.addToggle(t => t.setValue((this.plugin.settings as unknown as Record<string, boolean>)[tab.key])
 					.onChange(async v => {
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						(this.plugin.settings as any)[tab.key] = v;
+						(this.plugin.settings as unknown as Record<string, boolean>)[tab.key] = v;
 						await this.plugin.saveSettings();
 						this.plugin.updateToolbar();
 					}));
 		}
 
 		// TOC Settings
-		containerEl.createEl('h3', { text: 'Table of Contents' });
+		new Setting(containerEl).setName('Table of contents').setHeading();
 
 		new Setting(containerEl)
 			.setName('Pin TOC on startup')
@@ -62,7 +60,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 				}));
 
 		// Scripture Settings
-		containerEl.createEl('h3', { text: 'Scripture' });
+		new Setting(containerEl).setName('Scripture').setHeading();
 
 		new Setting(containerEl)
 			.setName('Default translation')
@@ -80,7 +78,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			});
 
 		// Scripture Hover Settings
-		containerEl.createEl('h3', { text: 'Scripture Hover Lookup' });
+		new Setting(containerEl).setName('Scripture hover lookup').setHeading();
 
 		containerEl.createEl('p', {
 			text: 'Hover over any scripture reference (e.g., John 3:16) to see a floating popup with Bible text, commentary, or dictionary content. Toggle modes from the Theology tab.',
@@ -141,7 +139,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			});
 
 		// AI Integration Settings
-		containerEl.createEl('h3', { text: 'AI Integration' });
+		new Setting(containerEl).setName('AI integration').setHeading();
 
 		containerEl.createEl('p', {
 			text: 'Connect an AI provider to enable citation conversion, Google Books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.',
@@ -179,7 +177,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		};
 
 		new Setting(containerEl)
-			.setName('AI Provider')
+			.setName('AI provider')
 			.setDesc('Choose your AI service provider')
 			.addDropdown(d => {
 				d.addOption('none', '\u2014 None \u2014');
@@ -200,7 +198,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('API Key')
+			.setName('API key')
 			.setDesc("Your API key (stored locally in this vault's data.json)")
 			.addText(t => {
 				t.inputEl.type = 'password';
@@ -227,7 +225,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			});
 
 		// License Section
-		containerEl.createEl('h3', { text: 'License' });
+		new Setting(containerEl).setName('License').setHeading();
 
 		const licenseStatus = this.plugin.settings.licenseStatus;
 		const isPro = this.plugin.settings.isPro && licenseStatus?.valid;

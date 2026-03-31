@@ -2,20 +2,18 @@ import { MarkdownView, Notice, TFile } from 'obsidian';
 import type { ArcadiaPluginInterface, EditorContext } from '../types';
 
 /**
- * Private API wrappers. All (this.app as any) casts are isolated here.
+ * Private API wrappers. All private API access is isolated here using typed unknown casts.
  * Each cast is documented with why it is necessary.
  */
 
 /** Check if a community plugin is enabled. Uses private API: app.plugins.enabledPlugins */
 export function isPluginEnabled(plugin: ArcadiaPluginInterface, pluginId: string): boolean {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return (plugin.app as any).plugins?.enabledPlugins?.has(pluginId) ?? false;
+	return (plugin.app as unknown as { plugins?: { enabledPlugins?: Set<string> } }).plugins?.enabledPlugins?.has(pluginId) ?? false;
 }
 
 /** Execute an Obsidian command by ID. Uses private API: app.commands.executeCommandById */
 export function executeCommand(plugin: ArcadiaPluginInterface, commandId: string): void {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	(plugin.app as any).commands.executeCommandById(commandId);
+	(plugin.app as unknown as { commands: { executeCommandById(id: string): void } }).commands.executeCommandById(commandId);
 }
 
 /** Open a command result in a new split leaf */
@@ -44,14 +42,12 @@ export function isReadingView(view: MarkdownView): boolean {
 
 /** Get recent files. Uses private API: workspace.getLastOpenFiles */
 export function getRecentFiles(plugin: ArcadiaPluginInterface): string[] {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return (plugin.app as any).workspace.getLastOpenFiles?.() || [];
+	return (plugin.app as unknown as { workspace: { getLastOpenFiles?: () => string[] } }).workspace.getLastOpenFiles?.() || [];
 }
 
 /** Get unresolved links. Uses private API: metadataCache.unresolvedLinks */
 export function getUnresolvedLinks(plugin: ArcadiaPluginInterface): Record<string, Record<string, number>> | null {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return (plugin.app.metadataCache as any).unresolvedLinks || null;
+	return (plugin.app.metadataCache as unknown as { unresolvedLinks?: Record<string, Record<string, number>> }).unresolvedLinks || null;
 }
 
 // ============================================================================

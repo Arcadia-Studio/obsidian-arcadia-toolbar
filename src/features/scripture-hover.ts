@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const require: (module: string) => any;
-
 import type { ArcadiaPluginInterface } from '../types';
 import { SCRIPTURE_REF_REGEX, BOOK_LOOKUP } from '../types';
 import { parseScriptureRef, fetchBibleText, fetchCommentary, fetchDictionary } from './bible-api';
@@ -172,30 +169,41 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 	});
 
 	// === LIVE PREVIEW: CM6 ViewPlugin ===
+	// Minimal local interfaces for CM6 shapes (avoids explicit any while keeping runtime require)
+	interface ScriptureEditorView {
+		viewport: { from: number; to: number };
+		state: { doc: { sliceString(from: number, to: number): string } };
+	}
+	interface ScriptureViewUpdate {
+		docChanged: boolean;
+		viewportChanged: boolean;
+		view: ScriptureEditorView;
+	}
+	interface ScriptureViewPlugin {
+		decorations: unknown;
+	}
+
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
-		const cmView: any = require('@codemirror/view');
-		// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
-		const cmState: any = require('@codemirror/state');
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const cmView = require('@codemirror/view');
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const cmState = require('@codemirror/state');
 
 		const scriptureHoverPlugin = cmView.ViewPlugin.fromClass(
 			class {
 				decorations: unknown;
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				constructor(view: any) {
+				constructor(view: ScriptureEditorView) {
 					this.decorations = this.buildDecorations(view);
 				}
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				update(update: any) {
+				update(update: ScriptureViewUpdate) {
 					if (update.docChanged || update.viewportChanged) {
 						this.decorations = this.buildDecorations(update.view);
 					}
 				}
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				buildDecorations(view: any) {
+				buildDecorations(view: ScriptureEditorView) {
 					if (plugin.settings.hoverMode === 'off') {
 						return cmView.Decoration.none;
 					}
@@ -222,8 +230,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 					return builder.finish();
 				}
 			},
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			{ decorations: (v: any) => v.decorations }
+			{ decorations: (v: ScriptureViewPlugin) => v.decorations }
 		);
 
 		registerEditorExtension(scriptureHoverPlugin);

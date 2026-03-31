@@ -29,10 +29,8 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		setupScriptureHover(
 			this,
 			(cb) => this.registerMarkdownPostProcessor(cb),
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(ext) => this.registerEditorExtension(ext as any),
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(el, event, cb) => this.registerDomEvent(el, event as any, cb as any)
+			(ext) => this.registerEditorExtension(ext as Parameters<typeof this.registerEditorExtension>[0]),
+			(el, event, cb) => this.registerDomEvent(el as Document, event as keyof DocumentEventMap, cb as (this: HTMLElement, ev: Event) => void)
 		);
 
 		// Close dropdowns on outside click
@@ -50,11 +48,10 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		this.registerEvent(this.app.workspace.on('layout-change', () => this.updateToolbar()));
 
 		// Register all commands
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		registerCommands(this as any);
+		registerCommands(this);
 
 		// Ribbon icon for TOC
-		this.addRibbonIcon('list-tree', 'Toggle Table of Contents', () => this.toggleTOC());
+		this.addRibbonIcon('list-tree', 'Toggle Table of Contents', () => { void this.toggleTOC(); });
 
 		// Settings tab
 		this.addSettingTab(new ArcadiaToolbarSettingTab(this.app, this));
@@ -63,7 +60,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		this.app.workspace.onLayoutReady(() => {
 			this.updateToolbar();
 			if (this.settings.tocPinned && this.settings.tocShowOnStartup) {
-				this.activateTOC();
+				void this.activateTOC();
 			}
 		});
 	}
@@ -91,6 +88,10 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+	}
+
+	get isPremium(): boolean {
+		return this.settings.isPro && (this.settings.licenseStatus?.valid ?? false);
 	}
 
 	// ========================================================================

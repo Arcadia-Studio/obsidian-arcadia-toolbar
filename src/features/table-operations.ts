@@ -121,7 +121,7 @@ export function sortTableColumn(editor: Editor, direction: 'asc' | 'desc'): void
 export function csvToTable(editor: Editor): void {
 	const sel = editor.getSelection();
 	if (!sel.trim()) {
-		navigator.clipboard.readText().then(text => {
+		void navigator.clipboard.readText().then(text => {
 			if (!text.trim()) { new Notice('No CSV data in clipboard or selection'); return; }
 			parseCsvAndInsert(editor, text);
 		}).catch(() => new Notice('Could not read clipboard'));

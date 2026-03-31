@@ -1,4 +1,4 @@
-import { Editor, Notice } from 'obsidian';
+import { Command, Editor, Notice } from 'obsidian';
 import type { ArcadiaPluginInterface } from '../types';
 import * as ec from '../features/editor-commands';
 import * as so from '../features/slide-operations';
@@ -6,7 +6,7 @@ import * as ai from '../features/ai-integration';
 import { getTableContext, renderTable, setColumnAlignment, sortTableColumn, csvToTable, tableToCsv, transposeTable, numberTableRows, filterTableRows, clearTableFilter } from '../features/table-operations';
 import { showWordCountGoal, readAloud, stopSpeaking, showDocStats, createUnresolvedPages } from './dom';
 
-export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: (cmd: unknown) => void }): void {
+export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: (cmd: Command) => Command }): void {
 	const p = plugin;
 
 	// Undo/Redo

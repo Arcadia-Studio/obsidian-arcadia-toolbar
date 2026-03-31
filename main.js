@@ -121,7 +121,7 @@ function renderTable(rows) {
 function setColumnAlignment(editor, align) {
   const tc = getTableContext(editor);
   if (!tc || tc.separatorRow === -1) {
-    new import_obsidian9.Notice("Place cursor inside a table with a separator row");
+    new import_obsidian10.Notice("Place cursor inside a table with a separator row");
     return;
   }
   const sepRow = tc.rows[tc.separatorRow];
@@ -133,12 +133,12 @@ function setColumnAlignment(editor, align) {
   sepRow[col] = align === "left" ? ":" + dashes : align === "right" ? dashes + ":" : ":" + dashes + ":";
   const table = renderTable(tc.rows);
   editor.replaceRange(table, { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-  new import_obsidian9.Notice(`Column aligned ${align}`);
+  new import_obsidian10.Notice(`Column aligned ${align}`);
 }
 function sortTableColumn(editor, direction) {
   const tc = getTableContext(editor);
   if (!tc || tc.separatorRow === -1) {
-    new import_obsidian9.Notice("Place cursor inside a table");
+    new import_obsidian10.Notice("Place cursor inside a table");
     return;
   }
   const col = tc.currentCol;
@@ -158,18 +158,18 @@ function sortTableColumn(editor, direction) {
   const newRows = [header, separator, ...dataRows];
   const table = renderTable(newRows);
   editor.replaceRange(table, { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-  new import_obsidian9.Notice(`Sorted ${direction === "asc" ? "A\u2192Z" : "Z\u2192A"}`);
+  new import_obsidian10.Notice(`Sorted ${direction === "asc" ? "A\u2192Z" : "Z\u2192A"}`);
 }
 function csvToTable(editor) {
   const sel = editor.getSelection();
   if (!sel.trim()) {
-    navigator.clipboard.readText().then((text) => {
+    void navigator.clipboard.readText().then((text) => {
       if (!text.trim()) {
-        new import_obsidian9.Notice("No CSV data in clipboard or selection");
+        new import_obsidian10.Notice("No CSV data in clipboard or selection");
         return;
       }
       parseCsvAndInsert(editor, text);
-    }).catch(() => new import_obsidian9.Notice("Could not read clipboard"));
+    }).catch(() => new import_obsidian10.Notice("Could not read clipboard"));
     return;
   }
   parseCsvAndInsert(editor, sel);
@@ -199,7 +199,7 @@ function parseCsvAndInsert(editor, csv) {
     return cells;
   });
   if (rows.length === 0) {
-    new import_obsidian9.Notice("No valid CSV data");
+    new import_obsidian10.Notice("No valid CSV data");
     return;
   }
   const colCount = Math.max(...rows.map((r) => r.length));
@@ -216,12 +216,12 @@ function parseCsvAndInsert(editor, csv) {
     ).join("\n") + "\n";
   }
   editor.replaceSelection(table);
-  new import_obsidian9.Notice(`Converted CSV to ${normalized.length}\xD7${colCount} table`);
+  new import_obsidian10.Notice(`Converted CSV to ${normalized.length}\xD7${colCount} table`);
 }
 function tableToCsv(editor) {
   const tc = getTableContext(editor);
   if (!tc) {
-    new import_obsidian9.Notice("Place cursor inside a table");
+    new import_obsidian10.Notice("Place cursor inside a table");
     return;
   }
   const dataRows = tc.rows.filter((_, i) => i !== tc.separatorRow);
@@ -230,12 +230,12 @@ function tableToCsv(editor) {
     return c.includes(",") || c.includes('"') || c.includes("\n") ? '"' + c.replace(/"/g, '""') + '"' : c;
   }).join(",")).join("\n");
   navigator.clipboard.writeText(csv);
-  new import_obsidian9.Notice("Table copied as CSV to clipboard");
+  new import_obsidian10.Notice("Table copied as CSV to clipboard");
 }
 function transposeTable(editor) {
   const tc = getTableContext(editor);
   if (!tc) {
-    new import_obsidian9.Notice("Place cursor inside a table");
+    new import_obsidian10.Notice("Place cursor inside a table");
     return;
   }
   const dataRows = tc.rows.filter((_, i) => i !== tc.separatorRow);
@@ -250,12 +250,12 @@ function transposeTable(editor) {
   const newRows = [header, separator, ...body];
   const table = renderTable(newRows);
   editor.replaceRange(table, { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-  new import_obsidian9.Notice("Table transposed");
+  new import_obsidian10.Notice("Table transposed");
 }
 function numberTableRows(editor) {
   const tc = getTableContext(editor);
   if (!tc || tc.separatorRow === -1) {
-    new import_obsidian9.Notice("Place cursor inside a table");
+    new import_obsidian10.Notice("Place cursor inside a table");
     return;
   }
   let num = 1;
@@ -268,12 +268,12 @@ function numberTableRows(editor) {
   });
   const table = renderTable(newRows);
   editor.replaceRange(table, { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-  new import_obsidian9.Notice("Rows numbered");
+  new import_obsidian10.Notice("Rows numbered");
 }
 function filterTableRows(plugin, editor) {
   const tc = getTableContext(editor);
   if (!tc || tc.separatorRow === -1) {
-    new import_obsidian9.Notice("Place cursor inside a table");
+    new import_obsidian10.Notice("Place cursor inside a table");
     return;
   }
   new FilterTableModal(plugin.app, (keyword) => {
@@ -293,18 +293,18 @@ function filterTableRows(plugin, editor) {
         kept.push(tc.rows[i]);
     }
     if (kept.length <= 2) {
-      new import_obsidian9.Notice("No rows match that filter");
+      new import_obsidian10.Notice("No rows match that filter");
       plugin._filteredTableBackup = null;
       return;
     }
     const table = renderTable(kept);
     editor.replaceRange(table, { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-    new import_obsidian9.Notice(`Filtered: ${kept.length - 2} row(s) shown. Use "Clear Filter" to restore.`);
+    new import_obsidian10.Notice(`Filtered: ${kept.length - 2} row(s) shown. Use "Clear Filter" to restore.`);
   }).open();
 }
 function clearTableFilter(plugin, editor) {
   if (!plugin._filteredTableBackup) {
-    new import_obsidian9.Notice("No active filter to clear");
+    new import_obsidian10.Notice("No active filter to clear");
     return;
   }
   const { start, original } = plugin._filteredTableBackup;
@@ -316,14 +316,14 @@ function clearTableFilter(plugin, editor) {
     editor.replaceRange(original + "\n", { line: start, ch: 0 });
   }
   plugin._filteredTableBackup = null;
-  new import_obsidian9.Notice("Filter cleared, original table restored");
+  new import_obsidian10.Notice("Filter cleared, original table restored");
 }
-var import_obsidian9, FilterTableModal;
+var import_obsidian10, FilterTableModal;
 var init_table_operations = __esm({
   "src/features/table-operations.ts"() {
     "use strict";
-    import_obsidian9 = require("obsidian");
-    FilterTableModal = class extends import_obsidian9.Modal {
+    import_obsidian10 = require("obsidian");
+    FilterTableModal = class extends import_obsidian10.Modal {
       constructor(app, onSubmit) {
         super(app);
         this.result = "";
@@ -370,7 +370,7 @@ __export(main_exports, {
   default: () => ArcadiaToolbarPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian21 = require("obsidian");
+var import_obsidian22 = require("obsidian");
 
 // src/types.ts
 var VIEW_TYPE_TOC = "arcadia-toc-view";
@@ -787,7 +787,10 @@ var DEFAULT_SETTINGS = {
   hoverMode: "off",
   defaultCommentary: "barnes",
   defaultDictionary: "eastons",
-  hoverBibleTranslation: "kjv"
+  hoverBibleTranslation: "kjv",
+  licenseKey: "",
+  licenseStatus: null,
+  isPro: false
 };
 
 // src/sidebar/toc-view.ts
@@ -877,8 +880,41 @@ var ArcadiaTOCView = class extends import_obsidian.ItemView {
 };
 
 // src/settings.ts
+var import_obsidian3 = require("obsidian");
+
+// src/license.ts
 var import_obsidian2 = require("obsidian");
-var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
+var LICENSE_CACHE_DURATION = 24 * 60 * 60 * 1e3;
+async function validateLicense(licenseKey, instanceName = "obsidian") {
+  var _a, _b, _c;
+  try {
+    const response = await (0, import_obsidian2.requestUrl)({
+      url: "https://api.lemonsqueezy.com/v1/licenses/validate",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ license_key: licenseKey, instance_name: instanceName })
+    });
+    const data = response.json;
+    if (data.valid) {
+      return {
+        valid: true,
+        instanceId: (_a = data.instance) == null ? void 0 : _a.id,
+        customerEmail: (_b = data.meta) == null ? void 0 : _b.customer_email,
+        expiresAt: (_c = data.license_key) == null ? void 0 : _c.expires_at,
+        lastChecked: Date.now()
+      };
+    }
+    return { valid: false, lastChecked: Date.now() };
+  } catch (e) {
+    return { valid: false, lastChecked: Date.now() };
+  }
+}
+
+// src/settings.ts
+var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
@@ -886,8 +922,8 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Arcadia Toolbar Settings" });
-    containerEl.createEl("h3", { text: "Ribbon Tabs" });
+    new import_obsidian3.Setting(containerEl).setName("Arcadia Toolbar settings").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Ribbon tabs").setHeading();
     const tabToggles = [
       { key: "showHomeTab", name: "Show Home tab", desc: "Text formatting, colors, headings, lists, alignment" },
       { key: "showInsertTab", name: "Show Insert tab", desc: "Links, images, tables, code, callouts, footnotes" },
@@ -902,20 +938,20 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
       { key: "showSlidesTab", name: "Show Slides tab", desc: "Presentation mode, slide separators, themes (Advanced Slides)" }
     ];
     for (const tab of tabToggles) {
-      new import_obsidian2.Setting(containerEl).setName(tab.name).setDesc(tab.desc).addToggle((t) => t.setValue(this.plugin.settings[tab.key]).onChange(async (v) => {
+      new import_obsidian3.Setting(containerEl).setName(tab.name).setDesc(tab.desc).addToggle((t) => t.setValue(this.plugin.settings[tab.key]).onChange(async (v) => {
         this.plugin.settings[tab.key] = v;
         await this.plugin.saveSettings();
         this.plugin.updateToolbar();
       }));
     }
-    containerEl.createEl("h3", { text: "Table of Contents" });
-    new import_obsidian2.Setting(containerEl).setName("Pin TOC on startup").setDesc("Automatically open the TOC panel when Obsidian starts").addToggle((t) => t.setValue(this.plugin.settings.tocShowOnStartup).onChange(async (v) => {
+    new import_obsidian3.Setting(containerEl).setName("Table of contents").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Pin TOC on startup").setDesc("Automatically open the TOC panel when Obsidian starts").addToggle((t) => t.setValue(this.plugin.settings.tocShowOnStartup).onChange(async (v) => {
       this.plugin.settings.tocShowOnStartup = v;
       this.plugin.settings.tocPinned = v;
       await this.plugin.saveSettings();
     }));
-    containerEl.createEl("h3", { text: "Scripture" });
-    new import_obsidian2.Setting(containerEl).setName("Default translation").setDesc("Default Bible translation for scripture blocks").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Scripture").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Default translation").setDesc("Default Bible translation for scripture blocks").addDropdown((d) => {
       for (const [code, name] of Object.entries(BIBLE_TRANSLATIONS)) {
         d.addOption(code, `${code} \u2014 ${name}`);
       }
@@ -925,12 +961,12 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         this.plugin.updateToolbar();
       });
     });
-    containerEl.createEl("h3", { text: "Scripture Hover Lookup" });
+    new import_obsidian3.Setting(containerEl).setName("Scripture hover lookup").setHeading();
     containerEl.createEl("p", {
       text: "Hover over any scripture reference (e.g., John 3:16) to see a floating popup with Bible text, commentary, or dictionary content. Toggle modes from the Theology tab.",
       cls: "setting-item-description"
     });
-    new import_obsidian2.Setting(containerEl).setName("Hover Bible translation").setDesc("Translation used for Bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Hover Bible translation").setDesc("Translation used for Bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)").addDropdown((d) => {
       const hoverTranslations = {
         "kjv": "KJV \u2014 King James Version",
         "asv": "ASV \u2014 American Standard Version",
@@ -948,7 +984,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
-    new import_obsidian2.Setting(containerEl).setName("Default commentary").setDesc("Commentary source for hover popups (public domain)").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Default commentary").setDesc("Commentary source for hover popups (public domain)").addDropdown((d) => {
       for (const [key, c] of Object.entries(COMMENTARIES)) {
         d.addOption(key, c.name);
       }
@@ -958,7 +994,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
-    new import_obsidian2.Setting(containerEl).setName("Default dictionary").setDesc("Bible dictionary source for hover popups").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Default dictionary").setDesc("Bible dictionary source for hover popups").addDropdown((d) => {
       for (const [key, dict] of Object.entries(BIBLE_DICTIONARIES)) {
         d.addOption(key, dict.name);
       }
@@ -968,7 +1004,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
-    containerEl.createEl("h3", { text: "AI Integration" });
+    new import_obsidian3.Setting(containerEl).setName("AI integration").setHeading();
     containerEl.createEl("p", {
       text: "Connect an AI provider to enable citation conversion, Google Books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.",
       cls: "setting-item-description"
@@ -1001,7 +1037,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         modelDropdown.appendChild(opt);
       }
     };
-    new import_obsidian2.Setting(containerEl).setName("AI Provider").setDesc("Choose your AI service provider").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("AI provider").setDesc("Choose your AI service provider").addDropdown((d) => {
       d.addOption("none", "\u2014 None \u2014");
       for (const [key, provider] of Object.entries(AI_PROVIDERS)) {
         d.addOption(key, provider.name);
@@ -1017,7 +1053,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         this.plugin.updateToolbar();
       });
     });
-    new import_obsidian2.Setting(containerEl).setName("API Key").setDesc("Your API key (stored locally in this vault's data.json)").addText((t) => {
+    new import_obsidian3.Setting(containerEl).setName("API key").setDesc("Your API key (stored locally in this vault's data.json)").addText((t) => {
       t.inputEl.type = "password";
       t.inputEl.style.width = "300px";
       t.setPlaceholder("sk-...").setValue(this.plugin.settings.aiApiKey).onChange(async (v) => {
@@ -1026,7 +1062,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         this.plugin.updateToolbar();
       });
     });
-    new import_obsidian2.Setting(containerEl).setName("Model").setDesc("Choose which model to use").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Model").setDesc("Choose which model to use").addDropdown((d) => {
       modelDropdown = d.selectEl;
       updateModelOptions();
       d.onChange(async (v) => {
@@ -1034,14 +1070,52 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian2.PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
+    new import_obsidian3.Setting(containerEl).setName("License").setHeading();
+    const licenseStatus = this.plugin.settings.licenseStatus;
+    const isPro = this.plugin.settings.isPro && (licenseStatus == null ? void 0 : licenseStatus.valid);
+    const statusDesc = isPro ? `Active${(licenseStatus == null ? void 0 : licenseStatus.customerEmail) ? ` (${licenseStatus.customerEmail})` : ""}${(licenseStatus == null ? void 0 : licenseStatus.expiresAt) ? ` - expires ${licenseStatus.expiresAt}` : ""}` : "No active license. Enter your license key and click Validate.";
+    const licenseStatusEl = containerEl.createEl("p", {
+      text: `License status: ${statusDesc}`,
+      cls: isPro ? "mod-success" : "mod-warning"
+    });
+    new import_obsidian3.Setting(containerEl).setName("License key").setDesc("Enter your Arcadia Toolbar Premium license key from Lemon Squeezy.").addText((t) => {
+      t.setPlaceholder("XXXX-XXXX-XXXX-XXXX").setValue(this.plugin.settings.licenseKey).onChange(async (v) => {
+        this.plugin.settings.licenseKey = v.trim();
+        await this.plugin.saveSettings();
+      });
+    }).addButton(
+      (btn) => btn.setButtonText("Validate").setCta().onClick(async () => {
+        const key = this.plugin.settings.licenseKey.trim();
+        if (!key)
+          return;
+        btn.setButtonText("Checking...").setDisabled(true);
+        const status = await validateLicense(key);
+        this.plugin.settings.licenseStatus = status;
+        this.plugin.settings.isPro = status.valid;
+        await this.plugin.saveSettings();
+        btn.setButtonText("Validate").setDisabled(false);
+        if (status.valid) {
+          licenseStatusEl.textContent = `License status: Active${status.customerEmail ? ` (${status.customerEmail})` : ""}`;
+          licenseStatusEl.className = "mod-success";
+        } else {
+          licenseStatusEl.textContent = "License status: Invalid or expired. Check your key and try again.";
+          licenseStatusEl.className = "mod-warning";
+        }
+      })
+    );
+    new import_obsidian3.Setting(containerEl).addButton(
+      (btn) => btn.setButtonText("Get Arcadia Toolbar Premium").onClick(() => {
+        window.open("https://arcadia-studio.lemonsqueezy.com", "_blank");
+      })
+    );
   }
 };
 
 // src/ribbon/ribbon.ts
-var import_obsidian18 = require("obsidian");
+var import_obsidian19 = require("obsidian");
 
 // src/utils/dom.ts
-var import_obsidian3 = require("obsidian");
+var import_obsidian4 = require("obsidian");
 function isPluginEnabled(plugin, pluginId) {
   var _a, _b, _c;
   return (_c = (_b = (_a = plugin.app.plugins) == null ? void 0 : _a.enabledPlugins) == null ? void 0 : _b.has(pluginId)) != null ? _c : false;
@@ -1055,13 +1129,13 @@ function openInNewLeaf(plugin, commandId) {
   executeCommand(plugin, commandId);
 }
 function getActiveEditor(plugin) {
-  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian3.MarkdownView);
+  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView);
   if (!view)
     return null;
   return { editor: view.editor, view };
 }
 function getActiveMarkdownView(plugin) {
-  return plugin.app.workspace.getActiveViewOfType(import_obsidian3.MarkdownView);
+  return plugin.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView);
 }
 function isReadingView(view) {
   var _a;
@@ -1081,7 +1155,7 @@ function showWordCountGoal(plugin, editor) {
   const nextTarget = targets.find((t) => t > words) || targets[targets.length - 1];
   const progress = Math.min(100, Math.round(words / nextTarget * 100));
   const bar = "\u2588".repeat(Math.round(progress / 5)) + "\u2591".repeat(20 - Math.round(progress / 5));
-  new import_obsidian3.Notice(
+  new import_obsidian4.Notice(
     `Writing Goal Progress
 Words: ${words.toLocaleString()} / ${nextTarget.toLocaleString()}
 [${bar}] ${progress}%
@@ -1090,18 +1164,18 @@ Remaining: ${Math.max(0, nextTarget - words).toLocaleString()} words`,
   );
 }
 function readAloud(plugin) {
-  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian3.MarkdownView);
+  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView);
   if (!view) {
-    new import_obsidian3.Notice("No active note");
+    new import_obsidian4.Notice("No active note");
     return;
   }
   const text = view.editor.getSelection() || view.editor.getValue();
   if (!text.trim()) {
-    new import_obsidian3.Notice("No text to read");
+    new import_obsidian4.Notice("No text to read");
     return;
   }
   if (!window.speechSynthesis) {
-    new import_obsidian3.Notice("Browser does not support text-to-speech");
+    new import_obsidian4.Notice("Browser does not support text-to-speech");
     return;
   }
   window.speechSynthesis.cancel();
@@ -1109,18 +1183,18 @@ function readAloud(plugin) {
   utterance.rate = 1;
   utterance.pitch = 1;
   window.speechSynthesis.speak(utterance);
-  new import_obsidian3.Notice("Reading aloud...");
+  new import_obsidian4.Notice("Reading aloud...");
 }
 function stopSpeaking() {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
-    new import_obsidian3.Notice("Stopped speaking");
+    new import_obsidian4.Notice("Stopped speaking");
   }
 }
 function showDocStats(plugin) {
-  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian3.MarkdownView);
+  const view = plugin.app.workspace.getActiveViewOfType(import_obsidian4.MarkdownView);
   if (!view) {
-    new import_obsidian3.Notice("No active note");
+    new import_obsidian4.Notice("No active note");
     return;
   }
   const text = view.editor.getValue();
@@ -1130,7 +1204,7 @@ function showDocStats(plugin) {
   const lines = text.split("\n").length;
   const paragraphs = text.split(/\n\s*\n/).filter((p) => p.trim().length > 0).length;
   const readingTime = Math.ceil(words / 225);
-  new import_obsidian3.Notice(
+  new import_obsidian4.Notice(
     `Document Statistics
 Words: ${words.toLocaleString()}
 Characters: ${chars.toLocaleString()} (${charsNoSpaces.toLocaleString()} without spaces)
@@ -1143,7 +1217,7 @@ Reading time: ~${readingTime} min`,
 async function createUnresolvedPages(plugin) {
   const unresolvedLinks = getUnresolvedLinks(plugin);
   if (!unresolvedLinks) {
-    new import_obsidian3.Notice("No unresolved links data available");
+    new import_obsidian4.Notice("No unresolved links data available");
     return;
   }
   const unresolvedSet = /* @__PURE__ */ new Set();
@@ -1156,7 +1230,7 @@ async function createUnresolvedPages(plugin) {
     }
   }
   if (unresolvedSet.size === 0) {
-    new import_obsidian3.Notice("All linked pages already exist!");
+    new import_obsidian4.Notice("All linked pages already exist!");
     return;
   }
   const folderPath = "New Pages";
@@ -1175,11 +1249,11 @@ async function createUnresolvedPages(plugin) {
       created++;
     }
   }
-  new import_obsidian3.Notice(`Created ${created} new page${created !== 1 ? "s" : ""} in "${folderPath}/" folder`);
+  new import_obsidian4.Notice(`Created ${created} new page${created !== 1 ? "s" : ""} in "${folderPath}/" folder`);
 }
 
 // src/components/button.ts
-var import_obsidian4 = require("obsidian");
+var import_obsidian5 = require("obsidian");
 function createButton(plugin, options) {
   const { icon, tooltip, action, label, pluginId, requiresAI, active } = options;
   let enabled = true;
@@ -1207,7 +1281,7 @@ function createButton(plugin, options) {
   }
   el.setAttribute("aria-label", tooltip);
   el.setAttribute("title", enabled ? tooltip : `${tooltip}${disabledReason}`);
-  (0, import_obsidian4.setIcon)(el, icon);
+  (0, import_obsidian5.setIcon)(el, icon);
   if (label) {
     const labelEl = document.createElement("span");
     labelEl.className = "arcadia-btn-label";
@@ -1246,7 +1320,7 @@ function addGroup(container, label, buttons) {
 }
 
 // src/components/dropdown.ts
-var import_obsidian5 = require("obsidian");
+var import_obsidian6 = require("obsidian");
 function createDropdownTrigger(options) {
   const wrapper = document.createElement("div");
   wrapper.className = "arcadia-dropdown-wrapper";
@@ -1254,7 +1328,7 @@ function createDropdownTrigger(options) {
   btnEl.className = "arcadia-btn";
   btnEl.setAttribute("title", options.tooltip);
   const iconSpan = document.createElement("span");
-  (0, import_obsidian5.setIcon)(iconSpan, options.icon);
+  (0, import_obsidian6.setIcon)(iconSpan, options.icon);
   btnEl.appendChild(iconSpan);
   if (options.label) {
     const labelEl = document.createElement("span");
@@ -1264,7 +1338,7 @@ function createDropdownTrigger(options) {
   }
   const arrow = document.createElement("span");
   arrow.className = "arcadia-dropdown-arrow";
-  (0, import_obsidian5.setIcon)(arrow, "chevron-down");
+  (0, import_obsidian6.setIcon)(arrow, "chevron-down");
   btnEl.appendChild(arrow);
   btnEl.addEventListener("click", (e) => {
     e.preventDefault();
@@ -1298,7 +1372,7 @@ function closeDropdowns(plugin) {
 }
 
 // src/features/editor-commands.ts
-var import_obsidian6 = require("obsidian");
+var import_obsidian7 = require("obsidian");
 function toggleWrap(editor, wrapper) {
   const selection = editor.getSelection();
   if (selection) {
@@ -1606,12 +1680,12 @@ function insertComment(editor) {
   const sel = editor.getSelection();
   if (sel) {
     editor.replaceSelection(`%%${sel}%%`);
-    new import_obsidian6.Notice("Comment inserted");
+    new import_obsidian7.Notice("Comment inserted");
   } else {
     const cursor = editor.getCursor();
     editor.replaceRange("%%comment%%", cursor);
     editor.setCursor({ line: cursor.line, ch: cursor.ch + 2 });
-    new import_obsidian6.Notice("Comment block inserted");
+    new import_obsidian7.Notice("Comment block inserted");
   }
 }
 function insertScriptureBlock(plugin, editor) {
@@ -1694,7 +1768,7 @@ function insertCitationFootnote(editor, styleKey) {
 [^${num}]: ${style.template}`,
     { line: lastLine, ch: lastLineText.length }
   );
-  new import_obsidian6.Notice(`${style.name} footnote [^${num}] inserted`);
+  new import_obsidian7.Notice(`${style.name} footnote [^${num}] inserted`);
 }
 function insertInlineCitation(editor, styleKey) {
   const style = CITATION_STYLES_LOCAL[styleKey];
@@ -1714,7 +1788,7 @@ function generateBibliography(editor) {
     entries.push({ num: parseInt(match[1]), text: match[2].trim() });
   }
   if (entries.length === 0) {
-    new import_obsidian6.Notice("No footnotes found to generate bibliography");
+    new import_obsidian7.Notice("No footnotes found to generate bibliography");
     return;
   }
   const sorted = [...entries].sort((a, b) => a.text.localeCompare(b.text));
@@ -1737,18 +1811,18 @@ function generateBibliography(editor) {
 `;
     }
     editor.replaceRange(replacement, startPos, endPos);
-    new import_obsidian6.Notice(`Bibliography updated with ${sorted.length} entries`);
+    new import_obsidian7.Notice(`Bibliography updated with ${sorted.length} entries`);
   } else {
     const lastLine = editor.lastLine();
     const lastLineText = editor.getLine(lastLine);
     editor.replaceRange(bib, { line: lastLine, ch: lastLineText.length });
-    new import_obsidian6.Notice(`Bibliography generated with ${sorted.length} entries`);
+    new import_obsidian7.Notice(`Bibliography generated with ${sorted.length} entries`);
   }
 }
 var CITATION_STYLES_LOCAL = CITATION_STYLES;
 
 // src/components/color-picker.ts
-var import_obsidian7 = require("obsidian");
+var import_obsidian8 = require("obsidian");
 function addColorButton(plugin, group, type, iconName, tooltip, currentColor, ctx) {
   const wrapper = document.createElement("div");
   wrapper.className = "arcadia-dropdown-wrapper";
@@ -1757,7 +1831,7 @@ function addColorButton(plugin, group, type, iconName, tooltip, currentColor, ct
   btnEl.setAttribute("title", tooltip);
   const iconSpan = document.createElement("span");
   iconSpan.className = "arcadia-color-icon";
-  (0, import_obsidian7.setIcon)(iconSpan, iconName);
+  (0, import_obsidian8.setIcon)(iconSpan, iconName);
   btnEl.appendChild(iconSpan);
   const bar = document.createElement("span");
   bar.className = "arcadia-color-bar";
@@ -1765,7 +1839,7 @@ function addColorButton(plugin, group, type, iconName, tooltip, currentColor, ct
   btnEl.appendChild(bar);
   const arrow = document.createElement("span");
   arrow.className = "arcadia-dropdown-arrow";
-  (0, import_obsidian7.setIcon)(arrow, "chevron-down");
+  (0, import_obsidian8.setIcon)(arrow, "chevron-down");
   btnEl.appendChild(arrow);
   btnEl.addEventListener("click", (e) => {
     e.preventDefault();
@@ -1815,7 +1889,7 @@ function openColorDropdown(plugin, wrapper, type, ctx) {
 }
 
 // src/ribbon/tab-home.ts
-var import_obsidian8 = require("obsidian");
+var import_obsidian9 = require("obsidian");
 function buildHomeTab(plugin, container, ctx) {
   const clipboardBtns = [
     createButton(plugin, {
@@ -1964,7 +2038,7 @@ function openHeadingDropdown(plugin, anchor, ctx) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian8.setIcon)(iconSpan, "heading");
+    (0, import_obsidian9.setIcon)(iconSpan, "heading");
     item.appendChild(iconSpan);
     const text = document.createElement("span");
     text.textContent = label;
@@ -1984,7 +2058,7 @@ function openHeadingDropdown(plugin, anchor, ctx) {
   const removeItem = document.createElement("button");
   removeItem.className = "arcadia-dropdown-item";
   const removeIcon = document.createElement("span");
-  (0, import_obsidian8.setIcon)(removeIcon, "x");
+  (0, import_obsidian9.setIcon)(removeIcon, "x");
   removeItem.appendChild(removeIcon);
   const removeText = document.createElement("span");
   removeText.textContent = "Remove Heading";
@@ -2017,7 +2091,7 @@ function openAlignmentDropdown(plugin, anchor, ctx) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian8.setIcon)(iconSpan, icon);
+    (0, import_obsidian9.setIcon)(iconSpan, icon);
     item.appendChild(iconSpan);
     const text = document.createElement("span");
     text.textContent = label;
@@ -2198,7 +2272,7 @@ function openSymbolsDropdown(plugin, anchor, ctx) {
 }
 
 // src/features/ai-integration.ts
-var import_obsidian10 = require("obsidian");
+var import_obsidian11 = require("obsidian");
 async function callAI(plugin, prompt) {
   const provider = AI_PROVIDERS[plugin.settings.aiProvider];
   if (!provider || !plugin.settings.aiApiKey) {
@@ -2206,7 +2280,7 @@ async function callAI(plugin, prompt) {
   }
   const model = plugin.settings.aiModel || provider.models[0];
   if (provider.format === "openai") {
-    const resp = await (0, import_obsidian10.requestUrl)({
+    const resp = await (0, import_obsidian11.requestUrl)({
       url: provider.endpoint,
       method: "POST",
       headers: {
@@ -2222,7 +2296,7 @@ async function callAI(plugin, prompt) {
     return resp.json.choices[0].message.content;
   }
   if (provider.format === "anthropic") {
-    const resp = await (0, import_obsidian10.requestUrl)({
+    const resp = await (0, import_obsidian11.requestUrl)({
       url: provider.endpoint,
       method: "POST",
       headers: {
@@ -2239,7 +2313,7 @@ async function callAI(plugin, prompt) {
     return resp.json.content[0].text;
   }
   if (provider.format === "google") {
-    const resp = await (0, import_obsidian10.requestUrl)({
+    const resp = await (0, import_obsidian11.requestUrl)({
       url: `${provider.endpoint}/${model}:generateContent?key=${plugin.settings.aiApiKey}`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2254,28 +2328,28 @@ async function callAI(plugin, prompt) {
 async function aiGenerateTable(plugin, editor) {
   const description = editor.getSelection() || "";
   if (!description.trim()) {
-    new import_obsidian10.Notice("Select text describing the table you want, then click Generate");
+    new import_obsidian11.Notice("Select text describing the table you want, then click Generate");
     return;
   }
   const prompt = `Generate a markdown table based on this description. Return ONLY the markdown table, no explanation:
 
 ${description}`;
   try {
-    new import_obsidian10.Notice("Generating table...");
+    new import_obsidian11.Notice("Generating table...");
     const result = await callAI(plugin, prompt);
     if (result) {
       editor.replaceSelection(result.trim() + "\n");
-      new import_obsidian10.Notice("Table generated");
+      new import_obsidian11.Notice("Table generated");
     }
   } catch (err) {
-    new import_obsidian10.Notice("AI table generation failed: " + err.message);
+    new import_obsidian11.Notice("AI table generation failed: " + err.message);
   }
 }
 async function aiFillTableData(plugin, editor) {
   const { getTableContext: getTableContext2 } = await Promise.resolve().then(() => (init_table_operations(), table_operations_exports));
   const tc = getTableContext2(editor);
   if (!tc) {
-    new import_obsidian10.Notice("Place cursor inside a table with headers");
+    new import_obsidian11.Notice("Place cursor inside a table with headers");
     return;
   }
   const headers = tc.rows[0].map((h) => h.trim()).join(", ");
@@ -2283,22 +2357,22 @@ async function aiFillTableData(plugin, editor) {
 
 Generate 5 realistic data rows for this table. Return ONLY the markdown table rows (no header, no separator), pipe-delimited. Each row on its own line starting and ending with |.`;
   try {
-    new import_obsidian10.Notice("Generating data...");
+    new import_obsidian11.Notice("Generating data...");
     const result = await callAI(plugin, prompt);
     if (result) {
       const insertLine = tc.tableEnd;
       editor.replaceRange("\n" + result.trim(), { line: insertLine, ch: editor.getLine(insertLine).length });
-      new import_obsidian10.Notice("Data rows added");
+      new import_obsidian11.Notice("Data rows added");
     }
   } catch (err) {
-    new import_obsidian10.Notice("AI data fill failed: " + err.message);
+    new import_obsidian11.Notice("AI data fill failed: " + err.message);
   }
 }
 async function aiAddCalculatedColumn(plugin, editor) {
   const { getTableContext: getTableContext2 } = await Promise.resolve().then(() => (init_table_operations(), table_operations_exports));
   const tc = getTableContext2(editor);
   if (!tc) {
-    new import_obsidian10.Notice("Place cursor inside a table");
+    new import_obsidian11.Notice("Place cursor inside a table");
     return;
   }
   const tableText = tc.rawLines.join("\n");
@@ -2306,14 +2380,14 @@ async function aiAddCalculatedColumn(plugin, editor) {
 
 ${tableText}`;
   try {
-    new import_obsidian10.Notice("Adding calculated column...");
+    new import_obsidian11.Notice("Adding calculated column...");
     const result = await callAI(plugin, prompt);
     if (result) {
       editor.replaceRange(result.trim(), { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length });
-      new import_obsidian10.Notice("Calculated column added");
+      new import_obsidian11.Notice("Calculated column added");
     }
   } catch (err) {
-    new import_obsidian10.Notice("AI calculation failed: " + err.message);
+    new import_obsidian11.Notice("AI calculation failed: " + err.message);
   }
 }
 async function aiConvertCitationsInDocument(plugin, editor, targetStyle) {
@@ -2333,10 +2407,10 @@ async function aiConvertCitationsInDocument(plugin, editor, targetStyle) {
     inlines.push({ text: match[1], fullMatch: match[0] });
   }
   if (entries.length === 0 && inlines.length === 0) {
-    new import_obsidian10.Notice("No citations found to convert");
+    new import_obsidian11.Notice("No citations found to convert");
     return;
   }
-  new import_obsidian10.Notice(`Converting ${entries.length + inlines.length} citation(s) to ${style.name}... (AI processing)`);
+  new import_obsidian11.Notice(`Converting ${entries.length + inlines.length} citation(s) to ${style.name}... (AI processing)`);
   try {
     const citationTexts = [
       ...entries.map((e, i) => `${i + 1}. [footnote] ${e.text}`),
@@ -2362,9 +2436,9 @@ ${citationTexts.join("\n")}`;
       newText = newText.replace(inlines[i].fullMatch, converted.startsWith("(") ? converted : `(${converted})`);
     }
     editor.setValue(newText);
-    new import_obsidian10.Notice(`Converted ${entries.length + inlines.length} citation(s) to ${style.name}`);
+    new import_obsidian11.Notice(`Converted ${entries.length + inlines.length} citation(s) to ${style.name}`);
   } catch (err) {
-    new import_obsidian10.Notice(`AI error: ${err.message}`);
+    new import_obsidian11.Notice(`AI error: ${err.message}`);
   }
 }
 async function aiLinkCitations(plugin, editor) {
@@ -2376,10 +2450,10 @@ async function aiLinkCitations(plugin, editor) {
     entries.push({ num: parseInt(match[1]), text: match[2].trim(), fullMatch: match[0] });
   }
   if (entries.length === 0) {
-    new import_obsidian10.Notice("No footnote citations found to link");
+    new import_obsidian11.Notice("No footnote citations found to link");
     return;
   }
-  new import_obsidian10.Notice(`Searching Google Books for ${entries.length} citation(s)... (AI processing)`);
+  new import_obsidian11.Notice(`Searching Google Books for ${entries.length} citation(s)... (AI processing)`);
   try {
     const citationList = entries.map((e, i) => `${i + 1}. ${e.text}`).join("\n");
     const prompt = `For each citation below, identify the book title and author, then construct a Google Books search URL. Return ONLY a numbered list where each line has the format:
@@ -2401,19 +2475,19 @@ ${citationList}`;
       }
     }
     editor.setValue(newText);
-    new import_obsidian10.Notice(`Linked ${linked} of ${entries.length} citation(s) to Google Books`);
+    new import_obsidian11.Notice(`Linked ${linked} of ${entries.length} citation(s) to Google Books`);
   } catch (err) {
-    new import_obsidian10.Notice(`AI error: ${err.message}`);
+    new import_obsidian11.Notice(`AI error: ${err.message}`);
   }
 }
 async function aiNotesToSlides(plugin, editor) {
   var _a;
   const text = editor.getValue();
   if (text.trim().length === 0) {
-    new import_obsidian10.Notice("Document is empty, nothing to convert");
+    new import_obsidian11.Notice("Document is empty, nothing to convert");
     return;
   }
-  new import_obsidian10.Notice("Converting notes to slides... (AI processing)");
+  new import_obsidian11.Notice("Converting notes to slides... (AI processing)");
   try {
     const prompt = `Convert the following study notes/document into an Advanced Slides presentation for Obsidian. Use these rules:
 - Separate each slide with --- (three dashes on its own line, with blank lines before and after)
@@ -2431,7 +2505,7 @@ ${text}`;
     const result = await callAI(plugin, prompt);
     const activeFile = plugin.app.workspace.getActiveFile();
     if (!activeFile) {
-      new import_obsidian10.Notice("No active file");
+      new import_obsidian11.Notice("No active file");
       return;
     }
     const baseName = activeFile.basename;
@@ -2445,17 +2519,17 @@ transition: slide
 ${result}`;
     await plugin.app.vault.create(slidesPath, slidesContent);
     const slidesFile = plugin.app.vault.getAbstractFileByPath(slidesPath);
-    if (slidesFile instanceof import_obsidian10.TFile) {
+    if (slidesFile instanceof import_obsidian11.TFile) {
       await plugin.app.workspace.getLeaf("split").openFile(slidesFile);
     }
-    new import_obsidian10.Notice(`Slides created: "${baseName} - Slides.md"`);
+    new import_obsidian11.Notice(`Slides created: "${baseName} - Slides.md"`);
   } catch (err) {
-    new import_obsidian10.Notice(`AI error: ${err.message}`);
+    new import_obsidian11.Notice(`AI error: ${err.message}`);
   }
 }
 
 // src/ribbon/tab-references.ts
-var import_obsidian11 = require("obsidian");
+var import_obsidian12 = require("obsidian");
 function buildReferencesTab(plugin, container, ctx) {
   const citationTrigger = createDropdownTrigger({
     icon: "book-marked",
@@ -2508,7 +2582,7 @@ function openCitationDropdown(plugin, anchor, ctx, mode) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian11.setIcon)(iconSpan, "book-open");
+    (0, import_obsidian12.setIcon)(iconSpan, "book-open");
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = style.name;
@@ -2548,7 +2622,7 @@ function openAIConvertDropdown(plugin, anchor, ctx) {
       item.classList.add("arcadia-btn-disabled");
     }
     const iconSpan = document.createElement("span");
-    (0, import_obsidian11.setIcon)(iconSpan, "sparkles");
+    (0, import_obsidian12.setIcon)(iconSpan, "sparkles");
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = style.name;
@@ -2777,7 +2851,7 @@ function buildViewTab(plugin, container, ctx) {
 }
 
 // src/ribbon/tab-navigate.ts
-var import_obsidian12 = require("obsidian");
+var import_obsidian13 = require("obsidian");
 function buildNavigateTab(plugin, container, ctx) {
   const searchBtns = [
     createButton(plugin, {
@@ -2902,7 +2976,7 @@ function openRecentFilesDropdown(plugin, anchor) {
       const item = document.createElement("button");
       item.className = "arcadia-dropdown-item";
       const iconSpan = document.createElement("span");
-      (0, import_obsidian12.setIcon)(iconSpan, "file-text");
+      (0, import_obsidian13.setIcon)(iconSpan, "file-text");
       item.appendChild(iconSpan);
       const nameSpan = document.createElement("span");
       const parts = filePath.split("/");
@@ -3017,7 +3091,7 @@ function buildTemplatesTab(plugin, container, ctx) {
 }
 
 // src/ribbon/tab-canvas.ts
-var import_obsidian13 = require("obsidian");
+var import_obsidian14 = require("obsidian");
 var CANVAS_TEMPLATES = [
   {
     name: "Blank Canvas",
@@ -3165,7 +3239,7 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian13.setIcon)(iconSpan, tmpl.icon);
+    (0, import_obsidian14.setIcon)(iconSpan, tmpl.icon);
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = tmpl.name;
@@ -3194,7 +3268,7 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
 
 // src/ribbon/tab-data.ts
 init_table_operations();
-var import_obsidian14 = require("obsidian");
+var import_obsidian15 = require("obsidian");
 function buildDataTab(plugin, container, ctx) {
   const sizePickerTrigger = createDropdownTrigger({
     icon: "table",
@@ -3468,7 +3542,7 @@ function openTableTemplatesDropdown(plugin, anchor, ctx) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian14.setIcon)(iconSpan, tmpl.icon);
+    (0, import_obsidian15.setIcon)(iconSpan, tmpl.icon);
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = tmpl.name;
@@ -3492,7 +3566,7 @@ function openTableTemplatesDropdown(plugin, anchor, ctx) {
 }
 
 // src/features/slide-operations.ts
-var import_obsidian15 = require("obsidian");
+var import_obsidian16 = require("obsidian");
 function navigateSlide(editor, direction) {
   const cursor = editor.getCursor();
   const lineCount = editor.lastLine();
@@ -3504,7 +3578,7 @@ function navigateSlide(editor, direction) {
         return;
       }
     }
-    new import_obsidian15.Notice("No next slide");
+    new import_obsidian16.Notice("No next slide");
   } else {
     for (let i = cursor.line - 1; i >= 0; i--) {
       if (sepPattern.test(editor.getLine(i).trim())) {
@@ -3583,7 +3657,7 @@ theme: ${theme}
 }
 
 // src/ribbon/tab-slides.ts
-var import_obsidian16 = require("obsidian");
+var import_obsidian17 = require("obsidian");
 var SLIDE_THEMES = [
   { name: "Black", value: "black", icon: "moon" },
   { name: "White", value: "white", icon: "sun" },
@@ -3740,7 +3814,7 @@ function openLayoutsDropdown(plugin, anchor, ctx) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian16.setIcon)(iconSpan, layout.icon);
+    (0, import_obsidian17.setIcon)(iconSpan, layout.icon);
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = layout.name;
@@ -3774,7 +3848,7 @@ function openThemesDropdown(plugin, anchor, ctx) {
     const item = document.createElement("button");
     item.className = "arcadia-dropdown-item";
     const iconSpan = document.createElement("span");
-    (0, import_obsidian16.setIcon)(iconSpan, theme.icon);
+    (0, import_obsidian17.setIcon)(iconSpan, theme.icon);
     item.appendChild(iconSpan);
     const nameSpan = document.createElement("span");
     nameSpan.textContent = theme.name;
@@ -3794,7 +3868,7 @@ function openThemesDropdown(plugin, anchor, ctx) {
 }
 
 // src/ribbon/tab-theology.ts
-var import_obsidian17 = require("obsidian");
+var import_obsidian18 = require("obsidian");
 function buildTheologyTab(plugin, container, ctx) {
   const scriptureTrigger = createDropdownTrigger({
     icon: "book-open",
@@ -3910,7 +3984,7 @@ function openScriptureDropdown(plugin, anchor, ctx) {
   const insertItem = document.createElement("button");
   insertItem.className = "arcadia-dropdown-item";
   const insertIcon = document.createElement("span");
-  (0, import_obsidian17.setIcon)(insertIcon, "book-open");
+  (0, import_obsidian18.setIcon)(insertIcon, "book-open");
   insertItem.appendChild(insertIcon);
   const insertText = document.createElement("span");
   insertText.textContent = `Insert Block (${plugin.settings.scriptureTranslation})`;
@@ -3938,7 +4012,7 @@ function openScriptureDropdown(plugin, anchor, ctx) {
       item.classList.add("arcadia-dropdown-item-active");
     }
     const iconSpan = document.createElement("span");
-    (0, import_obsidian17.setIcon)(iconSpan, abbr === plugin.settings.scriptureTranslation ? "check" : "book");
+    (0, import_obsidian18.setIcon)(iconSpan, abbr === plugin.settings.scriptureTranslation ? "check" : "book");
     item.appendChild(iconSpan);
     const abbrSpan = document.createElement("span");
     abbrSpan.textContent = abbr;
@@ -3999,7 +4073,7 @@ function updateToolbar(plugin) {
     tabBtn.dataset.tab = tab.id;
     const iconSpan = document.createElement("span");
     iconSpan.className = "arcadia-ribbon-tab-icon";
-    (0, import_obsidian18.setIcon)(iconSpan, tab.icon);
+    (0, import_obsidian19.setIcon)(iconSpan, tab.icon);
     tabBtn.appendChild(iconSpan);
     tabBtn.appendChild(document.createTextNode(tab.label));
     tabBtn.addEventListener("click", (e) => {
@@ -4017,11 +4091,11 @@ function updateToolbar(plugin) {
   tabWrapper.className = "arcadia-ribbon-tabbar-wrapper";
   const scrollLeft = document.createElement("button");
   scrollLeft.className = "arcadia-tab-scroll-btn arcadia-tab-scroll-left";
-  (0, import_obsidian18.setIcon)(scrollLeft, "chevron-left");
+  (0, import_obsidian19.setIcon)(scrollLeft, "chevron-left");
   scrollLeft.addEventListener("click", () => tabBar.scrollBy({ left: -120, behavior: "smooth" }));
   const scrollRight = document.createElement("button");
   scrollRight.className = "arcadia-tab-scroll-btn arcadia-tab-scroll-right";
-  (0, import_obsidian18.setIcon)(scrollRight, "chevron-right");
+  (0, import_obsidian19.setIcon)(scrollRight, "chevron-right");
   scrollRight.addEventListener("click", () => tabBar.scrollBy({ left: 120, behavior: "smooth" }));
   tabWrapper.appendChild(scrollLeft);
   tabWrapper.appendChild(tabBar);
@@ -4107,7 +4181,7 @@ function updateToolbar(plugin) {
 }
 
 // src/features/bible-api.ts
-var import_obsidian19 = require("obsidian");
+var import_obsidian20 = require("obsidian");
 function parseScriptureRef(text) {
   SCRIPTURE_REF_REGEX.lastIndex = 0;
   const m = SCRIPTURE_REF_REGEX.exec(text);
@@ -4135,7 +4209,7 @@ async function fetchBibleText(plugin, ref) {
     return plugin.scriptureCache.get(cacheKey);
   try {
     const url = `https://bible-api.com/${encodeURIComponent(verseRange)}?translation=${trans}`;
-    const resp = await (0, import_obsidian19.requestUrl)({ url });
+    const resp = await (0, import_obsidian20.requestUrl)({ url });
     const data = resp.json;
     if (data.error)
       throw new Error(data.error);
@@ -4168,7 +4242,7 @@ async function fetchCommentary(plugin, ref) {
     let chapterHtml = plugin.scriptureCache.get(chapterCacheKey);
     if (!chapterHtml) {
       const url = `https://biblehub.com/commentaries/${commentary.hubKey}/${ref.hubPath}/${ref.chapter}.htm`;
-      const resp = await (0, import_obsidian19.requestUrl)({ url });
+      const resp = await (0, import_obsidian20.requestUrl)({ url });
       chapterHtml = resp.text;
       plugin.scriptureCache.set(chapterCacheKey, chapterHtml);
     }
@@ -4377,17 +4451,14 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
     const cmState = require("@codemirror/state");
     const scriptureHoverPlugin = cmView.ViewPlugin.fromClass(
       class {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         constructor(view) {
           this.decorations = this.buildDecorations(view);
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         update(update) {
           if (update.docChanged || update.viewportChanged) {
             this.decorations = this.buildDecorations(update.view);
           }
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         buildDecorations(view) {
           if (plugin.settings.hoverMode === "off") {
             return cmView.Decoration.none;
@@ -4413,7 +4484,6 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
           return builder.finish();
         }
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { decorations: (v) => v.decorations }
     );
     registerEditorExtension(scriptureHoverPlugin);
@@ -4435,7 +4505,7 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
 }
 
 // src/utils/commands.ts
-var import_obsidian20 = require("obsidian");
+var import_obsidian21 = require("obsidian");
 init_table_operations();
 function registerCommands(plugin) {
   const p = plugin;
@@ -4508,7 +4578,7 @@ function registerCommands(plugin) {
   p.addCommand({ id: "table-add-row", name: "Table: Add Row Below", editorCallback: (e) => {
     const tc = getTableContext(e);
     if (!tc) {
-      new import_obsidian20.Notice("Place cursor inside a table");
+      new import_obsidian21.Notice("Place cursor inside a table");
       return;
     }
     const colCount = tc.rows[0].length;
@@ -4542,7 +4612,7 @@ function registerCommands(plugin) {
 }
 
 // src/main.ts
-var ArcadiaToolbarPlugin = class extends import_obsidian21.Plugin {
+var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
   constructor() {
     super(...arguments);
     this.toolbarEl = null;
@@ -4558,9 +4628,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian21.Plugin {
     setupScriptureHover(
       this,
       (cb) => this.registerMarkdownPostProcessor(cb),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ext) => this.registerEditorExtension(ext),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (el, event, cb) => this.registerDomEvent(el, event, cb)
     );
     this.registerDomEvent(document, "click", (e) => {
@@ -4574,12 +4642,14 @@ var ArcadiaToolbarPlugin = class extends import_obsidian21.Plugin {
     this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.updateToolbar()));
     this.registerEvent(this.app.workspace.on("layout-change", () => this.updateToolbar()));
     registerCommands(this);
-    this.addRibbonIcon("list-tree", "Toggle Table of Contents", () => this.toggleTOC());
+    this.addRibbonIcon("list-tree", "Toggle Table of Contents", () => {
+      void this.toggleTOC();
+    });
     this.addSettingTab(new ArcadiaToolbarSettingTab(this.app, this));
     this.app.workspace.onLayoutReady(() => {
       this.updateToolbar();
       if (this.settings.tocPinned && this.settings.tocShowOnStartup) {
-        this.activateTOC();
+        void this.activateTOC();
       }
     });
   }
@@ -4601,6 +4671,10 @@ var ArcadiaToolbarPlugin = class extends import_obsidian21.Plugin {
   }
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+  get isPremium() {
+    var _a, _b;
+    return this.settings.isPro && ((_b = (_a = this.settings.licenseStatus) == null ? void 0 : _a.valid) != null ? _b : false);
   }
   // ========================================================================
   // TOC MANAGEMENT
