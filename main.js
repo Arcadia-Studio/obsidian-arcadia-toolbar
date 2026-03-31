@@ -3257,8 +3257,8 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
         const file = await plugin.app.vault.create(fileName, tmpl.content);
         await plugin.app.workspace.getLeaf(false).openFile(file);
       } catch (err) {
-        const { Notice: Notice8 } = await import("obsidian");
-        new Notice8("Could not create canvas: " + err.message);
+        const { Notice: Notice7 } = await import("obsidian");
+        new Notice7("Could not create canvas: " + err.message);
       }
     });
     dropdown.appendChild(item);

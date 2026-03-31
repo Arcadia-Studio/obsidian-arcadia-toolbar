@@ -1,6 +1,6 @@
 {
 	"name": "arcadia-toolbar",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Word-like tabbed ribbon toolbar for Obsidian",
 	"main": "main.js",
 	"scripts": {
@@ -19,6 +19,8 @@
 	"author": "Peter J. Carter",
 	"license": "MIT",
 	"devDependencies": {
+		"@codemirror/state": "^6.6.0",
+		"@codemirror/view": "^6.40.0",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",

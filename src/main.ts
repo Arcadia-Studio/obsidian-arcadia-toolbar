@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Plugin, Notice } from 'obsidian';
+import { MarkdownView, Plugin } from 'obsidian';
 import type { ArcadiaToolbarSettings, ArcadiaPluginInterface, EditorContext } from './types';
 import { VIEW_TYPE_TOC, DEFAULT_SETTINGS } from './types';
 import { ArcadiaTOCView } from './sidebar/toc-view';

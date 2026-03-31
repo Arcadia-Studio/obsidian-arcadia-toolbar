@@ -220,7 +220,7 @@ export function numberTableRows(editor: Editor): void {
 // ============================================================================
 
 class FilterTableModal extends Modal {
-	private result: string = '';
+	private result = '';
 	private onSubmit: (value: string) => void;
 
 	constructor(app: App, onSubmit: (value: string) => void) {

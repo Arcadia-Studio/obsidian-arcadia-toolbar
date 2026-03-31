@@ -1,4 +1,3 @@
-import { Editor } from 'obsidian';
 import type { ArcadiaPluginInterface, EditorContext } from '../types';
 import { FONT_COLORS, BACKGROUND_COLORS } from '../types';
 import { positionDropdown, closeDropdowns } from './dropdown';
