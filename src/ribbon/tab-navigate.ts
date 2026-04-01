@@ -10,17 +10,17 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	const searchBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'search',
-			tooltip: 'Search in Vault',
+			tooltip: 'Search in vault',
 			action: () => plugin.executeCommand('global-search:open'),
 		}),
 		createButton(plugin, {
 			icon: 'file-search',
-			tooltip: 'Find in Current File',
+			tooltip: 'Find in current file',
 			action: () => plugin.executeCommand('editor:open-search'),
 		}),
 		createButton(plugin, {
 			icon: 'replace',
-			tooltip: 'Find and Replace',
+			tooltip: 'Find and replace',
 			action: () => plugin.executeCommand('editor:open-search-replace'),
 		}),
 	];
@@ -30,12 +30,12 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	const historyBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'arrow-left',
-			tooltip: 'Navigate Back',
+			tooltip: 'Navigate back',
 			action: () => plugin.executeCommand('app:go-back'),
 		}),
 		createButton(plugin, {
 			icon: 'arrow-right',
-			tooltip: 'Navigate Forward',
+			tooltip: 'Navigate forward',
 			action: () => plugin.executeCommand('app:go-forward'),
 		}),
 	];
@@ -45,17 +45,17 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	const linksBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'link',
-			tooltip: 'Open Link Under Cursor',
+			tooltip: 'Open link under cursor',
 			action: () => plugin.executeCommand('editor:follow-link'),
 		}),
 		createButton(plugin, {
 			icon: 'git-branch',
-			tooltip: 'Open Backlinks',
+			tooltip: 'Open backlinks',
 			action: () => plugin.executeCommand('backlink:open-backlinks'),
 		}),
 		createButton(plugin, {
 			icon: 'share-2',
-			tooltip: 'Open Outgoing Links',
+			tooltip: 'Open outgoing links',
 			action: () => plugin.executeCommand('outgoing-links:open-outgoing-links'),
 		}),
 	];
@@ -65,17 +65,17 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	const exploreBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'folder-open',
-			tooltip: 'Open File Explorer',
+			tooltip: 'Open file explorer',
 			action: () => plugin.executeCommand('file-explorer:open'),
 		}),
 		createButton(plugin, {
 			icon: 'git-fork',
-			tooltip: 'Open Graph View',
+			tooltip: 'Open graph view',
 			action: () => plugin.executeCommand('app:open-graph-view'),
 		}),
 		createButton(plugin, {
 			icon: 'star',
-			tooltip: 'Open Bookmarks',
+			tooltip: 'Open bookmarks',
 			action: () => plugin.executeCommand('bookmarks:open'),
 		}),
 	];
@@ -84,23 +84,23 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	// ---- Recent Files dropdown ----
 	const recentTrigger = createDropdownTrigger({
 		icon: 'history',
-		tooltip: 'Recent Files',
+		tooltip: 'Recent files',
 		label: 'Recent',
 		openFn: (wrapper) => openRecentFilesDropdown(plugin, wrapper),
 	});
-	addGroup(container, 'Recent Files', [recentTrigger]);
+	addGroup(container, 'Recent files', [recentTrigger]);
 
 	// ---- Workspace group ----
 	const workspaceBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'layout-dashboard',
-			tooltip: 'Manage Workspaces',
+			tooltip: 'Manage workspaces',
 			action: () => plugin.executeCommand('workspaces:open'),
 			pluginId: 'workspaces',
 		}),
 		createButton(plugin, {
 			icon: 'save',
-			tooltip: 'Save Workspace Layout',
+			tooltip: 'Save workspace layout',
 			action: () => plugin.executeCommand('workspaces:save-and-load'),
 			pluginId: 'workspaces',
 		}),
@@ -111,12 +111,12 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 	const sidebarBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'panel-left',
-			tooltip: 'Toggle Left Sidebar',
+			tooltip: 'Toggle left sidebar',
 			action: () => plugin.executeCommand('app:toggle-left-sidebar'),
 		}),
 		createButton(plugin, {
 			icon: 'panel-right',
-			tooltip: 'Toggle Right Sidebar',
+			tooltip: 'Toggle right sidebar',
 			action: () => plugin.executeCommand('app:toggle-right-sidebar'),
 		}),
 	];
@@ -131,7 +131,7 @@ function openRecentFilesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEle
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Recent Files';
+	title.textContent = 'Recent files';
 	dropdown.appendChild(title);
 
 	const recentFiles = getRecentFiles(plugin);
@@ -164,7 +164,7 @@ function openRecentFilesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEle
 				e.stopPropagation();
 				const file = plugin.app.vault.getAbstractFileByPath(filePath);
 				if (file) {
-					plugin.app.workspace.getLeaf(false).openFile(file as import('obsidian').TFile);
+					void plugin.app.workspace.getLeaf(false).openFile(file as import('obsidian').TFile);
 				}
 				closeDropdowns(plugin);
 			});

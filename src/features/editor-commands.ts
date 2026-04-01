@@ -62,7 +62,7 @@ export function clearFormatting(editor: Editor): void {
 export function applyFontColor(plugin: ArcadiaPluginInterface, editor: Editor, color: string): void {
 	const selection = editor.getSelection();
 	plugin.settings.lastFontColor = color;
-	plugin.saveSettings();
+	void plugin.saveSettings();
 	if (selection) {
 		editor.replaceSelection(`<font color="${color}">${selection}</font>`);
 	} else {
@@ -75,7 +75,7 @@ export function applyFontColor(plugin: ArcadiaPluginInterface, editor: Editor, c
 export function applyBackgroundColor(plugin: ArcadiaPluginInterface, editor: Editor, color: string): void {
 	const selection = editor.getSelection();
 	plugin.settings.lastBackgroundColor = color;
-	plugin.saveSettings();
+	void plugin.saveSettings();
 	if (color === 'transparent') {
 		if (selection) {
 			editor.replaceSelection(selection.replace(/<mark[^>]*>([^<]*)<\/mark>/g, '$1'));

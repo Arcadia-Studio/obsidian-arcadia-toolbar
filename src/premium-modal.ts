@@ -21,11 +21,11 @@ export class PremiumModal extends Modal {
 		this.featureName = featureName;
 	}
 
-	onOpen() {
+	onOpen(): void {
 		const { contentEl } = this;
-		contentEl.createEl('h2', { text: 'Arcadia Toolbar premium' });
+		new Setting(contentEl).setName('Premium feature').setHeading();
 		contentEl.createEl('p', {
-			text: `"${this.featureName}" is part of Arcadia Toolbar Premium.`,
+			text: `"${this.featureName}" is part of Arcadia Toolbar premium.`,
 		});
 		contentEl.createEl('p', {
 			text: 'Purchase a license to unlock all premium features, or enter your existing license key below.',
@@ -71,7 +71,7 @@ export class PremiumModal extends Modal {
 			);
 	}
 
-	onClose() {
+	onClose(): void {
 		this.contentEl.empty();
 	}
 }

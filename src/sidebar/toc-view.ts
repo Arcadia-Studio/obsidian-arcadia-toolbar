@@ -13,10 +13,11 @@ export class ArcadiaTOCView extends ItemView {
 	}
 
 	getViewType(): string { return VIEW_TYPE_TOC; }
-	getDisplayText(): string { return 'Table of Contents'; }
+	getDisplayText(): string { return 'Table of contents'; }
 	getIcon(): string { return 'list-tree'; }
 
 	async onOpen(): Promise<void> {
+		await super.onOpen();
 		this.containerEl.addClass('arcadia-toc-container');
 		this.renderTOC();
 

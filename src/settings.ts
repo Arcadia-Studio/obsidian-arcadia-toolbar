@@ -15,23 +15,24 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		new Setting(containerEl).setName('Arcadia Toolbar settings').setHeading();
+		new Setting(containerEl).setName('General').setHeading();
 
 		// Tab Visibility
 		new Setting(containerEl).setName('Ribbon tabs').setHeading();
 
+
 		const tabToggles: { key: string; name: string; desc: string }[] = [
-			{ key: 'showHomeTab', name: 'Show Home tab', desc: 'Text formatting, colors, headings, lists, alignment' },
-			{ key: 'showInsertTab', name: 'Show Insert tab', desc: 'Links, images, tables, code, callouts, footnotes' },
-			{ key: 'showTheologyTab', name: 'Show Theology tab', desc: 'Scripture blocks, cross-references, original language notes' },
-			{ key: 'showViewTab', name: 'Show View tab', desc: 'Table of Contents, word count, display options' },
-			{ key: 'showNavigateTab', name: 'Show Navigate tab', desc: 'Search, history, links, file explorer, workspace management' },
-			{ key: 'showTemplatesTab', name: 'Show Templates tab', desc: 'Quick insert templates, daily notes, note tools, properties' },
-			{ key: 'showCanvasTab', name: 'Show Canvas tab', desc: 'Canvas, Excalidraw, presentations, Mermaid and PlantUML' },
-			{ key: 'showReferencesTab', name: 'Show References tab', desc: 'Citations (Turabian, Chicago, APA, MLA), bibliography, footnotes' },
-			{ key: 'showReviewTab', name: 'Show Review tab', desc: 'Spell check, search, backlinks, speech, comments, statistics' },
-			{ key: 'showDataTab', name: 'Show Data tab', desc: 'Tables, rows/columns, sort, CSV, formulas, charts, AI tools' },
-			{ key: 'showSlidesTab', name: 'Show Slides tab', desc: 'Presentation mode, slide separators, themes (Advanced Slides)' },
+			{ key: 'showHomeTab', name: 'Show home tab', desc: 'Text formatting, colors, headings, lists, alignment' },
+			{ key: 'showInsertTab', name: 'Show insert tab', desc: 'Links, images, tables, code, callouts, footnotes' },
+			{ key: 'showTheologyTab', name: 'Show theology tab', desc: 'Scripture blocks, cross-references, original language notes' },
+			{ key: 'showViewTab', name: 'Show view tab', desc: 'Table of contents, word count, display options' },
+			{ key: 'showNavigateTab', name: 'Show navigate tab', desc: 'Search, history, links, file explorer, workspace management' },
+			{ key: 'showTemplatesTab', name: 'Show templates tab', desc: 'Quick insert templates, daily notes, note tools, properties' },
+			{ key: 'showCanvasTab', name: 'Show canvas tab', desc: 'Canvas, Excalidraw, presentations, Mermaid and PlantUML' },
+			{ key: 'showReferencesTab', name: 'Show references tab', desc: 'Citations (Turabian, Chicago, APA, MLA), bibliography, footnotes' },
+			{ key: 'showReviewTab', name: 'Show review tab', desc: 'Spell check, search, backlinks, speech, comments, statistics' },
+			{ key: 'showDataTab', name: 'Show data tab', desc: 'Tables, rows/columns, sort, CSV, formulas, charts, AI tools' },
+			{ key: 'showSlidesTab', name: 'Show slides tab', desc: 'Presentation mode, slide separators, themes (Advanced Slides)' },
 		];
 
 		for (const tab of tabToggles) {
@@ -49,8 +50,10 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		// TOC Settings
 		new Setting(containerEl).setName('Table of contents').setHeading();
 
+
 		new Setting(containerEl)
 			.setName('Pin TOC on startup')
+
 			.setDesc('Automatically open the TOC panel when Obsidian starts')
 			.addToggle(t => t.setValue(this.plugin.settings.tocShowOnStartup)
 				.onChange(async v => {
@@ -202,7 +205,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.setDesc("Your API key (stored locally in this vault's data.json)")
 			.addText(t => {
 				t.inputEl.type = 'password';
-				t.inputEl.style.width = '300px';
+				t.inputEl.addClass('arcadia-api-key-input');
 				t.setPlaceholder('sk-...')
 					.setValue(this.plugin.settings.aiApiKey)
 					.onChange(async v => {
@@ -273,7 +276,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.addButton(btn => btn
-				.setButtonText('Get Arcadia Toolbar Premium')
+				.setButtonText('Get Arcadia Toolbar premium')
 				.onClick(() => {
 					window.open('https://arcadia-studio.lemonsqueezy.com', '_blank');
 				})

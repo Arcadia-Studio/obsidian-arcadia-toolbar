@@ -67,12 +67,12 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const canvasBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'layout-grid',
-			tooltip: 'New Canvas',
+			tooltip: 'New canvas',
 			action: () => plugin.executeCommand('canvas:new-file'),
 		}),
 		createButton(plugin, {
 			icon: 'folder-open',
-			tooltip: 'Open Canvas File',
+			tooltip: 'Open canvas file',
 			action: () => plugin.executeCommand('file-explorer:open'),
 		}),
 	];
@@ -82,7 +82,7 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const drawingBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'pen-tool',
-			tooltip: 'New Excalidraw Drawing',
+			tooltip: 'New Excalidraw drawing',
 			pluginId: 'obsidian-excalidraw-plugin',
 			action: () => plugin.executeCommand('obsidian-excalidraw-plugin:excalidraw-autocreate'),
 		}),
@@ -98,7 +98,7 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	// ---- Templates dropdown ----
 	const templateTrigger = createDropdownTrigger({
 		icon: 'layout-template',
-		tooltip: 'Canvas Templates',
+		tooltip: 'Canvas templates',
 		label: 'Templates',
 		openFn: (wrapper) => openCanvasTemplatesDropdown(plugin, wrapper),
 	});
@@ -108,7 +108,7 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const presentBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'presentation',
-			tooltip: 'Start Canvas Presentation',
+			tooltip: 'Start canvas presentation',
 			pluginId: 'obsidian-advanced-slides',
 			action: () => plugin.executeCommand('obsidian-advanced-slides:start-server'),
 		}),
@@ -119,7 +119,7 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const diagramBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'share-2',
-			tooltip: 'Insert Mermaid Diagram',
+			tooltip: 'Insert Mermaid diagram',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) {
@@ -134,7 +134,7 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'boxes',
-			tooltip: 'Insert PlantUML Diagram',
+			tooltip: 'Insert PlantUML diagram',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) {
@@ -159,7 +159,7 @@ function openCanvasTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTM
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Canvas Templates';
+	title.textContent = 'Canvas templates';
 	dropdown.appendChild(title);
 
 	for (const tmpl of CANVAS_TEMPLATES) {

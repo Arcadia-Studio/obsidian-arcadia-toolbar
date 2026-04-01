@@ -36,19 +36,19 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const presentBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'presentation',
-			tooltip: 'Start Presentation (Advanced Slides)',
+			tooltip: 'Start presentation (Advanced Slides)',
 			pluginId: 'obsidian-advanced-slides',
 			action: () => plugin.executeCommand('obsidian-advanced-slides:start-server'),
 		}),
 		createButton(plugin, {
 			icon: 'stop-circle',
-			tooltip: 'Stop Presentation Server',
+			tooltip: 'Stop presentation server',
 			pluginId: 'obsidian-advanced-slides',
 			action: () => plugin.executeCommand('obsidian-advanced-slides:stop-server'),
 		}),
 		createButton(plugin, {
 			icon: 'refresh-cw',
-			tooltip: 'Reload Presentation',
+			tooltip: 'Reload presentation',
 			pluginId: 'obsidian-advanced-slides',
 			action: () => plugin.executeCommand('obsidian-advanced-slides:reload-server'),
 		}),
@@ -59,7 +59,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const navBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'chevron-left',
-			tooltip: 'Previous Slide',
+			tooltip: 'Previous slide',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) navigateSlide(activeCtx.editor, 'prev');
@@ -67,7 +67,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'chevron-right',
-			tooltip: 'Next Slide',
+			tooltip: 'Next slide',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) navigateSlide(activeCtx.editor, 'next');
@@ -80,7 +80,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const editBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'separator-horizontal',
-			tooltip: 'Insert Slide Break (---)',
+			tooltip: 'Insert slide break (---)',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideSeparator(activeCtx.editor);
@@ -88,7 +88,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'message-square',
-			tooltip: 'Insert Speaker Notes',
+			tooltip: 'Insert speaker notes',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSpeakerNotes(activeCtx.editor);
@@ -96,7 +96,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'image',
-			tooltip: 'Insert Slide Background',
+			tooltip: 'Insert slide background',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideBackground(activeCtx.editor);
@@ -104,19 +104,19 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'zap',
-			tooltip: 'Insert Fragment (Animate)',
+			tooltip: 'Insert fragment (Animate)',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideFragment(activeCtx.editor);
 			},
 		}),
 	];
-	addGroup(container, 'Slide Editing', editBtns);
+	addGroup(container, 'Slide editing', editBtns);
 
 	// ---- Layouts dropdown ----
 	const layoutTrigger = createDropdownTrigger({
 		icon: 'layout',
-		tooltip: 'Slide Layouts',
+		tooltip: 'Slide layouts',
 		label: 'Layouts',
 		openFn: (wrapper) => openLayoutsDropdown(plugin, wrapper, ctx),
 	});
@@ -126,7 +126,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const elementBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'columns',
-			tooltip: 'Insert Two-Column Layout',
+			tooltip: 'Insert two-Column layout',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideColumns(activeCtx.editor);
@@ -134,7 +134,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'grid',
-			tooltip: 'Insert Grid Layout',
+			tooltip: 'Insert grid layout',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideGrid(activeCtx.editor);
@@ -146,7 +146,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	// ---- Themes dropdown ----
 	const themeTrigger = createDropdownTrigger({
 		icon: 'palette',
-		tooltip: 'Slide Themes',
+		tooltip: 'Slide themes',
 		label: 'Themes',
 		openFn: (wrapper) => openThemesDropdown(plugin, wrapper, ctx),
 	});
@@ -156,15 +156,15 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const aiBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'sparkles',
-			tooltip: 'Convert Notes to Slides (AI)',
+			tooltip: 'Convert notes to Slides (AI)',
 			requiresAI: true,
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
-				if (activeCtx) aiNotesToSlides(plugin, activeCtx.editor);
+				if (activeCtx) void aiNotesToSlides(plugin, activeCtx.editor);
 			},
 		}),
 	];
-	addGroup(container, 'AI Tools', aiBtns);
+	addGroup(container, 'AI tools', aiBtns);
 }
 
 function openLayoutsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
@@ -175,7 +175,7 @@ function openLayoutsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Slide Layouts';
+	title.textContent = 'Slide layouts';
 	dropdown.appendChild(title);
 
 	for (const layout of SLIDE_LAYOUTS) {
@@ -219,7 +219,7 @@ function openThemesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement,
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Slide Theme';
+	title.textContent = 'Slide theme';
 	dropdown.appendChild(title);
 
 	for (const theme of SLIDE_THEMES) {

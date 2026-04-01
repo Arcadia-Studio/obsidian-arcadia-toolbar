@@ -1,4 +1,4 @@
-import type { ArcadiaPluginInterface, EditorContext, COMMON_SYMBOLS } from '../types';
+import type { ArcadiaPluginInterface, EditorContext } from '../types';
 import { COMMON_SYMBOLS as SYMBOLS } from '../types';
 import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
@@ -22,24 +22,23 @@ import {
 	insertMermaidBlock,
 	insertComment,
 } from '../features/editor-commands';
-import { setIcon } from 'obsidian';
 
 export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
 	// ---- Links group ----
 	const linkBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'link',
-			tooltip: 'Insert External Link',
+			tooltip: 'Insert external link',
 			action: () => ctx && insertLink(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'file-symlink',
-			tooltip: 'Insert Internal Link',
+			tooltip: 'Insert internal link',
 			action: () => ctx && insertInternalLink(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'footnote',
-			tooltip: 'Insert Footnote',
+			tooltip: 'Insert footnote',
 			action: () => ctx && insertFootnote(ctx.editor),
 		}),
 	];
@@ -49,12 +48,12 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const mediaBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'image',
-			tooltip: 'Insert Image',
+			tooltip: 'Insert image',
 			action: () => ctx && insertImage(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'paperclip',
-			tooltip: 'Embed File',
+			tooltip: 'Embed file',
 			action: () => ctx && insertFileEmbed(ctx.editor),
 		}),
 		createButton(plugin, {
@@ -64,7 +63,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'film',
-			tooltip: 'Embed Audio/Video',
+			tooltip: 'Embed audio/video',
 			action: () => ctx && insertAudioVideoEmbed(ctx.editor),
 		}),
 	];
@@ -74,7 +73,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const tableBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'table',
-			tooltip: 'Insert Table',
+			tooltip: 'Insert table',
 			action: () => ctx && insertTable(ctx.editor),
 		}),
 	];
@@ -84,17 +83,17 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const codeBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'code',
-			tooltip: 'Insert Code Block',
+			tooltip: 'Insert code block',
 			action: () => ctx && insertCodeBlock(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'terminal',
-			tooltip: 'Insert Mermaid Diagram',
+			tooltip: 'Insert Mermaid diagram',
 			action: () => ctx && insertMermaidBlock(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'message-square',
-			tooltip: 'Insert Comment',
+			tooltip: 'Insert comment',
 			action: () => ctx && insertComment(ctx.editor),
 		}),
 	];
@@ -104,12 +103,12 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const elementsBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'minus',
-			tooltip: 'Horizontal Rule',
+			tooltip: 'Horizontal rule',
 			action: () => ctx && insertHorizontalRule(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'info',
-			tooltip: 'Insert Callout',
+			tooltip: 'Insert callout',
 			action: () => ctx && insertCallout(ctx.editor),
 		}),
 	];
@@ -119,12 +118,12 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const dateBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'calendar',
-			tooltip: 'Insert Date',
+			tooltip: 'Insert date',
 			action: () => ctx && insertDate(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'clock',
-			tooltip: 'Insert Date and Time',
+			tooltip: 'Insert date and time',
 			action: () => ctx && insertDateTime(ctx.editor),
 		}),
 	];
@@ -134,7 +133,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const templatesBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'layout-template',
-			tooltip: 'Insert Template (Templater)',
+			tooltip: 'Insert template (Templater)',
 			pluginId: 'templater-obsidian',
 			action: () => plugin.executeCommand('templater-obsidian:insert-templater'),
 		}),
@@ -145,18 +144,18 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const mathBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'sigma',
-			tooltip: 'Insert LaTeX Block',
+			tooltip: 'Insert LaTeX block',
 			action: () => ctx && insertLatexBlock(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'function-square',
-			tooltip: 'Insert Inline Math',
+			tooltip: 'Insert inline math',
 			action: () => ctx && insertInlineMath(ctx.editor),
 		}),
 	];
 	const symbolsTrigger = createDropdownTrigger({
 		icon: 'omega',
-		tooltip: 'Insert Symbol',
+		tooltip: 'Insert symbol',
 		openFn: (wrapper) => openSymbolsDropdown(plugin, wrapper, ctx),
 	});
 	mathBtns.push(symbolsTrigger);
@@ -166,7 +165,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const embedBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'layout-grid',
-			tooltip: 'Embed Note',
+			tooltip: 'Embed note',
 			action: () => ctx && insertFileEmbed(ctx.editor),
 		}),
 	];
@@ -181,7 +180,7 @@ function openSymbolsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Insert Symbol';
+	title.textContent = 'Insert symbol';
 	dropdown.appendChild(title);
 
 	const grid = document.createElement('div');

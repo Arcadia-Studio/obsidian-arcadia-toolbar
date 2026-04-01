@@ -27,7 +27,7 @@ export function addColorButton(
 
 	const bar = document.createElement('span');
 	bar.className = 'arcadia-color-bar';
-	bar.style.backgroundColor = currentColor === 'transparent' ? '#ccc' : currentColor;
+	bar.style.setProperty('--arcadia-color-bar-bg', currentColor === 'transparent' ? '#ccc' : currentColor);
 	btnEl.appendChild(bar);
 
 	const arrow = document.createElement('span');
@@ -58,7 +58,7 @@ function openColorDropdown(
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = type === 'font-color' ? 'Font Color' : 'Background Color';
+	title.textContent = type === 'font-color' ? 'Font color' : 'Background color';
 	dropdown.appendChild(title);
 
 	const colors = type === 'font-color' ? FONT_COLORS : BACKGROUND_COLORS;
@@ -70,10 +70,9 @@ function openColorDropdown(
 		swatch.className = 'arcadia-color-swatch';
 		if (color === 'transparent') {
 			swatch.textContent = '\u2715';
-			swatch.style.backgroundColor = '#fff';
-			swatch.style.color = '#999';
+			swatch.addClass('arcadia-color-swatch-transparent');
 		} else {
-			swatch.style.backgroundColor = color;
+			swatch.style.setProperty('--arcadia-swatch-bg', color);
 		}
 		swatch.setAttribute('title', color);
 		swatch.addEventListener('click', (e) => {

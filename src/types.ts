@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, MarkdownView } from 'obsidian';
 import type { LicenseStatus } from './license';
 
 // ============================================================================

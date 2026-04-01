@@ -18,7 +18,7 @@ export function buildReferencesTab(plugin: ArcadiaPluginInterface, container: HT
 	// ---- Citations dropdown ----
 	const citationTrigger = createDropdownTrigger({
 		icon: 'book-marked',
-		tooltip: 'Insert Citation (Footnote)',
+		tooltip: 'Insert citation (Footnote)',
 		label: 'Citation',
 		openFn: (wrapper) => openCitationDropdown(plugin, wrapper, ctx, 'footnote'),
 	});
@@ -27,17 +27,17 @@ export function buildReferencesTab(plugin: ArcadiaPluginInterface, container: HT
 	// ---- Inline Citations dropdown ----
 	const inlineTrigger = createDropdownTrigger({
 		icon: 'parentheses',
-		tooltip: 'Insert Inline Citation',
+		tooltip: 'Insert inline citation',
 		label: 'Inline',
 		openFn: (wrapper) => openCitationDropdown(plugin, wrapper, ctx, 'inline'),
 	});
-	addGroup(container, 'Inline Citations', [inlineTrigger]);
+	addGroup(container, 'Inline citations', [inlineTrigger]);
 
 	// ---- Bibliography group ----
 	const bibBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'library',
-			tooltip: 'Generate Bibliography from Footnotes',
+			tooltip: 'Generate bibliography from footnotes',
 			action: () => ctx && generateBibliography(ctx.editor),
 		}),
 	];
@@ -46,18 +46,18 @@ export function buildReferencesTab(plugin: ArcadiaPluginInterface, container: HT
 	// ---- AI Tools group ----
 	const convertTrigger = createDropdownTrigger({
 		icon: 'repeat',
-		tooltip: 'Convert Citations (AI)',
+		tooltip: 'Convert citations (AI)',
 		openFn: (wrapper) => openAIConvertDropdown(plugin, wrapper, ctx),
 	});
 
 	const linkCitationsBtn = createButton(plugin, {
 		icon: 'external-link',
-		tooltip: 'Link Citations to Google Books (AI)',
+		tooltip: 'Link citations to Google Books (AI)',
 		requiresAI: true,
-		action: () => ctx && aiLinkCitations(plugin, ctx.editor),
+		action: () => { if (ctx) void aiLinkCitations(plugin, ctx.editor); },
 	});
 
-	addGroup(container, 'AI Tools', [convertTrigger, linkCitationsBtn]);
+	addGroup(container, 'AI tools', [convertTrigger, linkCitationsBtn]);
 }
 
 function openCitationDropdown(
@@ -127,7 +127,7 @@ function openAIConvertDropdown(
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Convert Citations To...';
+	title.textContent = 'Convert citations to...';
 	dropdown.appendChild(title);
 
 	for (const [key, style] of Object.entries(CITATION_STYLES)) {
@@ -150,7 +150,7 @@ function openAIConvertDropdown(
 			e.preventDefault();
 			e.stopPropagation();
 			if (ctx && plugin.isAIConfigured()) {
-				aiConvertCitationsInDocument(plugin, ctx.editor, key);
+				void aiConvertCitationsInDocument(plugin, ctx.editor, key);
 			}
 			closeDropdowns(plugin);
 		});

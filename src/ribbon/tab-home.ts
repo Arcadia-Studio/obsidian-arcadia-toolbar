@@ -74,7 +74,7 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'remove-formatting',
-			tooltip: 'Clear Formatting',
+			tooltip: 'Clear formatting',
 			action: () => ctx && clearFormatting(ctx.editor),
 		}),
 	];
@@ -87,7 +87,7 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 			fontGroup,
 			'font-color',
 			'type',
-			'Font Color',
+			'Font color',
 			plugin.settings.lastFontColor,
 			ctx
 		);
@@ -96,7 +96,7 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 			fontGroup,
 			'bg-color',
 			'paintbrush',
-			'Background Color',
+			'Background color',
 			plugin.settings.lastBackgroundColor,
 			ctx
 		);
@@ -115,12 +115,12 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const paragraphBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'list',
-			tooltip: 'Bullet List',
+			tooltip: 'Bullet list',
 			action: () => ctx && toggleBulletList(ctx.editor),
 		}),
 		createButton(plugin, {
 			icon: 'list-ordered',
-			tooltip: 'Numbered List',
+			tooltip: 'Numbered list',
 			action: () => ctx && toggleNumberedList(ctx.editor),
 		}),
 		createButton(plugin, {
@@ -154,7 +154,7 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	// ---- Alignment dropdown ----
 	const alignTrigger = createDropdownTrigger({
 		icon: 'align-left',
-		tooltip: 'Text Alignment',
+		tooltip: 'Text alignment',
 		label: 'Align',
 		openFn: (wrapper) => openAlignmentDropdown(plugin, wrapper, ctx),
 	});
@@ -169,7 +169,7 @@ function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Heading Style';
+	title.textContent = 'Heading style';
 	dropdown.appendChild(title);
 
 	const levels: { level: number; label: string }[] = [
@@ -179,6 +179,7 @@ function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 		{ level: 4, label: 'Heading 4' },
 		{ level: 5, label: 'Heading 5' },
 		{ level: 6, label: 'Heading 6' },
+
 	];
 
 	for (const { level, label } of levels) {
@@ -209,7 +210,7 @@ function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 	setIcon(removeIcon, 'x');
 	removeItem.appendChild(removeIcon);
 	const removeText = document.createElement('span');
-	removeText.textContent = 'Remove Heading';
+	removeText.textContent = 'Remove heading';
 	removeItem.appendChild(removeText);
 	removeItem.addEventListener('click', (e) => {
 		e.preventDefault();
@@ -230,13 +231,13 @@ function openAlignmentDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Text Alignment';
+	title.textContent = 'Text alignment';
 	dropdown.appendChild(title);
 
 	const alignments: { icon: string; label: string; value: string }[] = [
-		{ icon: 'align-left', label: 'Align Left', value: 'left' },
-		{ icon: 'align-center', label: 'Align Center', value: 'center' },
-		{ icon: 'align-right', label: 'Align Right', value: 'right' },
+		{ icon: 'align-left', label: 'Align left', value: 'left' },
+		{ icon: 'align-center', label: 'Align center', value: 'center' },
+		{ icon: 'align-right', label: 'Align right', value: 'right' },
 		{ icon: 'align-justify', label: 'Justify', value: 'justify' },
 	];
 

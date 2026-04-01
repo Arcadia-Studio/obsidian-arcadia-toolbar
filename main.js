@@ -331,13 +331,12 @@ var init_table_operations = __esm({
       }
       onOpen() {
         const { contentEl } = this;
-        contentEl.createEl("h3", { text: "Filter Table Rows" });
+        new import_obsidian10.Setting(contentEl).setName("Filter table rows").setHeading();
         const inputEl = contentEl.createEl("input", {
           type: "text",
           placeholder: "Enter filter keyword..."
         });
-        inputEl.style.width = "100%";
-        inputEl.style.marginBottom = "12px";
+        inputEl.addClass("arcadia-filter-input");
         inputEl.addEventListener("input", () => {
           this.result = inputEl.value;
         });
@@ -805,12 +804,13 @@ var ArcadiaTOCView = class extends import_obsidian.ItemView {
     return VIEW_TYPE_TOC;
   }
   getDisplayText() {
-    return "Table of Contents";
+    return "Table of contents";
   }
   getIcon() {
     return "list-tree";
   }
   async onOpen() {
+    await super.onOpen();
     this.containerEl.addClass("arcadia-toc-container");
     this.renderTOC();
     this.registerEvent(
@@ -922,20 +922,20 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new import_obsidian3.Setting(containerEl).setName("Arcadia Toolbar settings").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("General").setHeading();
     new import_obsidian3.Setting(containerEl).setName("Ribbon tabs").setHeading();
     const tabToggles = [
-      { key: "showHomeTab", name: "Show Home tab", desc: "Text formatting, colors, headings, lists, alignment" },
-      { key: "showInsertTab", name: "Show Insert tab", desc: "Links, images, tables, code, callouts, footnotes" },
-      { key: "showTheologyTab", name: "Show Theology tab", desc: "Scripture blocks, cross-references, original language notes" },
-      { key: "showViewTab", name: "Show View tab", desc: "Table of Contents, word count, display options" },
-      { key: "showNavigateTab", name: "Show Navigate tab", desc: "Search, history, links, file explorer, workspace management" },
-      { key: "showTemplatesTab", name: "Show Templates tab", desc: "Quick insert templates, daily notes, note tools, properties" },
-      { key: "showCanvasTab", name: "Show Canvas tab", desc: "Canvas, Excalidraw, presentations, Mermaid and PlantUML" },
-      { key: "showReferencesTab", name: "Show References tab", desc: "Citations (Turabian, Chicago, APA, MLA), bibliography, footnotes" },
-      { key: "showReviewTab", name: "Show Review tab", desc: "Spell check, search, backlinks, speech, comments, statistics" },
-      { key: "showDataTab", name: "Show Data tab", desc: "Tables, rows/columns, sort, CSV, formulas, charts, AI tools" },
-      { key: "showSlidesTab", name: "Show Slides tab", desc: "Presentation mode, slide separators, themes (Advanced Slides)" }
+      { key: "showHomeTab", name: "Show home tab", desc: "Text formatting, colors, headings, lists, alignment" },
+      { key: "showInsertTab", name: "Show insert tab", desc: "Links, images, tables, code, callouts, footnotes" },
+      { key: "showTheologyTab", name: "Show theology tab", desc: "Scripture blocks, cross-references, original language notes" },
+      { key: "showViewTab", name: "Show view tab", desc: "Table of contents, word count, display options" },
+      { key: "showNavigateTab", name: "Show navigate tab", desc: "Search, history, links, file explorer, workspace management" },
+      { key: "showTemplatesTab", name: "Show templates tab", desc: "Quick insert templates, daily notes, note tools, properties" },
+      { key: "showCanvasTab", name: "Show canvas tab", desc: "Canvas, Excalidraw, presentations, Mermaid and PlantUML" },
+      { key: "showReferencesTab", name: "Show references tab", desc: "Citations (Turabian, Chicago, APA, MLA), bibliography, footnotes" },
+      { key: "showReviewTab", name: "Show review tab", desc: "Spell check, search, backlinks, speech, comments, statistics" },
+      { key: "showDataTab", name: "Show data tab", desc: "Tables, rows/columns, sort, CSV, formulas, charts, AI tools" },
+      { key: "showSlidesTab", name: "Show slides tab", desc: "Presentation mode, slide separators, themes (Advanced Slides)" }
     ];
     for (const tab of tabToggles) {
       new import_obsidian3.Setting(containerEl).setName(tab.name).setDesc(tab.desc).addToggle((t) => t.setValue(this.plugin.settings[tab.key]).onChange(async (v) => {
@@ -1055,7 +1055,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     new import_obsidian3.Setting(containerEl).setName("API key").setDesc("Your API key (stored locally in this vault's data.json)").addText((t) => {
       t.inputEl.type = "password";
-      t.inputEl.style.width = "300px";
+      t.inputEl.addClass("arcadia-api-key-input");
       t.setPlaceholder("sk-...").setValue(this.plugin.settings.aiApiKey).onChange(async (v) => {
         this.plugin.settings.aiApiKey = v;
         await this.plugin.saveSettings();
@@ -1104,7 +1104,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
       })
     );
     new import_obsidian3.Setting(containerEl).addButton(
-      (btn) => btn.setButtonText("Get Arcadia Toolbar Premium").onClick(() => {
+      (btn) => btn.setButtonText("Get Arcadia Toolbar premium").onClick(() => {
         window.open("https://arcadia-studio.lemonsqueezy.com", "_blank");
       })
     );
@@ -1413,7 +1413,7 @@ function clearFormatting(editor) {
 function applyFontColor(plugin, editor, color) {
   const selection = editor.getSelection();
   plugin.settings.lastFontColor = color;
-  plugin.saveSettings();
+  void plugin.saveSettings();
   if (selection) {
     editor.replaceSelection(`<font color="${color}">${selection}</font>`);
   } else {
@@ -1425,7 +1425,7 @@ function applyFontColor(plugin, editor, color) {
 function applyBackgroundColor(plugin, editor, color) {
   const selection = editor.getSelection();
   plugin.settings.lastBackgroundColor = color;
-  plugin.saveSettings();
+  void plugin.saveSettings();
   if (color === "transparent") {
     if (selection) {
       editor.replaceSelection(selection.replace(/<mark[^>]*>([^<]*)<\/mark>/g, "$1"));
@@ -1835,7 +1835,7 @@ function addColorButton(plugin, group, type, iconName, tooltip, currentColor, ct
   btnEl.appendChild(iconSpan);
   const bar = document.createElement("span");
   bar.className = "arcadia-color-bar";
-  bar.style.backgroundColor = currentColor === "transparent" ? "#ccc" : currentColor;
+  bar.style.setProperty("--arcadia-color-bar-bg", currentColor === "transparent" ? "#ccc" : currentColor);
   btnEl.appendChild(bar);
   const arrow = document.createElement("span");
   arrow.className = "arcadia-dropdown-arrow";
@@ -1855,7 +1855,7 @@ function openColorDropdown(plugin, wrapper, type, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = type === "font-color" ? "Font Color" : "Background Color";
+  title.textContent = type === "font-color" ? "Font color" : "Background color";
   dropdown.appendChild(title);
   const colors = type === "font-color" ? FONT_COLORS : BACKGROUND_COLORS;
   const grid = document.createElement("div");
@@ -1865,10 +1865,9 @@ function openColorDropdown(plugin, wrapper, type, ctx) {
     swatch.className = "arcadia-color-swatch";
     if (color === "transparent") {
       swatch.textContent = "\u2715";
-      swatch.style.backgroundColor = "#fff";
-      swatch.style.color = "#999";
+      swatch.addClass("arcadia-color-swatch-transparent");
     } else {
-      swatch.style.backgroundColor = color;
+      swatch.style.setProperty("--arcadia-swatch-bg", color);
     }
     swatch.setAttribute("title", color);
     swatch.addEventListener("click", (e) => {
@@ -1942,7 +1941,7 @@ function buildHomeTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "remove-formatting",
-      tooltip: "Clear Formatting",
+      tooltip: "Clear formatting",
       action: () => ctx && clearFormatting(ctx.editor)
     })
   ];
@@ -1953,7 +1952,7 @@ function buildHomeTab(plugin, container, ctx) {
       fontGroup,
       "font-color",
       "type",
-      "Font Color",
+      "Font color",
       plugin.settings.lastFontColor,
       ctx
     );
@@ -1962,7 +1961,7 @@ function buildHomeTab(plugin, container, ctx) {
       fontGroup,
       "bg-color",
       "paintbrush",
-      "Background Color",
+      "Background color",
       plugin.settings.lastBackgroundColor,
       ctx
     );
@@ -1977,12 +1976,12 @@ function buildHomeTab(plugin, container, ctx) {
   const paragraphBtns = [
     createButton(plugin, {
       icon: "list",
-      tooltip: "Bullet List",
+      tooltip: "Bullet list",
       action: () => ctx && toggleBulletList(ctx.editor)
     }),
     createButton(plugin, {
       icon: "list-ordered",
-      tooltip: "Numbered List",
+      tooltip: "Numbered list",
       action: () => ctx && toggleNumberedList(ctx.editor)
     }),
     createButton(plugin, {
@@ -2012,7 +2011,7 @@ function buildHomeTab(plugin, container, ctx) {
   addGroup(container, "Indent", indentBtns);
   const alignTrigger = createDropdownTrigger({
     icon: "align-left",
-    tooltip: "Text Alignment",
+    tooltip: "Text alignment",
     label: "Align",
     openFn: (wrapper) => openAlignmentDropdown(plugin, wrapper, ctx)
   });
@@ -2024,7 +2023,7 @@ function openHeadingDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Heading Style";
+  title.textContent = "Heading style";
   dropdown.appendChild(title);
   const levels = [
     { level: 1, label: "Heading 1" },
@@ -2061,7 +2060,7 @@ function openHeadingDropdown(plugin, anchor, ctx) {
   (0, import_obsidian9.setIcon)(removeIcon, "x");
   removeItem.appendChild(removeIcon);
   const removeText = document.createElement("span");
-  removeText.textContent = "Remove Heading";
+  removeText.textContent = "Remove heading";
   removeItem.appendChild(removeText);
   removeItem.addEventListener("click", (e) => {
     e.preventDefault();
@@ -2079,12 +2078,12 @@ function openAlignmentDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Text Alignment";
+  title.textContent = "Text alignment";
   dropdown.appendChild(title);
   const alignments = [
-    { icon: "align-left", label: "Align Left", value: "left" },
-    { icon: "align-center", label: "Align Center", value: "center" },
-    { icon: "align-right", label: "Align Right", value: "right" },
+    { icon: "align-left", label: "Align left", value: "left" },
+    { icon: "align-center", label: "Align center", value: "center" },
+    { icon: "align-right", label: "Align right", value: "right" },
     { icon: "align-justify", label: "Justify", value: "justify" }
   ];
   for (const { icon, label, value } of alignments) {
@@ -2113,17 +2112,17 @@ function buildInsertTab(plugin, container, ctx) {
   const linkBtns = [
     createButton(plugin, {
       icon: "link",
-      tooltip: "Insert External Link",
+      tooltip: "Insert external link",
       action: () => ctx && insertLink(ctx.editor)
     }),
     createButton(plugin, {
       icon: "file-symlink",
-      tooltip: "Insert Internal Link",
+      tooltip: "Insert internal link",
       action: () => ctx && insertInternalLink(ctx.editor)
     }),
     createButton(plugin, {
       icon: "footnote",
-      tooltip: "Insert Footnote",
+      tooltip: "Insert footnote",
       action: () => ctx && insertFootnote(ctx.editor)
     })
   ];
@@ -2131,12 +2130,12 @@ function buildInsertTab(plugin, container, ctx) {
   const mediaBtns = [
     createButton(plugin, {
       icon: "image",
-      tooltip: "Insert Image",
+      tooltip: "Insert image",
       action: () => ctx && insertImage(ctx.editor)
     }),
     createButton(plugin, {
       icon: "paperclip",
-      tooltip: "Embed File",
+      tooltip: "Embed file",
       action: () => ctx && insertFileEmbed(ctx.editor)
     }),
     createButton(plugin, {
@@ -2146,7 +2145,7 @@ function buildInsertTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "film",
-      tooltip: "Embed Audio/Video",
+      tooltip: "Embed audio/video",
       action: () => ctx && insertAudioVideoEmbed(ctx.editor)
     })
   ];
@@ -2154,7 +2153,7 @@ function buildInsertTab(plugin, container, ctx) {
   const tableBtns = [
     createButton(plugin, {
       icon: "table",
-      tooltip: "Insert Table",
+      tooltip: "Insert table",
       action: () => ctx && insertTable(ctx.editor)
     })
   ];
@@ -2162,17 +2161,17 @@ function buildInsertTab(plugin, container, ctx) {
   const codeBtns = [
     createButton(plugin, {
       icon: "code",
-      tooltip: "Insert Code Block",
+      tooltip: "Insert code block",
       action: () => ctx && insertCodeBlock(ctx.editor)
     }),
     createButton(plugin, {
       icon: "terminal",
-      tooltip: "Insert Mermaid Diagram",
+      tooltip: "Insert Mermaid diagram",
       action: () => ctx && insertMermaidBlock(ctx.editor)
     }),
     createButton(plugin, {
       icon: "message-square",
-      tooltip: "Insert Comment",
+      tooltip: "Insert comment",
       action: () => ctx && insertComment(ctx.editor)
     })
   ];
@@ -2180,12 +2179,12 @@ function buildInsertTab(plugin, container, ctx) {
   const elementsBtns = [
     createButton(plugin, {
       icon: "minus",
-      tooltip: "Horizontal Rule",
+      tooltip: "Horizontal rule",
       action: () => ctx && insertHorizontalRule(ctx.editor)
     }),
     createButton(plugin, {
       icon: "info",
-      tooltip: "Insert Callout",
+      tooltip: "Insert callout",
       action: () => ctx && insertCallout(ctx.editor)
     })
   ];
@@ -2193,12 +2192,12 @@ function buildInsertTab(plugin, container, ctx) {
   const dateBtns = [
     createButton(plugin, {
       icon: "calendar",
-      tooltip: "Insert Date",
+      tooltip: "Insert date",
       action: () => ctx && insertDate(ctx.editor)
     }),
     createButton(plugin, {
       icon: "clock",
-      tooltip: "Insert Date and Time",
+      tooltip: "Insert date and time",
       action: () => ctx && insertDateTime(ctx.editor)
     })
   ];
@@ -2206,7 +2205,7 @@ function buildInsertTab(plugin, container, ctx) {
   const templatesBtns = [
     createButton(plugin, {
       icon: "layout-template",
-      tooltip: "Insert Template (Templater)",
+      tooltip: "Insert template (Templater)",
       pluginId: "templater-obsidian",
       action: () => plugin.executeCommand("templater-obsidian:insert-templater")
     })
@@ -2215,18 +2214,18 @@ function buildInsertTab(plugin, container, ctx) {
   const mathBtns = [
     createButton(plugin, {
       icon: "sigma",
-      tooltip: "Insert LaTeX Block",
+      tooltip: "Insert LaTeX block",
       action: () => ctx && insertLatexBlock(ctx.editor)
     }),
     createButton(plugin, {
       icon: "function-square",
-      tooltip: "Insert Inline Math",
+      tooltip: "Insert inline math",
       action: () => ctx && insertInlineMath(ctx.editor)
     })
   ];
   const symbolsTrigger = createDropdownTrigger({
     icon: "omega",
-    tooltip: "Insert Symbol",
+    tooltip: "Insert symbol",
     openFn: (wrapper) => openSymbolsDropdown(plugin, wrapper, ctx)
   });
   mathBtns.push(symbolsTrigger);
@@ -2234,7 +2233,7 @@ function buildInsertTab(plugin, container, ctx) {
   const embedBtns = [
     createButton(plugin, {
       icon: "layout-grid",
-      tooltip: "Embed Note",
+      tooltip: "Embed note",
       action: () => ctx && insertFileEmbed(ctx.editor)
     })
   ];
@@ -2246,7 +2245,7 @@ function openSymbolsDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu arcadia-symbols-dropdown";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Insert Symbol";
+  title.textContent = "Insert symbol";
   dropdown.appendChild(title);
   const grid = document.createElement("div");
   grid.className = "arcadia-symbol-grid";
@@ -2533,38 +2532,41 @@ var import_obsidian12 = require("obsidian");
 function buildReferencesTab(plugin, container, ctx) {
   const citationTrigger = createDropdownTrigger({
     icon: "book-marked",
-    tooltip: "Insert Citation (Footnote)",
+    tooltip: "Insert citation (Footnote)",
     label: "Citation",
     openFn: (wrapper) => openCitationDropdown(plugin, wrapper, ctx, "footnote")
   });
   addGroup(container, "Citations", [citationTrigger]);
   const inlineTrigger = createDropdownTrigger({
     icon: "parentheses",
-    tooltip: "Insert Inline Citation",
+    tooltip: "Insert inline citation",
     label: "Inline",
     openFn: (wrapper) => openCitationDropdown(plugin, wrapper, ctx, "inline")
   });
-  addGroup(container, "Inline Citations", [inlineTrigger]);
+  addGroup(container, "Inline citations", [inlineTrigger]);
   const bibBtns = [
     createButton(plugin, {
       icon: "library",
-      tooltip: "Generate Bibliography from Footnotes",
+      tooltip: "Generate bibliography from footnotes",
       action: () => ctx && generateBibliography(ctx.editor)
     })
   ];
   addGroup(container, "Bibliography", bibBtns);
   const convertTrigger = createDropdownTrigger({
     icon: "repeat",
-    tooltip: "Convert Citations (AI)",
+    tooltip: "Convert citations (AI)",
     openFn: (wrapper) => openAIConvertDropdown(plugin, wrapper, ctx)
   });
   const linkCitationsBtn = createButton(plugin, {
     icon: "external-link",
-    tooltip: "Link Citations to Google Books (AI)",
+    tooltip: "Link citations to Google Books (AI)",
     requiresAI: true,
-    action: () => ctx && aiLinkCitations(plugin, ctx.editor)
+    action: () => {
+      if (ctx)
+        void aiLinkCitations(plugin, ctx.editor);
+    }
   });
-  addGroup(container, "AI Tools", [convertTrigger, linkCitationsBtn]);
+  addGroup(container, "AI tools", [convertTrigger, linkCitationsBtn]);
 }
 function openCitationDropdown(plugin, anchor, ctx, mode) {
   closeDropdowns(plugin);
@@ -2613,7 +2615,7 @@ function openAIConvertDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Convert Citations To...";
+  title.textContent = "Convert citations to...";
   dropdown.appendChild(title);
   for (const [key, style] of Object.entries(CITATION_STYLES)) {
     const item = document.createElement("button");
@@ -2631,7 +2633,7 @@ function openAIConvertDropdown(plugin, anchor, ctx) {
       e.preventDefault();
       e.stopPropagation();
       if (ctx && plugin.isAIConfigured()) {
-        aiConvertCitationsInDocument(plugin, ctx.editor, key);
+        void aiConvertCitationsInDocument(plugin, ctx.editor, key);
       }
       closeDropdowns(plugin);
     });
@@ -2645,12 +2647,12 @@ function buildReviewTab(plugin, container, ctx) {
   const proofingBtns = [
     createButton(plugin, {
       icon: "spell-check",
-      tooltip: "Spell Check (system)",
+      tooltip: "Spell check (system)",
       action: () => plugin.executeCommand("editor:toggle-spellcheck")
     }),
     createButton(plugin, {
       icon: "search",
-      tooltip: "Find / Replace",
+      tooltip: "Find / replace",
       action: () => plugin.executeCommand("editor:open-search-replace")
     })
   ];
@@ -2658,20 +2660,22 @@ function buildReviewTab(plugin, container, ctx) {
   const linksBtns = [
     createButton(plugin, {
       icon: "link-2",
-      tooltip: "Check Unresolved Links",
+      tooltip: "Check unresolved links",
       action: () => plugin.executeCommand("app:open-graph-view")
     }),
     createButton(plugin, {
       icon: "file-plus",
-      tooltip: "Create Unresolved Pages",
-      action: () => createUnresolvedPages(plugin)
+      tooltip: "Create unresolved pages",
+      action: () => {
+        void createUnresolvedPages(plugin);
+      }
     })
   ];
   addGroup(container, "Links", linksBtns);
   const goalBtns = [
     createButton(plugin, {
       icon: "target",
-      tooltip: "Show Writing Goal Progress",
+      tooltip: "Show writing goal progress",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx) {
@@ -2681,20 +2685,20 @@ function buildReviewTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "bar-chart",
-      tooltip: "Document Statistics",
+      tooltip: "Document statistics",
       action: () => showDocStats(plugin)
     })
   ];
-  addGroup(container, "Writing Goals", goalBtns);
+  addGroup(container, "Writing goals", goalBtns);
   const speechBtns = [
     createButton(plugin, {
       icon: "volume-2",
-      tooltip: "Read Aloud",
+      tooltip: "Read aloud",
       action: () => readAloud(plugin)
     }),
     createButton(plugin, {
       icon: "volume-x",
-      tooltip: "Stop Speaking",
+      tooltip: "Stop speaking",
       action: () => stopSpeaking()
     })
   ];
@@ -2702,7 +2706,7 @@ function buildReviewTab(plugin, container, ctx) {
   const notesBtns = [
     createButton(plugin, {
       icon: "message-circle",
-      tooltip: "Insert Comment",
+      tooltip: "Insert comment",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx) {
@@ -2726,30 +2730,34 @@ function buildViewTab(plugin, container, ctx) {
   const tocBtns = [
     createButton(plugin, {
       icon: "list",
-      tooltip: "Toggle Table of Contents",
-      action: () => plugin.toggleTOC()
+      tooltip: "Toggle table of contents",
+      action: () => {
+        void plugin.toggleTOC();
+      }
     }),
     createButton(plugin, {
       icon: "layout-sidebar-left",
-      tooltip: "Open TOC in Sidebar",
-      action: () => plugin.activateTOC()
+      tooltip: "Open TOC in sidebar",
+      action: () => {
+        void plugin.activateTOC();
+      }
     })
   ];
   addGroup(container, "TOC", tocBtns);
   const modeBtns = [
     createButton(plugin, {
       icon: "edit-3",
-      tooltip: "Editing View",
+      tooltip: "Editing view",
       action: () => plugin.executeCommand("markdown:toggle-preview")
     }),
     createButton(plugin, {
       icon: "book-open",
-      tooltip: "Reading View",
+      tooltip: "Reading view",
       action: () => plugin.executeCommand("markdown:toggle-preview")
     }),
     createButton(plugin, {
       icon: "columns",
-      tooltip: "Split View",
+      tooltip: "Split view",
       action: () => plugin.executeCommand("workspace:split-vertical")
     })
   ];
@@ -2757,17 +2765,17 @@ function buildViewTab(plugin, container, ctx) {
   const zoomBtns = [
     createButton(plugin, {
       icon: "zoom-in",
-      tooltip: "Zoom In",
+      tooltip: "Zoom in",
       action: () => plugin.executeCommand("window:zoom-in")
     }),
     createButton(plugin, {
       icon: "zoom-out",
-      tooltip: "Zoom Out",
+      tooltip: "Zoom out",
       action: () => plugin.executeCommand("window:zoom-out")
     }),
     createButton(plugin, {
       icon: "maximize",
-      tooltip: "Reset Zoom",
+      tooltip: "Reset zoom",
       action: () => plugin.executeCommand("window:reset-zoom")
     })
   ];
@@ -2775,12 +2783,12 @@ function buildViewTab(plugin, container, ctx) {
   const pluginBtns = [
     createButton(plugin, {
       icon: "command",
-      tooltip: "Command Palette",
+      tooltip: "Command palette",
       action: () => plugin.executeCommand("command-palette:open")
     }),
     createButton(plugin, {
       icon: "settings",
-      tooltip: "Open Settings",
+      tooltip: "Open settings",
       action: () => plugin.executeCommand("app:open-settings")
     })
   ];
@@ -2788,17 +2796,17 @@ function buildViewTab(plugin, container, ctx) {
   const windowBtns = [
     createButton(plugin, {
       icon: "maximize-2",
-      tooltip: "Toggle Fullscreen",
+      tooltip: "Toggle fullscreen",
       action: () => plugin.executeCommand("window:toggle-fullscreen")
     }),
     createButton(plugin, {
       icon: "sidebar-close",
-      tooltip: "Toggle Left Sidebar",
+      tooltip: "Toggle left sidebar",
       action: () => plugin.executeCommand("app:toggle-left-sidebar")
     }),
     createButton(plugin, {
       icon: "sidebar-open",
-      tooltip: "Toggle Right Sidebar",
+      tooltip: "Toggle right sidebar",
       action: () => plugin.executeCommand("app:toggle-right-sidebar")
     })
   ];
@@ -2806,13 +2814,13 @@ function buildViewTab(plugin, container, ctx) {
   const displayBtns = [
     createButton(plugin, {
       icon: "eye",
-      tooltip: "Focus Mode",
+      tooltip: "Focus mode",
       action: () => plugin.executeCommand("obsidian-focus-mode:toggle-focus-mode"),
       pluginId: "obsidian-focus-mode"
     }),
     createButton(plugin, {
       icon: "type",
-      tooltip: "Toggle Reading Width",
+      tooltip: "Toggle reading width",
       action: () => plugin.executeCommand("editor:toggle-readable-line-length")
     })
   ];
@@ -2820,7 +2828,7 @@ function buildViewTab(plugin, container, ctx) {
   const infoBtns = [
     createButton(plugin, {
       icon: "info",
-      tooltip: "Document Statistics",
+      tooltip: "Document statistics",
       action: () => showDocStats(plugin)
     })
   ];
@@ -2856,17 +2864,17 @@ function buildNavigateTab(plugin, container, ctx) {
   const searchBtns = [
     createButton(plugin, {
       icon: "search",
-      tooltip: "Search in Vault",
+      tooltip: "Search in vault",
       action: () => plugin.executeCommand("global-search:open")
     }),
     createButton(plugin, {
       icon: "file-search",
-      tooltip: "Find in Current File",
+      tooltip: "Find in current file",
       action: () => plugin.executeCommand("editor:open-search")
     }),
     createButton(plugin, {
       icon: "replace",
-      tooltip: "Find and Replace",
+      tooltip: "Find and replace",
       action: () => plugin.executeCommand("editor:open-search-replace")
     })
   ];
@@ -2874,12 +2882,12 @@ function buildNavigateTab(plugin, container, ctx) {
   const historyBtns = [
     createButton(plugin, {
       icon: "arrow-left",
-      tooltip: "Navigate Back",
+      tooltip: "Navigate back",
       action: () => plugin.executeCommand("app:go-back")
     }),
     createButton(plugin, {
       icon: "arrow-right",
-      tooltip: "Navigate Forward",
+      tooltip: "Navigate forward",
       action: () => plugin.executeCommand("app:go-forward")
     })
   ];
@@ -2887,17 +2895,17 @@ function buildNavigateTab(plugin, container, ctx) {
   const linksBtns = [
     createButton(plugin, {
       icon: "link",
-      tooltip: "Open Link Under Cursor",
+      tooltip: "Open link under cursor",
       action: () => plugin.executeCommand("editor:follow-link")
     }),
     createButton(plugin, {
       icon: "git-branch",
-      tooltip: "Open Backlinks",
+      tooltip: "Open backlinks",
       action: () => plugin.executeCommand("backlink:open-backlinks")
     }),
     createButton(plugin, {
       icon: "share-2",
-      tooltip: "Open Outgoing Links",
+      tooltip: "Open outgoing links",
       action: () => plugin.executeCommand("outgoing-links:open-outgoing-links")
     })
   ];
@@ -2905,38 +2913,38 @@ function buildNavigateTab(plugin, container, ctx) {
   const exploreBtns = [
     createButton(plugin, {
       icon: "folder-open",
-      tooltip: "Open File Explorer",
+      tooltip: "Open file explorer",
       action: () => plugin.executeCommand("file-explorer:open")
     }),
     createButton(plugin, {
       icon: "git-fork",
-      tooltip: "Open Graph View",
+      tooltip: "Open graph view",
       action: () => plugin.executeCommand("app:open-graph-view")
     }),
     createButton(plugin, {
       icon: "star",
-      tooltip: "Open Bookmarks",
+      tooltip: "Open bookmarks",
       action: () => plugin.executeCommand("bookmarks:open")
     })
   ];
   addGroup(container, "Explore", exploreBtns);
   const recentTrigger = createDropdownTrigger({
     icon: "history",
-    tooltip: "Recent Files",
+    tooltip: "Recent files",
     label: "Recent",
     openFn: (wrapper) => openRecentFilesDropdown(plugin, wrapper)
   });
-  addGroup(container, "Recent Files", [recentTrigger]);
+  addGroup(container, "Recent files", [recentTrigger]);
   const workspaceBtns = [
     createButton(plugin, {
       icon: "layout-dashboard",
-      tooltip: "Manage Workspaces",
+      tooltip: "Manage workspaces",
       action: () => plugin.executeCommand("workspaces:open"),
       pluginId: "workspaces"
     }),
     createButton(plugin, {
       icon: "save",
-      tooltip: "Save Workspace Layout",
+      tooltip: "Save workspace layout",
       action: () => plugin.executeCommand("workspaces:save-and-load"),
       pluginId: "workspaces"
     })
@@ -2945,12 +2953,12 @@ function buildNavigateTab(plugin, container, ctx) {
   const sidebarBtns = [
     createButton(plugin, {
       icon: "panel-left",
-      tooltip: "Toggle Left Sidebar",
+      tooltip: "Toggle left sidebar",
       action: () => plugin.executeCommand("app:toggle-left-sidebar")
     }),
     createButton(plugin, {
       icon: "panel-right",
-      tooltip: "Toggle Right Sidebar",
+      tooltip: "Toggle right sidebar",
       action: () => plugin.executeCommand("app:toggle-right-sidebar")
     })
   ];
@@ -2962,7 +2970,7 @@ function openRecentFilesDropdown(plugin, anchor) {
   dropdown.className = "arcadia-dropdown-menu arcadia-recent-files-dropdown";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Recent Files";
+  title.textContent = "Recent files";
   dropdown.appendChild(title);
   const recentFiles = getRecentFiles(plugin);
   const filesToShow = recentFiles.slice(0, 15);
@@ -2989,7 +2997,7 @@ function openRecentFilesDropdown(plugin, anchor) {
         e.stopPropagation();
         const file = plugin.app.vault.getAbstractFileByPath(filePath);
         if (file) {
-          plugin.app.workspace.getLeaf(false).openFile(file);
+          void plugin.app.workspace.getLeaf(false).openFile(file);
         }
         closeDropdowns(plugin);
       });
@@ -3004,73 +3012,73 @@ function buildTemplatesTab(plugin, container, ctx) {
   const quickBtns = [
     createButton(plugin, {
       icon: "layout-template",
-      tooltip: "Insert Template (Templater)",
+      tooltip: "Insert template (Templater)",
       pluginId: "templater-obsidian",
       action: () => plugin.executeCommand("templater-obsidian:insert-templater")
     }),
     createButton(plugin, {
       icon: "file-plus",
-      tooltip: "Create Note from Template (Templater)",
+      tooltip: "Create note from template (Templater)",
       pluginId: "templater-obsidian",
       action: () => plugin.executeCommand("templater-obsidian:create-new-note-from-template")
     }),
     createButton(plugin, {
       icon: "copy",
-      tooltip: "Insert Template (Core)",
+      tooltip: "Insert template (Core)",
       action: () => plugin.executeCommand("insert-template")
     })
   ];
-  addGroup(container, "Quick Insert", quickBtns);
+  addGroup(container, "Quick insert", quickBtns);
   const dailyBtns = [
     createButton(plugin, {
       icon: "calendar",
-      tooltip: "Open Today's Daily Note",
+      tooltip: "Open today's Daily Note",
       action: () => plugin.executeCommand("daily-notes")
     }),
     createButton(plugin, {
       icon: "calendar-plus",
-      tooltip: "Open Next Daily Note",
+      tooltip: "Open next daily note",
       action: () => plugin.executeCommand("daily-notes:goto-next")
     }),
     createButton(plugin, {
       icon: "calendar-minus",
-      tooltip: "Open Previous Daily Note",
+      tooltip: "Open previous daily note",
       action: () => plugin.executeCommand("daily-notes:goto-prev")
     })
   ];
-  addGroup(container, "Daily Notes", dailyBtns);
+  addGroup(container, "Daily notes", dailyBtns);
   const toolsBtns = [
     createButton(plugin, {
       icon: "file-text",
-      tooltip: "New Note",
+      tooltip: "New note",
       action: () => plugin.executeCommand("file-explorer:new-file")
     }),
     createButton(plugin, {
       icon: "folder-plus",
-      tooltip: "New Folder",
+      tooltip: "New folder",
       action: () => plugin.executeCommand("file-explorer:new-folder")
     }),
     createButton(plugin, {
       icon: "copy",
-      tooltip: "Duplicate Note",
+      tooltip: "Duplicate note",
       action: () => plugin.executeCommand("file-explorer:duplicate-file")
     })
   ];
-  addGroup(container, "Note Tools", toolsBtns);
+  addGroup(container, "Note tools", toolsBtns);
   const propsBtns = [
     createButton(plugin, {
       icon: "tag",
-      tooltip: "Edit Frontmatter / Properties",
+      tooltip: "Edit frontmatter / properties",
       action: () => plugin.executeCommand("editor:toggle-source")
     }),
     createButton(plugin, {
       icon: "hash",
-      tooltip: "Insert Date",
+      tooltip: "Insert date",
       action: () => ctx && insertDate(ctx.editor)
     }),
     createButton(plugin, {
       icon: "clock",
-      tooltip: "Insert Date and Time",
+      tooltip: "Insert date and time",
       action: () => ctx && insertDateTime(ctx.editor)
     })
   ];
@@ -3078,12 +3086,12 @@ function buildTemplatesTab(plugin, container, ctx) {
   const snippetBtns = [
     createButton(plugin, {
       icon: "info",
-      tooltip: "Insert Callout",
+      tooltip: "Insert callout",
       action: () => ctx && insertCallout(ctx.editor)
     }),
     createButton(plugin, {
       icon: "minus",
-      tooltip: "Insert Horizontal Rule",
+      tooltip: "Insert horizontal rule",
       action: () => ctx && insertHorizontalRule(ctx.editor)
     })
   ];
@@ -3152,12 +3160,12 @@ function buildCanvasTab(plugin, container, ctx) {
   const canvasBtns = [
     createButton(plugin, {
       icon: "layout-grid",
-      tooltip: "New Canvas",
+      tooltip: "New canvas",
       action: () => plugin.executeCommand("canvas:new-file")
     }),
     createButton(plugin, {
       icon: "folder-open",
-      tooltip: "Open Canvas File",
+      tooltip: "Open canvas file",
       action: () => plugin.executeCommand("file-explorer:open")
     })
   ];
@@ -3165,7 +3173,7 @@ function buildCanvasTab(plugin, container, ctx) {
   const drawingBtns = [
     createButton(plugin, {
       icon: "pen-tool",
-      tooltip: "New Excalidraw Drawing",
+      tooltip: "New Excalidraw drawing",
       pluginId: "obsidian-excalidraw-plugin",
       action: () => plugin.executeCommand("obsidian-excalidraw-plugin:excalidraw-autocreate")
     }),
@@ -3179,7 +3187,7 @@ function buildCanvasTab(plugin, container, ctx) {
   addGroup(container, "Drawing", drawingBtns);
   const templateTrigger = createDropdownTrigger({
     icon: "layout-template",
-    tooltip: "Canvas Templates",
+    tooltip: "Canvas templates",
     label: "Templates",
     openFn: (wrapper) => openCanvasTemplatesDropdown(plugin, wrapper)
   });
@@ -3187,7 +3195,7 @@ function buildCanvasTab(plugin, container, ctx) {
   const presentBtns = [
     createButton(plugin, {
       icon: "presentation",
-      tooltip: "Start Canvas Presentation",
+      tooltip: "Start canvas presentation",
       pluginId: "obsidian-advanced-slides",
       action: () => plugin.executeCommand("obsidian-advanced-slides:start-server")
     })
@@ -3196,7 +3204,7 @@ function buildCanvasTab(plugin, container, ctx) {
   const diagramBtns = [
     createButton(plugin, {
       icon: "share-2",
-      tooltip: "Insert Mermaid Diagram",
+      tooltip: "Insert Mermaid diagram",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx) {
@@ -3211,7 +3219,7 @@ function buildCanvasTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "boxes",
-      tooltip: "Insert PlantUML Diagram",
+      tooltip: "Insert PlantUML diagram",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx) {
@@ -3233,7 +3241,7 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Canvas Templates";
+  title.textContent = "Canvas templates";
   dropdown.appendChild(title);
   for (const tmpl of CANVAS_TEMPLATES) {
     const item = document.createElement("button");
@@ -3272,13 +3280,13 @@ var import_obsidian15 = require("obsidian");
 function buildDataTab(plugin, container, ctx) {
   const sizePickerTrigger = createDropdownTrigger({
     icon: "table",
-    tooltip: "Insert Table (Size Picker)",
-    label: "New Table",
+    tooltip: "Insert table (Size picker)",
+    label: "New table",
     openFn: (wrapper) => openTableSizeDropdown(plugin, wrapper, ctx)
   });
   const templateTrigger = createDropdownTrigger({
     icon: "layout-template",
-    tooltip: "Table Templates",
+    tooltip: "Table templates",
     label: "Templates",
     openFn: (wrapper) => openTableTemplatesDropdown(plugin, wrapper, ctx)
   });
@@ -3286,12 +3294,12 @@ function buildDataTab(plugin, container, ctx) {
   const rowColBtns = [
     createButton(plugin, {
       icon: "plus-square",
-      tooltip: "Add Row Above",
+      tooltip: "Add row above",
       action: () => plugin.executeCommand("editor:insert-newline-above")
     }),
     createButton(plugin, {
       icon: "minus-square",
-      tooltip: "Delete Current Row",
+      tooltip: "Delete current row",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (!activeCtx)
@@ -3306,7 +3314,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "list-ordered",
-      tooltip: "Number Rows",
+      tooltip: "Number rows",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3314,11 +3322,11 @@ function buildDataTab(plugin, container, ctx) {
       }
     })
   ];
-  addGroup(container, "Rows & Cols", rowColBtns);
+  addGroup(container, "Rows & cols", rowColBtns);
   const formatBtns = [
     createButton(plugin, {
       icon: "align-left",
-      tooltip: "Align Column Left",
+      tooltip: "Align column left",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3327,7 +3335,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "align-center",
-      tooltip: "Align Column Center",
+      tooltip: "Align column center",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3336,7 +3344,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "align-right",
-      tooltip: "Align Column Right",
+      tooltip: "Align column right",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3348,7 +3356,7 @@ function buildDataTab(plugin, container, ctx) {
   const dataBtns = [
     createButton(plugin, {
       icon: "download",
-      tooltip: "Import CSV to Table",
+      tooltip: "Import CSV to table",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3357,7 +3365,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "upload",
-      tooltip: "Export Table as CSV",
+      tooltip: "Export table as CSV",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3366,7 +3374,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "rotate-ccw",
-      tooltip: "Transpose Table",
+      tooltip: "Transpose table",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3378,7 +3386,7 @@ function buildDataTab(plugin, container, ctx) {
   const formulaBtns = [
     createButton(plugin, {
       icon: "filter",
-      tooltip: "Filter Table Rows",
+      tooltip: "Filter table rows",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3387,7 +3395,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "x-circle",
-      tooltip: "Clear Filter",
+      tooltip: "Clear filter",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3396,7 +3404,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "arrow-up-az",
-      tooltip: "Sort Column Ascending",
+      tooltip: "Sort column ascending",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3405,7 +3413,7 @@ function buildDataTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "arrow-down-az",
-      tooltip: "Sort Column Descending",
+      tooltip: "Sort column descending",
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
@@ -3417,7 +3425,7 @@ function buildDataTab(plugin, container, ctx) {
   const chartBtns = [
     createButton(plugin, {
       icon: "bar-chart-2",
-      tooltip: "Insert Chart (Dataview)",
+      tooltip: "Insert chart (Dataview)",
       pluginId: "dataview",
       action: () => plugin.executeCommand("dataview:new-query")
     })
@@ -3426,36 +3434,36 @@ function buildDataTab(plugin, container, ctx) {
   const aiBtns = [
     createButton(plugin, {
       icon: "sparkles",
-      tooltip: "Generate Table with AI",
+      tooltip: "Generate table with AI",
       requiresAI: true,
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
-          aiGenerateTable(plugin, activeCtx.editor);
+          void aiGenerateTable(plugin, activeCtx.editor);
       }
     }),
     createButton(plugin, {
       icon: "wand",
-      tooltip: "Fill Table Data with AI",
+      tooltip: "Fill table data with AI",
       requiresAI: true,
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
-          aiFillTableData(plugin, activeCtx.editor);
+          void aiFillTableData(plugin, activeCtx.editor);
       }
     }),
     createButton(plugin, {
       icon: "calculator",
-      tooltip: "Add Calculated Column with AI",
+      tooltip: "Add calculated column with AI",
       requiresAI: true,
       action: () => {
         const activeCtx = plugin.getActiveEditor();
         if (activeCtx)
-          aiAddCalculatedColumn(plugin, activeCtx.editor);
+          void aiAddCalculatedColumn(plugin, activeCtx.editor);
       }
     })
   ];
-  addGroup(container, "AI Tools", aiBtns);
+  addGroup(container, "AI tools", aiBtns);
 }
 function openTableSizeDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
@@ -3463,7 +3471,7 @@ function openTableSizeDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu arcadia-table-picker";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Table Size";
+  title.textContent = "Table size";
   dropdown.appendChild(title);
   const grid = document.createElement("div");
   grid.className = "arcadia-table-size-grid";
@@ -3536,7 +3544,7 @@ function openTableTemplatesDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Table Templates";
+  title.textContent = "Table templates";
   dropdown.appendChild(title);
   for (const tmpl of TABLE_TEMPLATES) {
     const item = document.createElement("button");
@@ -3675,19 +3683,19 @@ function buildSlidesTab(plugin, container, ctx) {
   const presentBtns = [
     createButton(plugin, {
       icon: "presentation",
-      tooltip: "Start Presentation (Advanced Slides)",
+      tooltip: "Start presentation (Advanced Slides)",
       pluginId: "obsidian-advanced-slides",
       action: () => plugin.executeCommand("obsidian-advanced-slides:start-server")
     }),
     createButton(plugin, {
       icon: "stop-circle",
-      tooltip: "Stop Presentation Server",
+      tooltip: "Stop presentation server",
       pluginId: "obsidian-advanced-slides",
       action: () => plugin.executeCommand("obsidian-advanced-slides:stop-server")
     }),
     createButton(plugin, {
       icon: "refresh-cw",
-      tooltip: "Reload Presentation",
+      tooltip: "Reload presentation",
       pluginId: "obsidian-advanced-slides",
       action: () => plugin.executeCommand("obsidian-advanced-slides:reload-server")
     })
@@ -3696,7 +3704,7 @@ function buildSlidesTab(plugin, container, ctx) {
   const navBtns = [
     createButton(plugin, {
       icon: "chevron-left",
-      tooltip: "Previous Slide",
+      tooltip: "Previous slide",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3705,7 +3713,7 @@ function buildSlidesTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "chevron-right",
-      tooltip: "Next Slide",
+      tooltip: "Next slide",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3717,7 +3725,7 @@ function buildSlidesTab(plugin, container, ctx) {
   const editBtns = [
     createButton(plugin, {
       icon: "separator-horizontal",
-      tooltip: "Insert Slide Break (---)",
+      tooltip: "Insert slide break (---)",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3726,7 +3734,7 @@ function buildSlidesTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "message-square",
-      tooltip: "Insert Speaker Notes",
+      tooltip: "Insert speaker notes",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3735,7 +3743,7 @@ function buildSlidesTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "image",
-      tooltip: "Insert Slide Background",
+      tooltip: "Insert slide background",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3744,7 +3752,7 @@ function buildSlidesTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "zap",
-      tooltip: "Insert Fragment (Animate)",
+      tooltip: "Insert fragment (Animate)",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3752,10 +3760,10 @@ function buildSlidesTab(plugin, container, ctx) {
       }
     })
   ];
-  addGroup(container, "Slide Editing", editBtns);
+  addGroup(container, "Slide editing", editBtns);
   const layoutTrigger = createDropdownTrigger({
     icon: "layout",
-    tooltip: "Slide Layouts",
+    tooltip: "Slide layouts",
     label: "Layouts",
     openFn: (wrapper) => openLayoutsDropdown(plugin, wrapper, ctx)
   });
@@ -3763,7 +3771,7 @@ function buildSlidesTab(plugin, container, ctx) {
   const elementBtns = [
     createButton(plugin, {
       icon: "columns",
-      tooltip: "Insert Two-Column Layout",
+      tooltip: "Insert two-Column layout",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3772,7 +3780,7 @@ function buildSlidesTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "grid",
-      tooltip: "Insert Grid Layout",
+      tooltip: "Insert grid layout",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3783,7 +3791,7 @@ function buildSlidesTab(plugin, container, ctx) {
   addGroup(container, "Elements", elementBtns);
   const themeTrigger = createDropdownTrigger({
     icon: "palette",
-    tooltip: "Slide Themes",
+    tooltip: "Slide themes",
     label: "Themes",
     openFn: (wrapper) => openThemesDropdown(plugin, wrapper, ctx)
   });
@@ -3791,16 +3799,16 @@ function buildSlidesTab(plugin, container, ctx) {
   const aiBtns = [
     createButton(plugin, {
       icon: "sparkles",
-      tooltip: "Convert Notes to Slides (AI)",
+      tooltip: "Convert notes to Slides (AI)",
       requiresAI: true,
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
-          aiNotesToSlides(plugin, activeCtx.editor);
+          void aiNotesToSlides(plugin, activeCtx.editor);
       }
     })
   ];
-  addGroup(container, "AI Tools", aiBtns);
+  addGroup(container, "AI tools", aiBtns);
 }
 function openLayoutsDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
@@ -3808,7 +3816,7 @@ function openLayoutsDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Slide Layouts";
+  title.textContent = "Slide layouts";
   dropdown.appendChild(title);
   for (const layout of SLIDE_LAYOUTS) {
     const item = document.createElement("button");
@@ -3842,7 +3850,7 @@ function openThemesDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Slide Theme";
+  title.textContent = "Slide theme";
   dropdown.appendChild(title);
   for (const theme of SLIDE_THEMES) {
     const item = document.createElement("button");
@@ -3872,7 +3880,7 @@ var import_obsidian18 = require("obsidian");
 function buildTheologyTab(plugin, container, ctx) {
   const scriptureTrigger = createDropdownTrigger({
     icon: "book-open",
-    tooltip: "Insert Scripture Block",
+    tooltip: "Insert scripture block",
     label: "Scripture",
     openFn: (wrapper) => openScriptureDropdown(plugin, wrapper, ctx)
   });
@@ -3880,7 +3888,7 @@ function buildTheologyTab(plugin, container, ctx) {
   const refBtns = [
     createButton(plugin, {
       icon: "git-branch",
-      tooltip: "Insert Cross-Reference",
+      tooltip: "Insert cross-Reference",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3889,7 +3897,7 @@ function buildTheologyTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "highlighter",
-      tooltip: "Insert Verse Highlight",
+      tooltip: "Insert verse highlight",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3901,7 +3909,7 @@ function buildTheologyTab(plugin, container, ctx) {
   const notesBtns = [
     createButton(plugin, {
       icon: "message-square",
-      tooltip: "Insert Commentary Note",
+      tooltip: "Insert commentary note",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3910,7 +3918,7 @@ function buildTheologyTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "languages",
-      tooltip: "Insert Language Note (Hebrew/Greek)",
+      tooltip: "Insert language note (Hebrew/Greek)",
       action: () => {
         const activeCtx = ctx || plugin.getActiveEditor();
         if (activeCtx)
@@ -3923,7 +3931,7 @@ function buildTheologyTab(plugin, container, ctx) {
   const hoverBtns = [
     createButton(plugin, {
       icon: "eye-off",
-      tooltip: "Hover Lookup: Off",
+      tooltip: "Hover lookup: off",
       active: currentMode === "off",
       action: async () => {
         plugin.settings.hoverMode = "off";
@@ -3933,7 +3941,7 @@ function buildTheologyTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "book",
-      tooltip: "Hover Lookup: Bible Text",
+      tooltip: "Hover lookup: Bible text",
       active: currentMode === "bible",
       action: async () => {
         plugin.settings.hoverMode = "bible";
@@ -3943,7 +3951,7 @@ function buildTheologyTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "scroll-text",
-      tooltip: "Hover Lookup: Commentary",
+      tooltip: "Hover lookup: commentary",
       active: currentMode === "commentary",
       action: async () => {
         plugin.settings.hoverMode = "commentary";
@@ -3953,7 +3961,7 @@ function buildTheologyTab(plugin, container, ctx) {
     }),
     createButton(plugin, {
       icon: "library",
-      tooltip: "Hover Lookup: Dictionary",
+      tooltip: "Hover lookup: dictionary",
       active: currentMode === "dictionary",
       action: async () => {
         plugin.settings.hoverMode = "dictionary";
@@ -3962,7 +3970,7 @@ function buildTheologyTab(plugin, container, ctx) {
       }
     })
   ];
-  addGroup(container, "Hover Lookup", hoverBtns);
+  addGroup(container, "Hover lookup", hoverBtns);
 }
 function openScriptureDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
@@ -3970,7 +3978,7 @@ function openScriptureDropdown(plugin, anchor, ctx) {
   dropdown.className = "arcadia-dropdown-menu";
   const title = document.createElement("div");
   title.className = "arcadia-dropdown-title";
-  title.textContent = "Insert Scripture Block";
+  title.textContent = "Insert scripture block";
   dropdown.appendChild(title);
   const currentEl = document.createElement("div");
   currentEl.className = "arcadia-dropdown-subtitle";
@@ -4003,7 +4011,7 @@ function openScriptureDropdown(plugin, anchor, ctx) {
   dropdown.appendChild(divider2);
   const transTitle = document.createElement("div");
   transTitle.className = "arcadia-dropdown-section-label";
-  transTitle.textContent = "Switch Translation";
+  transTitle.textContent = "Switch translation";
   dropdown.appendChild(transTitle);
   for (const [abbr, fullName] of Object.entries(BIBLE_TRANSLATIONS)) {
     const item = document.createElement("button");
@@ -4081,7 +4089,7 @@ function updateToolbar(plugin) {
       e.stopPropagation();
       if (plugin.settings.activeTab !== tab.id) {
         plugin.settings.activeTab = tab.id;
-        plugin.saveSettings();
+        void plugin.saveSettings();
       }
       plugin.updateToolbar();
     });
@@ -4157,7 +4165,7 @@ function updateToolbar(plugin) {
     if (editorTabs.includes(activeTab)) {
       const msg = document.createElement("div");
       msg.className = "arcadia-reading-notice";
-      msg.textContent = "Switch to Editing View to use this tab";
+      msg.textContent = "Switch to editing view to use this tab";
       content.appendChild(msg);
     } else {
       switch (activeTab) {
@@ -4376,8 +4384,12 @@ function showScripturePopup(plugin, anchorEl, refText) {
       }
       if (plugin.scripturePopupEl === popup) {
         content.textContent = "";
+        const parser = new DOMParser();
+        const parsed = parser.parseFromString(result, "text/html");
         const resultDiv = document.createElement("div");
-        resultDiv.innerHTML = result;
+        while (parsed.body.firstChild) {
+          resultDiv.appendChild(parsed.body.firstChild);
+        }
         content.appendChild(resultDiv);
       }
     } catch (err) {
@@ -4446,10 +4458,14 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
       node.parentNode.replaceChild(frag, node);
     }
   });
-  try {
-    const cmView = require("@codemirror/view");
-    const cmState = require("@codemirror/state");
-    const scriptureHoverPlugin = cmView.ViewPlugin.fromClass(
+  void Promise.all([
+    import("@codemirror/view"),
+    import("@codemirror/state")
+  ]).then(([cmView, cmState]) => {
+    const ViewPlugin = cmView.ViewPlugin;
+    const Decoration = cmView.Decoration;
+    const RangeSetBuilder = cmState.RangeSetBuilder;
+    const scriptureHoverPlugin = ViewPlugin.fromClass(
       class {
         constructor(view) {
           this.decorations = this.buildDecorations(view);
@@ -4461,9 +4477,9 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
         }
         buildDecorations(view) {
           if (plugin.settings.hoverMode === "off") {
-            return cmView.Decoration.none;
+            return Decoration.none;
           }
-          const builder = new cmState.RangeSetBuilder();
+          const builder = new RangeSetBuilder();
           const { from, to } = view.viewport;
           const text = view.state.doc.sliceString(from, to);
           SCRIPTURE_REF_REGEX.lastIndex = 0;
@@ -4474,7 +4490,7 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
               builder.add(
                 from + m.index,
                 from + m.index + m[0].length,
-                cmView.Decoration.mark({
+                Decoration.mark({
                   class: "arcadia-scripture-ref",
                   attributes: { "data-ref": m[0] }
                 })
@@ -4499,9 +4515,8 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
         }
       }
     });
-  } catch (err) {
-    console.log("Arcadia Toolbar: CM6 scripture hover extension not available, using reading mode only");
-  }
+  }).catch(() => {
+  });
 }
 
 // src/utils/commands.ts
@@ -4511,71 +4526,87 @@ function registerCommands(plugin) {
   const p = plugin;
   p.addCommand({ id: "undo", name: "Undo", editorCallback: (e) => e.undo() });
   p.addCommand({ id: "redo", name: "Redo", editorCallback: (e) => e.redo() });
-  p.addCommand({ id: "toggle-bold", name: "Toggle Bold", editorCallback: (e) => toggleWrap(e, "**") });
-  p.addCommand({ id: "toggle-italic", name: "Toggle Italic", editorCallback: (e) => toggleWrap(e, "*") });
-  p.addCommand({ id: "toggle-underline", name: "Toggle Underline", editorCallback: (e) => toggleHtmlWrap(e, "u") });
-  p.addCommand({ id: "toggle-strikethrough", name: "Toggle Strikethrough", editorCallback: (e) => toggleWrap(e, "~~") });
-  p.addCommand({ id: "toggle-highlight", name: "Toggle Highlight", editorCallback: (e) => toggleWrap(e, "==") });
-  p.addCommand({ id: "toggle-subscript", name: "Toggle Subscript", editorCallback: (e) => toggleHtmlWrap(e, "sub") });
-  p.addCommand({ id: "toggle-superscript", name: "Toggle Superscript", editorCallback: (e) => toggleHtmlWrap(e, "sup") });
-  p.addCommand({ id: "clear-formatting", name: "Clear Formatting", editorCallback: (e) => clearFormatting(e) });
+  p.addCommand({ id: "toggle-bold", name: "Toggle bold", editorCallback: (e) => toggleWrap(e, "**") });
+  p.addCommand({ id: "toggle-italic", name: "Toggle italic", editorCallback: (e) => toggleWrap(e, "*") });
+  p.addCommand({ id: "toggle-underline", name: "Toggle underline", editorCallback: (e) => toggleHtmlWrap(e, "u") });
+  p.addCommand({ id: "toggle-strikethrough", name: "Toggle strikethrough", editorCallback: (e) => toggleWrap(e, "~~") });
+  p.addCommand({ id: "toggle-highlight", name: "Toggle highlight", editorCallback: (e) => toggleWrap(e, "==") });
+  p.addCommand({ id: "toggle-subscript", name: "Toggle subscript", editorCallback: (e) => toggleHtmlWrap(e, "sub") });
+  p.addCommand({ id: "toggle-superscript", name: "Toggle superscript", editorCallback: (e) => toggleHtmlWrap(e, "sup") });
+  p.addCommand({ id: "clear-formatting", name: "Clear formatting", editorCallback: (e) => clearFormatting(e) });
   for (let i = 1; i <= 6; i++) {
     p.addCommand({ id: `heading-${i}`, name: `Heading ${i}`, editorCallback: (e) => insertHeading(e, i) });
   }
-  p.addCommand({ id: "bullet-list", name: "Toggle Bullet List", editorCallback: (e) => toggleBulletList(e) });
-  p.addCommand({ id: "numbered-list", name: "Toggle Numbered List", editorCallback: (e) => toggleNumberedList(e) });
-  p.addCommand({ id: "checklist", name: "Toggle Checklist", editorCallback: (e) => toggleChecklist(e) });
-  p.addCommand({ id: "blockquote", name: "Toggle Blockquote", editorCallback: (e) => toggleBlockquote(e) });
-  p.addCommand({ id: "align-left", name: "Align Left", editorCallback: (e) => setAlignment(e, "left") });
-  p.addCommand({ id: "align-center", name: "Align Center", editorCallback: (e) => setAlignment(e, "center") });
-  p.addCommand({ id: "align-right", name: "Align Right", editorCallback: (e) => setAlignment(e, "right") });
-  p.addCommand({ id: "align-justify", name: "Align Justify", editorCallback: (e) => setAlignment(e, "justify") });
-  p.addCommand({ id: "insert-link", name: "Insert Link", editorCallback: (e) => insertLink(e) });
-  p.addCommand({ id: "insert-image", name: "Insert Image", editorCallback: (e) => insertImage(e) });
-  p.addCommand({ id: "insert-table", name: "Insert Table", editorCallback: (e) => insertTable(e) });
-  p.addCommand({ id: "insert-code-block", name: "Insert Code Block", editorCallback: (e) => insertCodeBlock(e) });
-  p.addCommand({ id: "insert-horizontal-rule", name: "Insert Horizontal Rule", editorCallback: (e) => insertHorizontalRule(e) });
-  p.addCommand({ id: "insert-callout", name: "Insert Callout", editorCallback: (e) => insertCallout(e) });
-  p.addCommand({ id: "insert-footnote", name: "Insert Footnote", editorCallback: (e) => insertFootnote(e) });
-  p.addCommand({ id: "insert-scripture", name: "Insert Scripture Block", editorCallback: (e) => insertScriptureBlock(p, e) });
-  p.addCommand({ id: "insert-latex-block", name: "Insert LaTeX Block", editorCallback: (e) => insertLatexBlock(e) });
-  p.addCommand({ id: "insert-inline-math", name: "Insert Inline Math", editorCallback: (e) => insertInlineMath(e) });
-  p.addCommand({ id: "insert-file-embed", name: "Insert File Embed", editorCallback: (e) => insertFileEmbed(e) });
-  p.addCommand({ id: "insert-mermaid", name: "Insert Mermaid Diagram", editorCallback: (e) => insertMermaidBlock(e) });
-  p.addCommand({ id: "insert-plantuml", name: "Insert PlantUML Block", editorCallback: (e) => insertPlantUMLBlock(e) });
-  p.addCommand({ id: "insert-template", name: "Insert Template", callback: () => plugin.executeCommand("templates:insert-template") });
-  p.addCommand({ id: "insert-slide-separator", name: "Insert Slide Separator", editorCallback: (e) => insertSlideSeparator(e) });
-  p.addCommand({ id: "insert-speaker-notes", name: "Insert Speaker Notes", editorCallback: (e) => insertSpeakerNotes(e) });
-  p.addCommand({ id: "insert-slide-columns", name: "Insert Slide Columns", editorCallback: (e) => insertSlideColumns(e) });
-  p.addCommand({ id: "insert-slide-grid", name: "Insert Slide Grid", editorCallback: (e) => insertSlideGrid(e) });
-  p.addCommand({ id: "insert-slide-background", name: "Insert Slide Background", editorCallback: (e) => insertSlideBackground(e) });
-  p.addCommand({ id: "cite-turabian", name: "Insert Turabian Citation", editorCallback: (e) => insertCitationFootnote(e, "turabian") });
-  p.addCommand({ id: "cite-chicago", name: "Insert Chicago Citation", editorCallback: (e) => insertCitationFootnote(e, "chicago") });
-  p.addCommand({ id: "cite-apa-inline", name: "Insert APA Inline Citation", editorCallback: (e) => insertInlineCitation(e, "apa") });
-  p.addCommand({ id: "cite-mla-inline", name: "Insert MLA Inline Citation", editorCallback: (e) => insertInlineCitation(e, "mla") });
-  p.addCommand({ id: "generate-bibliography", name: "Generate Bibliography", editorCallback: (e) => generateBibliography(e) });
-  p.addCommand({ id: "create-missing-pages", name: "Create Missing Pages", callback: () => createUnresolvedPages(p) });
-  p.addCommand({ id: "ai-convert-citations-turabian", name: "AI: Convert Citations to Turabian", editorCallback: (e) => aiConvertCitationsInDocument(p, e, "turabian") });
-  p.addCommand({ id: "ai-convert-citations-chicago", name: "AI: Convert Citations to Chicago", editorCallback: (e) => aiConvertCitationsInDocument(p, e, "chicago") });
-  p.addCommand({ id: "ai-convert-citations-apa", name: "AI: Convert Citations to APA", editorCallback: (e) => aiConvertCitationsInDocument(p, e, "apa") });
-  p.addCommand({ id: "ai-convert-citations-mla", name: "AI: Convert Citations to MLA", editorCallback: (e) => aiConvertCitationsInDocument(p, e, "mla") });
-  p.addCommand({ id: "ai-link-citations", name: "AI: Link Citations to Google Books", editorCallback: (e) => aiLinkCitations(p, e) });
-  p.addCommand({ id: "ai-notes-to-slides", name: "AI: Convert Notes to Slides", editorCallback: (e) => aiNotesToSlides(p, e) });
-  p.addCommand({ id: "zoom-in", name: "Zoom In", callback: () => p.executeCommand("window:zoom-in") });
-  p.addCommand({ id: "zoom-out", name: "Zoom Out", callback: () => p.executeCommand("window:zoom-out") });
-  p.addCommand({ id: "reset-zoom", name: "Reset Zoom", callback: () => p.executeCommand("window:reset-zoom") });
-  p.addCommand({ id: "split-right", name: "Split Right", callback: () => p.executeCommand("workspace:split-vertical") });
-  p.addCommand({ id: "split-down", name: "Split Down", callback: () => p.executeCommand("workspace:split-horizontal") });
-  p.addCommand({ id: "toggle-toc", name: "Toggle Table of Contents", callback: () => p.toggleTOC() });
-  p.addCommand({ id: "nav-back", name: "Navigate Back", callback: () => p.executeCommand("app:go-back") });
-  p.addCommand({ id: "nav-forward", name: "Navigate Forward", callback: () => p.executeCommand("app:go-forward") });
-  p.addCommand({ id: "new-tab", name: "New Tab", callback: () => p.executeCommand("workspace:new-tab") });
-  p.addCommand({ id: "close-tab", name: "Close Tab", callback: () => p.executeCommand("workspace:close") });
-  p.addCommand({ id: "read-aloud", name: "Read Aloud", callback: () => readAloud(p) });
-  p.addCommand({ id: "stop-speaking", name: "Stop Speaking", callback: () => stopSpeaking() });
-  p.addCommand({ id: "insert-comment", name: "Insert Comment", editorCallback: (e) => insertComment(e) });
-  p.addCommand({ id: "doc-stats", name: "Document Statistics", callback: () => showDocStats(p) });
-  p.addCommand({ id: "table-add-row", name: "Table: Add Row Below", editorCallback: (e) => {
+  p.addCommand({ id: "bullet-list", name: "Toggle bullet list", editorCallback: (e) => toggleBulletList(e) });
+  p.addCommand({ id: "numbered-list", name: "Toggle numbered list", editorCallback: (e) => toggleNumberedList(e) });
+  p.addCommand({ id: "checklist", name: "Toggle checklist", editorCallback: (e) => toggleChecklist(e) });
+  p.addCommand({ id: "blockquote", name: "Toggle blockquote", editorCallback: (e) => toggleBlockquote(e) });
+  p.addCommand({ id: "align-left", name: "Align left", editorCallback: (e) => setAlignment(e, "left") });
+  p.addCommand({ id: "align-center", name: "Align center", editorCallback: (e) => setAlignment(e, "center") });
+  p.addCommand({ id: "align-right", name: "Align right", editorCallback: (e) => setAlignment(e, "right") });
+  p.addCommand({ id: "align-justify", name: "Align justify", editorCallback: (e) => setAlignment(e, "justify") });
+  p.addCommand({ id: "insert-link", name: "Insert link", editorCallback: (e) => insertLink(e) });
+  p.addCommand({ id: "insert-image", name: "Insert image", editorCallback: (e) => insertImage(e) });
+  p.addCommand({ id: "insert-table", name: "Insert table", editorCallback: (e) => insertTable(e) });
+  p.addCommand({ id: "insert-code-block", name: "Insert code block", editorCallback: (e) => insertCodeBlock(e) });
+  p.addCommand({ id: "insert-horizontal-rule", name: "Insert horizontal rule", editorCallback: (e) => insertHorizontalRule(e) });
+  p.addCommand({ id: "insert-callout", name: "Insert callout", editorCallback: (e) => insertCallout(e) });
+  p.addCommand({ id: "insert-footnote", name: "Insert footnote", editorCallback: (e) => insertFootnote(e) });
+  p.addCommand({ id: "insert-scripture", name: "Insert scripture block", editorCallback: (e) => insertScriptureBlock(p, e) });
+  p.addCommand({ id: "insert-latex-block", name: "Insert LaTeX block", editorCallback: (e) => insertLatexBlock(e) });
+  p.addCommand({ id: "insert-inline-math", name: "Insert inline math", editorCallback: (e) => insertInlineMath(e) });
+  p.addCommand({ id: "insert-file-embed", name: "Insert file embed", editorCallback: (e) => insertFileEmbed(e) });
+  p.addCommand({ id: "insert-mermaid", name: "Insert Mermaid diagram", editorCallback: (e) => insertMermaidBlock(e) });
+  p.addCommand({ id: "insert-plantuml", name: "Insert PlantUML block", editorCallback: (e) => insertPlantUMLBlock(e) });
+  p.addCommand({ id: "insert-template", name: "Insert template", callback: () => plugin.executeCommand("templates:insert-template") });
+  p.addCommand({ id: "insert-slide-separator", name: "Insert slide separator", editorCallback: (e) => insertSlideSeparator(e) });
+  p.addCommand({ id: "insert-speaker-notes", name: "Insert speaker notes", editorCallback: (e) => insertSpeakerNotes(e) });
+  p.addCommand({ id: "insert-slide-columns", name: "Insert slide columns", editorCallback: (e) => insertSlideColumns(e) });
+  p.addCommand({ id: "insert-slide-grid", name: "Insert slide grid", editorCallback: (e) => insertSlideGrid(e) });
+  p.addCommand({ id: "insert-slide-background", name: "Insert slide background", editorCallback: (e) => insertSlideBackground(e) });
+  p.addCommand({ id: "cite-turabian", name: "Insert Turabian citation", editorCallback: (e) => insertCitationFootnote(e, "turabian") });
+  p.addCommand({ id: "cite-chicago", name: "Insert Chicago citation", editorCallback: (e) => insertCitationFootnote(e, "chicago") });
+  p.addCommand({ id: "cite-apa-inline", name: "Insert APA inline citation", editorCallback: (e) => insertInlineCitation(e, "apa") });
+  p.addCommand({ id: "cite-mla-inline", name: "Insert MLA inline citation", editorCallback: (e) => insertInlineCitation(e, "mla") });
+  p.addCommand({ id: "generate-bibliography", name: "Generate bibliography", editorCallback: (e) => generateBibliography(e) });
+  p.addCommand({ id: "create-missing-pages", name: "Create missing pages", callback: () => {
+    void createUnresolvedPages(p);
+  } });
+  p.addCommand({ id: "ai-convert-citations-turabian", name: "AI: Convert citations to Turabian", editorCallback: (e) => {
+    void aiConvertCitationsInDocument(p, e, "turabian");
+  } });
+  p.addCommand({ id: "ai-convert-citations-chicago", name: "AI: Convert citations to Chicago", editorCallback: (e) => {
+    void aiConvertCitationsInDocument(p, e, "chicago");
+  } });
+  p.addCommand({ id: "ai-convert-citations-apa", name: "AI: Convert citations to APA", editorCallback: (e) => {
+    void aiConvertCitationsInDocument(p, e, "apa");
+  } });
+  p.addCommand({ id: "ai-convert-citations-mla", name: "AI: Convert citations to MLA", editorCallback: (e) => {
+    void aiConvertCitationsInDocument(p, e, "mla");
+  } });
+  p.addCommand({ id: "ai-link-citations", name: "AI: Link citations to Google Books", editorCallback: (e) => {
+    void aiLinkCitations(p, e);
+  } });
+  p.addCommand({ id: "ai-notes-to-slides", name: "AI: Convert notes to Slides", editorCallback: (e) => {
+    void aiNotesToSlides(p, e);
+  } });
+  p.addCommand({ id: "zoom-in", name: "Zoom in", callback: () => p.executeCommand("window:zoom-in") });
+  p.addCommand({ id: "zoom-out", name: "Zoom out", callback: () => p.executeCommand("window:zoom-out") });
+  p.addCommand({ id: "reset-zoom", name: "Reset zoom", callback: () => p.executeCommand("window:reset-zoom") });
+  p.addCommand({ id: "split-right", name: "Split right", callback: () => p.executeCommand("workspace:split-vertical") });
+  p.addCommand({ id: "split-down", name: "Split down", callback: () => p.executeCommand("workspace:split-horizontal") });
+  p.addCommand({ id: "toggle-toc", name: "Toggle table of contents", callback: () => {
+    void p.toggleTOC();
+  } });
+  p.addCommand({ id: "nav-back", name: "Navigate back", callback: () => p.executeCommand("app:go-back") });
+  p.addCommand({ id: "nav-forward", name: "Navigate forward", callback: () => p.executeCommand("app:go-forward") });
+  p.addCommand({ id: "new-tab", name: "New tab", callback: () => p.executeCommand("workspace:new-tab") });
+  p.addCommand({ id: "close-tab", name: "Close tab", callback: () => p.executeCommand("workspace:close") });
+  p.addCommand({ id: "read-aloud", name: "Read aloud", callback: () => readAloud(p) });
+  p.addCommand({ id: "stop-speaking", name: "Stop speaking", callback: () => stopSpeaking() });
+  p.addCommand({ id: "insert-comment", name: "Insert comment", editorCallback: (e) => insertComment(e) });
+  p.addCommand({ id: "doc-stats", name: "Document statistics", callback: () => showDocStats(p) });
+  p.addCommand({ id: "table-add-row", name: "Table: add row below", editorCallback: (e) => {
     const tc = getTableContext(e);
     if (!tc) {
       new import_obsidian21.Notice("Place cursor inside a table");
@@ -4586,7 +4617,7 @@ function registerCommands(plugin) {
     const insertLine = tc.tableStart + tc.currentRow;
     e.replaceRange("\n" + newRow, { line: insertLine, ch: e.getLine(insertLine).length });
   } });
-  p.addCommand({ id: "table-delete-row", name: "Table: Delete Current Row", editorCallback: (e) => {
+  p.addCommand({ id: "table-delete-row", name: "Table: delete current row", editorCallback: (e) => {
     const tc = getTableContext(e);
     if (!tc)
       return;
@@ -4595,20 +4626,26 @@ function registerCommands(plugin) {
     const newRows = tc.rows.filter((_, i) => i !== tc.currentRow);
     e.replaceRange(renderTable(newRows), { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: e.getLine(tc.tableEnd).length });
   } });
-  p.addCommand({ id: "table-align-left", name: "Table: Align Column Left", editorCallback: (e) => setColumnAlignment(e, "left") });
-  p.addCommand({ id: "table-align-center", name: "Table: Align Column Center", editorCallback: (e) => setColumnAlignment(e, "center") });
-  p.addCommand({ id: "table-align-right", name: "Table: Align Column Right", editorCallback: (e) => setColumnAlignment(e, "right") });
-  p.addCommand({ id: "table-sort-asc", name: "Table: Sort Column A\u2192Z", editorCallback: (e) => sortTableColumn(e, "asc") });
-  p.addCommand({ id: "table-sort-desc", name: "Table: Sort Column Z\u2192A", editorCallback: (e) => sortTableColumn(e, "desc") });
-  p.addCommand({ id: "csv-to-table", name: "CSV to Table", editorCallback: (e) => csvToTable(e) });
+  p.addCommand({ id: "table-align-left", name: "Table: align column left", editorCallback: (e) => setColumnAlignment(e, "left") });
+  p.addCommand({ id: "table-align-center", name: "Table: align column center", editorCallback: (e) => setColumnAlignment(e, "center") });
+  p.addCommand({ id: "table-align-right", name: "Table: align column right", editorCallback: (e) => setColumnAlignment(e, "right") });
+  p.addCommand({ id: "table-sort-asc", name: "Table: sort column A\u2192Z", editorCallback: (e) => sortTableColumn(e, "asc") });
+  p.addCommand({ id: "table-sort-desc", name: "Table: sort column Z\u2192A", editorCallback: (e) => sortTableColumn(e, "desc") });
+  p.addCommand({ id: "csv-to-table", name: "CSV to table", editorCallback: (e) => csvToTable(e) });
   p.addCommand({ id: "table-to-csv", name: "Table to CSV", editorCallback: (e) => tableToCsv(e) });
-  p.addCommand({ id: "transpose-table", name: "Transpose Table", editorCallback: (e) => transposeTable(e) });
-  p.addCommand({ id: "number-rows", name: "Number Table Rows", editorCallback: (e) => numberTableRows(e) });
-  p.addCommand({ id: "filter-table", name: "Table: Filter Rows", editorCallback: (e) => filterTableRows(p, e) });
-  p.addCommand({ id: "clear-table-filter", name: "Table: Clear Filter", editorCallback: (e) => clearTableFilter(p, e) });
-  p.addCommand({ id: "ai-generate-table", name: "AI: Generate Table", editorCallback: (e) => aiGenerateTable(p, e) });
-  p.addCommand({ id: "ai-fill-table", name: "AI: Fill Table Data", editorCallback: (e) => aiFillTableData(p, e) });
-  p.addCommand({ id: "ai-calc-column", name: "AI: Add Calculated Column", editorCallback: (e) => aiAddCalculatedColumn(p, e) });
+  p.addCommand({ id: "transpose-table", name: "Transpose table", editorCallback: (e) => transposeTable(e) });
+  p.addCommand({ id: "number-rows", name: "Number table rows", editorCallback: (e) => numberTableRows(e) });
+  p.addCommand({ id: "filter-table", name: "Table: filter rows", editorCallback: (e) => filterTableRows(p, e) });
+  p.addCommand({ id: "clear-table-filter", name: "Table: clear filter", editorCallback: (e) => clearTableFilter(p, e) });
+  p.addCommand({ id: "ai-generate-table", name: "AI: generate table", editorCallback: (e) => {
+    void aiGenerateTable(p, e);
+  } });
+  p.addCommand({ id: "ai-fill-table", name: "AI: fill table data", editorCallback: (e) => {
+    void aiFillTableData(p, e);
+  } });
+  p.addCommand({ id: "ai-calc-column", name: "AI: add calculated column", editorCallback: (e) => {
+    void aiAddCalculatedColumn(p, e);
+  } });
 }
 
 // src/main.ts
@@ -4642,7 +4679,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
     this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.updateToolbar()));
     this.registerEvent(this.app.workspace.on("layout-change", () => this.updateToolbar()));
     registerCommands(this);
-    this.addRibbonIcon("list-tree", "Toggle Table of Contents", () => {
+    this.addRibbonIcon("list-tree", "Toggle table of contents", () => {
       void this.toggleTOC();
     });
     this.addSettingTab(new ArcadiaToolbarSettingTab(this.app, this));
@@ -4657,7 +4694,6 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
     removeToolbar(this);
     this.hideScripturePopup();
     this.closeDropdowns();
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_TOC);
   }
   async loadSettings() {
     const data = await this.loadData();

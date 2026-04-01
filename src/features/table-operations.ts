@@ -1,4 +1,4 @@
-import { Editor, Notice, Modal, App } from 'obsidian';
+import { Editor, Notice, Modal, App, Setting } from 'obsidian';
 import type { TableContext, ArcadiaPluginInterface } from '../types';
 
 // ============================================================================
@@ -230,14 +230,13 @@ class FilterTableModal extends Modal {
 
 	onOpen(): void {
 		const { contentEl } = this;
-		contentEl.createEl('h3', { text: 'Filter Table Rows' });
+		new Setting(contentEl).setName('Filter table rows').setHeading();
 
 		const inputEl = contentEl.createEl('input', {
 			type: 'text',
 			placeholder: 'Enter filter keyword...',
 		});
-		inputEl.style.width = '100%';
-		inputEl.style.marginBottom = '12px';
+		inputEl.addClass('arcadia-filter-input');
 		inputEl.addEventListener('input', () => {
 			this.result = inputEl.value;
 		});

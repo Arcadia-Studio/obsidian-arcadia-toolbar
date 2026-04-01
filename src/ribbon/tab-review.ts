@@ -14,12 +14,12 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const proofingBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'spell-check',
-			tooltip: 'Spell Check (system)',
+			tooltip: 'Spell check (system)',
 			action: () => plugin.executeCommand('editor:toggle-spellcheck'),
 		}),
 		createButton(plugin, {
 			icon: 'search',
-			tooltip: 'Find / Replace',
+			tooltip: 'Find / replace',
 			action: () => plugin.executeCommand('editor:open-search-replace'),
 		}),
 	];
@@ -29,13 +29,13 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const linksBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'link-2',
-			tooltip: 'Check Unresolved Links',
+			tooltip: 'Check unresolved links',
 			action: () => plugin.executeCommand('app:open-graph-view'),
 		}),
 		createButton(plugin, {
 			icon: 'file-plus',
-			tooltip: 'Create Unresolved Pages',
-			action: () => createUnresolvedPages(plugin),
+			tooltip: 'Create unresolved pages',
+			action: () => { void createUnresolvedPages(plugin); },
 		}),
 	];
 	addGroup(container, 'Links', linksBtns);
@@ -44,7 +44,7 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const goalBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'target',
-			tooltip: 'Show Writing Goal Progress',
+			tooltip: 'Show writing goal progress',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) {
@@ -54,22 +54,22 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'bar-chart',
-			tooltip: 'Document Statistics',
+			tooltip: 'Document statistics',
 			action: () => showDocStats(plugin),
 		}),
 	];
-	addGroup(container, 'Writing Goals', goalBtns);
+	addGroup(container, 'Writing goals', goalBtns);
 
 	// ---- Speech group ----
 	const speechBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'volume-2',
-			tooltip: 'Read Aloud',
+			tooltip: 'Read aloud',
 			action: () => readAloud(plugin),
 		}),
 		createButton(plugin, {
 			icon: 'volume-x',
-			tooltip: 'Stop Speaking',
+			tooltip: 'Stop speaking',
 			action: () => stopSpeaking(),
 		}),
 	];
@@ -79,7 +79,7 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const notesBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'message-circle',
-			tooltip: 'Insert Comment',
+			tooltip: 'Insert comment',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) {

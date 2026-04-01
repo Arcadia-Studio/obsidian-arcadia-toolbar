@@ -51,7 +51,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		registerCommands(this);
 
 		// Ribbon icon for TOC
-		this.addRibbonIcon('list-tree', 'Toggle Table of Contents', () => { void this.toggleTOC(); });
+		this.addRibbonIcon('list-tree', 'Toggle table of contents', () => { void this.toggleTOC(); });
 
 		// Settings tab
 		this.addSettingTab(new ArcadiaToolbarSettingTab(this.app, this));
@@ -68,9 +68,8 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 	onunload(): void {
 		removeToolbar(this);
 		this.hideScripturePopup();
-		// BUG FIX: Close any open dropdowns on unload
+		// Close any open dropdowns on unload
 		this.closeDropdowns();
-		this.app.workspace.detachLeavesOfType(VIEW_TYPE_TOC);
 	}
 
 	async loadSettings(): Promise<void> {

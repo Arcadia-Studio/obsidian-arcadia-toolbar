@@ -16,7 +16,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	// ---- Scripture dropdown ----
 	const scriptureTrigger = createDropdownTrigger({
 		icon: 'book-open',
-		tooltip: 'Insert Scripture Block',
+		tooltip: 'Insert scripture block',
 		label: 'Scripture',
 		openFn: (wrapper) => openScriptureDropdown(plugin, wrapper, ctx),
 	});
@@ -26,7 +26,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	const refBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'git-branch',
-			tooltip: 'Insert Cross-Reference',
+			tooltip: 'Insert cross-Reference',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertCrossReference(activeCtx.editor);
@@ -34,7 +34,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 		}),
 		createButton(plugin, {
 			icon: 'highlighter',
-			tooltip: 'Insert Verse Highlight',
+			tooltip: 'Insert verse highlight',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertVerseHighlight(activeCtx.editor);
@@ -47,7 +47,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	const notesBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'message-square',
-			tooltip: 'Insert Commentary Note',
+			tooltip: 'Insert commentary note',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertCommentaryNote(activeCtx.editor);
@@ -55,7 +55,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 		}),
 		createButton(plugin, {
 			icon: 'languages',
-			tooltip: 'Insert Language Note (Hebrew/Greek)',
+			tooltip: 'Insert language note (Hebrew/Greek)',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertLanguageNote(activeCtx.editor);
@@ -70,7 +70,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	const hoverBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'eye-off',
-			tooltip: 'Hover Lookup: Off',
+			tooltip: 'Hover lookup: off',
 			active: currentMode === 'off',
 			action: async () => {
 				plugin.settings.hoverMode = 'off';
@@ -80,7 +80,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 		}),
 		createButton(plugin, {
 			icon: 'book',
-			tooltip: 'Hover Lookup: Bible Text',
+			tooltip: 'Hover lookup: Bible text',
 			active: currentMode === 'bible',
 			action: async () => {
 				plugin.settings.hoverMode = 'bible';
@@ -90,7 +90,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 		}),
 		createButton(plugin, {
 			icon: 'scroll-text',
-			tooltip: 'Hover Lookup: Commentary',
+			tooltip: 'Hover lookup: commentary',
 			active: currentMode === 'commentary',
 			action: async () => {
 				plugin.settings.hoverMode = 'commentary';
@@ -100,7 +100,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 		}),
 		createButton(plugin, {
 			icon: 'library',
-			tooltip: 'Hover Lookup: Dictionary',
+			tooltip: 'Hover lookup: dictionary',
 			active: currentMode === 'dictionary',
 			action: async () => {
 				plugin.settings.hoverMode = 'dictionary';
@@ -109,7 +109,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 			},
 		}),
 	];
-	addGroup(container, 'Hover Lookup', hoverBtns);
+	addGroup(container, 'Hover lookup', hoverBtns);
 }
 
 function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
@@ -120,7 +120,7 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Insert Scripture Block';
+	title.textContent = 'Insert scripture block';
 	dropdown.appendChild(title);
 
 	// Current translation indicator
@@ -160,7 +160,7 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 	// Translation switcher section
 	const transTitle = document.createElement('div');
 	transTitle.className = 'arcadia-dropdown-section-label';
-	transTitle.textContent = 'Switch Translation';
+	transTitle.textContent = 'Switch translation';
 	dropdown.appendChild(transTitle);
 
 	for (const [abbr, fullName] of Object.entries(BIBLE_TRANSLATIONS)) {

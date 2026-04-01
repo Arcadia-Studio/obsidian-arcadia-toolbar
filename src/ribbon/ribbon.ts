@@ -71,7 +71,7 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 			// BUG FIX: Only save when activeTab actually changes
 			if (plugin.settings.activeTab !== tab.id) {
 				plugin.settings.activeTab = tab.id;
-				plugin.saveSettings();
+				void plugin.saveSettings();
 			}
 			plugin.updateToolbar();
 		});
@@ -139,7 +139,7 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 		if (editorTabs.includes(activeTab)) {
 			const msg = document.createElement('div');
 			msg.className = 'arcadia-reading-notice';
-			msg.textContent = 'Switch to Editing View to use this tab';
+			msg.textContent = 'Switch to editing view to use this tab';
 			content.appendChild(msg);
 		} else {
 			switch (activeTab) {

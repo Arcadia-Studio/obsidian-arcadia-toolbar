@@ -4,9 +4,6 @@ import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
 import { createDropdownTrigger, positionDropdown, closeDropdowns } from '../components/dropdown';
 import {
-	insertTable,
-} from '../features/editor-commands';
-import {
 	setColumnAlignment,
 	sortTableColumn,
 	csvToTable,
@@ -27,14 +24,14 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	// ---- Tables group (size picker + templates dropdown) ----
 	const sizePickerTrigger = createDropdownTrigger({
 		icon: 'table',
-		tooltip: 'Insert Table (Size Picker)',
-		label: 'New Table',
+		tooltip: 'Insert table (Size picker)',
+		label: 'New table',
 		openFn: (wrapper) => openTableSizeDropdown(plugin, wrapper, ctx),
 	});
 
 	const templateTrigger = createDropdownTrigger({
 		icon: 'layout-template',
-		tooltip: 'Table Templates',
+		tooltip: 'Table templates',
 		label: 'Templates',
 		openFn: (wrapper) => openTableTemplatesDropdown(plugin, wrapper, ctx),
 	});
@@ -45,12 +42,12 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const rowColBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'plus-square',
-			tooltip: 'Add Row Above',
+			tooltip: 'Add row above',
 			action: () => plugin.executeCommand('editor:insert-newline-above'),
 		}),
 		createButton(plugin, {
 			icon: 'minus-square',
-			tooltip: 'Delete Current Row',
+			tooltip: 'Delete current row',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (!activeCtx) return;
@@ -64,20 +61,20 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'list-ordered',
-			tooltip: 'Number Rows',
+			tooltip: 'Number rows',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) numberTableRows(activeCtx.editor);
 			},
 		}),
 	];
-	addGroup(container, 'Rows & Cols', rowColBtns);
+	addGroup(container, 'Rows & cols', rowColBtns);
 
 	// ---- Format group ----
 	const formatBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'align-left',
-			tooltip: 'Align Column Left',
+			tooltip: 'Align column left',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) setColumnAlignment(activeCtx.editor, 'left');
@@ -85,7 +82,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'align-center',
-			tooltip: 'Align Column Center',
+			tooltip: 'Align column center',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) setColumnAlignment(activeCtx.editor, 'center');
@@ -93,7 +90,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'align-right',
-			tooltip: 'Align Column Right',
+			tooltip: 'Align column right',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) setColumnAlignment(activeCtx.editor, 'right');
@@ -106,7 +103,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const dataBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'download',
-			tooltip: 'Import CSV to Table',
+			tooltip: 'Import CSV to table',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) csvToTable(activeCtx.editor);
@@ -114,7 +111,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'upload',
-			tooltip: 'Export Table as CSV',
+			tooltip: 'Export table as CSV',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) tableToCsv(activeCtx.editor);
@@ -122,7 +119,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'rotate-ccw',
-			tooltip: 'Transpose Table',
+			tooltip: 'Transpose table',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) transposeTable(activeCtx.editor);
@@ -135,7 +132,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const formulaBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'filter',
-			tooltip: 'Filter Table Rows',
+			tooltip: 'Filter table rows',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) filterTableRows(plugin, activeCtx.editor);
@@ -143,7 +140,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'x-circle',
-			tooltip: 'Clear Filter',
+			tooltip: 'Clear filter',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) clearTableFilter(plugin, activeCtx.editor);
@@ -151,7 +148,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'arrow-up-az',
-			tooltip: 'Sort Column Ascending',
+			tooltip: 'Sort column ascending',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) sortTableColumn(activeCtx.editor, 'asc');
@@ -159,7 +156,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		}),
 		createButton(plugin, {
 			icon: 'arrow-down-az',
-			tooltip: 'Sort Column Descending',
+			tooltip: 'Sort column descending',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) sortTableColumn(activeCtx.editor, 'desc');
@@ -172,7 +169,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const chartBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'bar-chart-2',
-			tooltip: 'Insert Chart (Dataview)',
+			tooltip: 'Insert chart (Dataview)',
 			pluginId: 'dataview',
 			action: () => plugin.executeCommand('dataview:new-query'),
 		}),
@@ -183,33 +180,33 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const aiBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'sparkles',
-			tooltip: 'Generate Table with AI',
+			tooltip: 'Generate table with AI',
 			requiresAI: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
-				if (activeCtx) aiGenerateTable(plugin, activeCtx.editor);
+				if (activeCtx) void aiGenerateTable(plugin, activeCtx.editor);
 			},
 		}),
 		createButton(plugin, {
 			icon: 'wand',
-			tooltip: 'Fill Table Data with AI',
+			tooltip: 'Fill table data with AI',
 			requiresAI: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
-				if (activeCtx) aiFillTableData(plugin, activeCtx.editor);
+				if (activeCtx) void aiFillTableData(plugin, activeCtx.editor);
 			},
 		}),
 		createButton(plugin, {
 			icon: 'calculator',
-			tooltip: 'Add Calculated Column with AI',
+			tooltip: 'Add calculated column with AI',
 			requiresAI: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
-				if (activeCtx) aiAddCalculatedColumn(plugin, activeCtx.editor);
+				if (activeCtx) void aiAddCalculatedColumn(plugin, activeCtx.editor);
 			},
 		}),
 	];
-	addGroup(container, 'AI Tools', aiBtns);
+	addGroup(container, 'AI tools', aiBtns);
 }
 
 function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
@@ -220,7 +217,7 @@ function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Table Size';
+	title.textContent = 'Table size';
 	dropdown.appendChild(title);
 
 	const grid = document.createElement('div');
@@ -305,7 +302,7 @@ function openTableTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTML
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Table Templates';
+	title.textContent = 'Table templates';
 	dropdown.appendChild(title);
 
 	for (const tmpl of TABLE_TEMPLATES) {

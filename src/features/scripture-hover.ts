@@ -87,12 +87,14 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 					break;
 			}
 			if (plugin.scripturePopupEl === popup) {
-				// Use safe DOM API instead of innerHTML for the content
-				// Note: the fetched content contains trusted HTML from our own formatters
-				// but we set it via a wrapper for consistency
+				// Parse trusted HTML from our own formatters using DOMParser for safety
 				content.textContent = '';
+				const parser = new DOMParser();
+				const parsed = parser.parseFromString(result, 'text/html');
 				const resultDiv = document.createElement('div');
-				resultDiv.innerHTML = result;
+				while (parsed.body.firstChild) {
+					resultDiv.appendChild(parsed.body.firstChild);
+				}
 				content.appendChild(resultDiv);
 			}
 		} catch (err: unknown) {
@@ -183,13 +185,16 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 		decorations: unknown;
 	}
 
-	try {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const cmView = require('@codemirror/view');
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const cmState = require('@codemirror/state');
+	// CM6 modules loaded at runtime via dynamic import (peer dependencies bundled by Obsidian)
+	void Promise.all([
+		import('@codemirror/view') as Promise<Record<string, unknown>>,
+		import('@codemirror/state') as Promise<Record<string, unknown>>,
+	]).then(([cmView, cmState]) => {
+		const ViewPlugin = cmView.ViewPlugin as { fromClass: (cls: unknown, spec: unknown) => unknown };
+		const Decoration = cmView.Decoration as { none: unknown; mark: (spec: Record<string, unknown>) => unknown };
+		const RangeSetBuilder = cmState.RangeSetBuilder as new () => { add(from: number, to: number, value: unknown): void; finish(): unknown };
 
-		const scriptureHoverPlugin = cmView.ViewPlugin.fromClass(
+		const scriptureHoverPlugin = ViewPlugin.fromClass(
 			class {
 				decorations: unknown;
 
@@ -205,10 +210,10 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 
 				buildDecorations(view: ScriptureEditorView) {
 					if (plugin.settings.hoverMode === 'off') {
-						return cmView.Decoration.none;
+						return Decoration.none;
 					}
 
-					const builder = new cmState.RangeSetBuilder();
+					const builder = new RangeSetBuilder();
 					const { from, to } = view.viewport;
 					const text = view.state.doc.sliceString(from, to);
 
@@ -220,7 +225,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 							builder.add(
 								from + m.index,
 								from + m.index + m[0].length,
-								cmView.Decoration.mark({
+								Decoration.mark({
 									class: 'arcadia-scripture-ref',
 									attributes: { 'data-ref': m[0] },
 								})
@@ -248,7 +253,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 				}
 			}
 		});
-	} catch (err) {
-		console.log('Arcadia Toolbar: CM6 scripture hover extension not available, using reading mode only');
-	}
+	}).catch(() => {
+		// CM6 scripture hover extension not available, using reading mode only
+	});
 }

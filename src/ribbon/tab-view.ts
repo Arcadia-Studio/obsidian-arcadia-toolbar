@@ -8,13 +8,13 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const tocBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'list',
-			tooltip: 'Toggle Table of Contents',
-			action: () => plugin.toggleTOC(),
+			tooltip: 'Toggle table of contents',
+			action: () => { void plugin.toggleTOC(); },
 		}),
 		createButton(plugin, {
 			icon: 'layout-sidebar-left',
-			tooltip: 'Open TOC in Sidebar',
-			action: () => plugin.activateTOC(),
+			tooltip: 'Open TOC in sidebar',
+			action: () => { void plugin.activateTOC(); },
 		}),
 	];
 	addGroup(container, 'TOC', tocBtns);
@@ -23,17 +23,17 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const modeBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'edit-3',
-			tooltip: 'Editing View',
+			tooltip: 'Editing view',
 			action: () => plugin.executeCommand('markdown:toggle-preview'),
 		}),
 		createButton(plugin, {
 			icon: 'book-open',
-			tooltip: 'Reading View',
+			tooltip: 'Reading view',
 			action: () => plugin.executeCommand('markdown:toggle-preview'),
 		}),
 		createButton(plugin, {
 			icon: 'columns',
-			tooltip: 'Split View',
+			tooltip: 'Split view',
 			action: () => plugin.executeCommand('workspace:split-vertical'),
 		}),
 	];
@@ -43,17 +43,17 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const zoomBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'zoom-in',
-			tooltip: 'Zoom In',
+			tooltip: 'Zoom in',
 			action: () => plugin.executeCommand('window:zoom-in'),
 		}),
 		createButton(plugin, {
 			icon: 'zoom-out',
-			tooltip: 'Zoom Out',
+			tooltip: 'Zoom out',
 			action: () => plugin.executeCommand('window:zoom-out'),
 		}),
 		createButton(plugin, {
 			icon: 'maximize',
-			tooltip: 'Reset Zoom',
+			tooltip: 'Reset zoom',
 			action: () => plugin.executeCommand('window:reset-zoom'),
 		}),
 	];
@@ -63,12 +63,12 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const pluginBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'command',
-			tooltip: 'Command Palette',
+			tooltip: 'Command palette',
 			action: () => plugin.executeCommand('command-palette:open'),
 		}),
 		createButton(plugin, {
 			icon: 'settings',
-			tooltip: 'Open Settings',
+			tooltip: 'Open settings',
 			action: () => plugin.executeCommand('app:open-settings'),
 		}),
 	];
@@ -78,17 +78,17 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const windowBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'maximize-2',
-			tooltip: 'Toggle Fullscreen',
+			tooltip: 'Toggle fullscreen',
 			action: () => plugin.executeCommand('window:toggle-fullscreen'),
 		}),
 		createButton(plugin, {
 			icon: 'sidebar-close',
-			tooltip: 'Toggle Left Sidebar',
+			tooltip: 'Toggle left sidebar',
 			action: () => plugin.executeCommand('app:toggle-left-sidebar'),
 		}),
 		createButton(plugin, {
 			icon: 'sidebar-open',
-			tooltip: 'Toggle Right Sidebar',
+			tooltip: 'Toggle right sidebar',
 			action: () => plugin.executeCommand('app:toggle-right-sidebar'),
 		}),
 	];
@@ -98,13 +98,13 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const displayBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'eye',
-			tooltip: 'Focus Mode',
+			tooltip: 'Focus mode',
 			action: () => plugin.executeCommand('obsidian-focus-mode:toggle-focus-mode'),
 			pluginId: 'obsidian-focus-mode',
 		}),
 		createButton(plugin, {
 			icon: 'type',
-			tooltip: 'Toggle Reading Width',
+			tooltip: 'Toggle reading width',
 			action: () => plugin.executeCommand('editor:toggle-readable-line-length'),
 		}),
 	];
@@ -114,7 +114,7 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	const infoBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'info',
-			tooltip: 'Document Statistics',
+			tooltip: 'Document statistics',
 			action: () => showDocStats(plugin),
 		}),
 	];

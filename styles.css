@@ -1024,3 +1024,29 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+/* ============================================================================
+   UTILITY CLASSES (replacing inline styles for lint compliance)
+   ============================================================================ */
+
+.arcadia-color-bar {
+	background-color: var(--arcadia-color-bar-bg, #ccc);
+}
+
+.arcadia-color-swatch {
+	background-color: var(--arcadia-swatch-bg, transparent);
+}
+
+.arcadia-color-swatch-transparent {
+	background-color: #fff;
+	color: #999;
+}
+
+.arcadia-api-key-input {
+	width: 300px;
+}
+
+.arcadia-filter-input {
+	width: 100%;
+	margin-bottom: 12px;
+}
