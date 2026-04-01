@@ -229,7 +229,7 @@ function tableToCsv(editor) {
     const c = cell.trim();
     return c.includes(",") || c.includes('"') || c.includes("\n") ? '"' + c.replace(/"/g, '""') + '"' : c;
   }).join(",")).join("\n");
-  navigator.clipboard.writeText(csv);
+  void navigator.clipboard.writeText(csv);
   new import_obsidian10.Notice("Table copied as CSV to clipboard");
 }
 function transposeTable(editor) {
@@ -923,7 +923,6 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new import_obsidian3.Setting(containerEl).setName("General").setHeading();
     new import_obsidian3.Setting(containerEl).setName("Ribbon tabs").setHeading();
     const tabToggles = [
       { key: "showHomeTab", name: "Show home tab", desc: "Text formatting, colors, headings, lists, alignment" },
@@ -946,13 +945,13 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
       }));
     }
     new import_obsidian3.Setting(containerEl).setName("Table of contents").setHeading();
-    new import_obsidian3.Setting(containerEl).setName("Pin TOC on startup").setDesc("Automatically open the TOC panel when Obsidian starts").addToggle((t) => t.setValue(this.plugin.settings.tocShowOnStartup).onChange(async (v) => {
+    new import_obsidian3.Setting(containerEl).setName("Pin table of contents on startup").setDesc("Automatically open the table of contents panel when Obsidian starts").addToggle((t) => t.setValue(this.plugin.settings.tocShowOnStartup).onChange(async (v) => {
       this.plugin.settings.tocShowOnStartup = v;
       this.plugin.settings.tocPinned = v;
       await this.plugin.saveSettings();
     }));
     new import_obsidian3.Setting(containerEl).setName("Scripture").setHeading();
-    new import_obsidian3.Setting(containerEl).setName("Default translation").setDesc("Default Bible translation for scripture blocks").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Default translation").setDesc("Default bible translation for scripture blocks").addDropdown((d) => {
       for (const [code, name] of Object.entries(BIBLE_TRANSLATIONS)) {
         d.addOption(code, `${code} \u2014 ${name}`);
       }
@@ -964,10 +963,10 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     new import_obsidian3.Setting(containerEl).setName("Scripture hover lookup").setHeading();
     containerEl.createEl("p", {
-      text: "Hover over any scripture reference (e.g., John 3:16) to see a floating popup with Bible text, commentary, or dictionary content. Toggle modes from the Theology tab.",
+      text: "Hover over any scripture reference (e.g., John 3:16) to see a floating popup with bible text, commentary, or dictionary content. Toggle modes from the theology tab.",
       cls: "setting-item-description"
     });
-    new import_obsidian3.Setting(containerEl).setName("Hover Bible translation").setDesc("Translation used for Bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)").addDropdown((d) => {
+    new import_obsidian3.Setting(containerEl).setName("Hover bible translation").setDesc("Translation used for bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)").addDropdown((d) => {
       const hoverTranslations = {
         "kjv": "KJV \u2014 King James Version",
         "asv": "ASV \u2014 American Standard Version",
@@ -1007,7 +1006,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     new import_obsidian3.Setting(containerEl).setName("AI integration").setHeading();
     containerEl.createEl("p", {
-      text: "Connect an AI provider to enable citation conversion, Google Books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.",
+      text: "Connect an AI provider to enable citation conversion, google books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.",
       cls: "setting-item-description"
     });
     let modelDropdown = null;
@@ -1039,7 +1038,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
       }
     };
     new import_obsidian3.Setting(containerEl).setName("AI provider").setDesc("Choose your AI service provider").addDropdown((d) => {
-      d.addOption("none", "\u2014 None \u2014");
+      d.addOption("none", "\u2014 none \u2014");
       for (const [key, provider] of Object.entries(AI_PROVIDERS)) {
         d.addOption(key, provider.name);
       }
@@ -1079,8 +1078,8 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
       text: `License status: ${statusDesc}`,
       cls: isPro ? "mod-success" : "mod-warning"
     });
-    new import_obsidian3.Setting(containerEl).setName("License key").setDesc("Enter your Arcadia Toolbar Premium license key from Lemon Squeezy.").addText((t) => {
-      t.setPlaceholder("XXXX-XXXX-XXXX-XXXX").setValue(this.plugin.settings.licenseKey).onChange(async (v) => {
+    new import_obsidian3.Setting(containerEl).setName("License key").setDesc("Enter your Arcadia Toolbar premium license key from Lemon Squeezy.").addText((t) => {
+      t.setPlaceholder("xxxx-xxxx-xxxx-xxxx").setValue(this.plugin.settings.licenseKey).onChange(async (v) => {
         this.plugin.settings.licenseKey = v.trim();
         await this.plugin.saveSettings();
       });
@@ -1099,7 +1098,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
           licenseStatusEl.textContent = `License status: Active${status.customerEmail ? ` (${status.customerEmail})` : ""}`;
           licenseStatusEl.className = "mod-success";
         } else {
-          licenseStatusEl.textContent = "License status: Invalid or expired. Check your key and try again.";
+          licenseStatusEl.textContent = "License status: invalid or expired. Check your key and try again.";
           licenseStatusEl.className = "mod-warning";
         }
       })
@@ -1973,7 +1972,7 @@ function buildHomeTab(plugin, container, ctx) {
     label: "Heading",
     openFn: (wrapper) => openHeadingDropdown(plugin, wrapper, ctx)
   });
-  const headingGroup = addGroup(container, "Headings", [headingTrigger]);
+  addGroup(container, "Headings", [headingTrigger]);
   const paragraphBtns = [
     createButton(plugin, {
       icon: "list",
@@ -2323,12 +2322,12 @@ async function callAI(plugin, prompt) {
     });
     return resp.json.candidates[0].content.parts[0].text;
   }
-  throw new Error(`Unknown AI provider format: ${provider.format}`);
+  throw new Error(`Unknown AI provider format: ${String(provider.format)}`);
 }
 async function aiGenerateTable(plugin, editor) {
   const description = editor.getSelection() || "";
   if (!description.trim()) {
-    new import_obsidian11.Notice("Select text describing the table you want, then click Generate");
+    new import_obsidian11.Notice("Select text describing the table you want, then click generate");
     return;
   }
   const prompt = `Generate a markdown table based on this description. Return ONLY the markdown table, no explanation:
@@ -2835,7 +2834,7 @@ function buildViewTab(plugin, container, ctx) {
   ];
   const wordCountBtn = document.createElement("button");
   wordCountBtn.className = "arcadia-btn arcadia-word-count";
-  wordCountBtn.setAttribute("title", "Word Count");
+  wordCountBtn.setAttribute("title", "Word count");
   wordCountBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -3257,18 +3256,20 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
     descSpan.className = "arcadia-dropdown-item-hint";
     descSpan.textContent = tmpl.desc;
     item.appendChild(descSpan);
-    item.addEventListener("click", async (e) => {
+    item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       closeDropdowns(plugin);
-      try {
-        const fileName = `${tmpl.name.replace(/\s+/g, "-")}-${Date.now()}.canvas`;
-        const file = await plugin.app.vault.create(fileName, tmpl.content);
-        await plugin.app.workspace.getLeaf(false).openFile(file);
-      } catch (err) {
-        const { Notice: Notice7 } = await import("obsidian");
-        new Notice7("Could not create canvas: " + err.message);
-      }
+      void (async () => {
+        try {
+          const fileName = `${tmpl.name.replace(/\s+/g, "-")}-${Date.now()}.canvas`;
+          const file = await plugin.app.vault.create(fileName, tmpl.content);
+          await plugin.app.workspace.getLeaf(false).openFile(file);
+        } catch (err) {
+          const { Notice: Notice7 } = await import("obsidian");
+          new Notice7("Could not create canvas: " + err.message);
+        }
+      })();
     });
     dropdown.appendChild(item);
   }
@@ -3934,40 +3935,36 @@ function buildTheologyTab(plugin, container, ctx) {
       icon: "eye-off",
       tooltip: "Hover lookup: off",
       active: currentMode === "off",
-      action: async () => {
+      action: () => {
         plugin.settings.hoverMode = "off";
-        await plugin.saveSettings();
-        plugin.updateToolbar();
+        void plugin.saveSettings().then(() => plugin.updateToolbar());
       }
     }),
     createButton(plugin, {
       icon: "book",
-      tooltip: "Hover lookup: Bible text",
+      tooltip: "Hover lookup: bible text",
       active: currentMode === "bible",
-      action: async () => {
+      action: () => {
         plugin.settings.hoverMode = "bible";
-        await plugin.saveSettings();
-        plugin.updateToolbar();
+        void plugin.saveSettings().then(() => plugin.updateToolbar());
       }
     }),
     createButton(plugin, {
       icon: "scroll-text",
       tooltip: "Hover lookup: commentary",
       active: currentMode === "commentary",
-      action: async () => {
+      action: () => {
         plugin.settings.hoverMode = "commentary";
-        await plugin.saveSettings();
-        plugin.updateToolbar();
+        void plugin.saveSettings().then(() => plugin.updateToolbar());
       }
     }),
     createButton(plugin, {
       icon: "library",
       tooltip: "Hover lookup: dictionary",
       active: currentMode === "dictionary",
-      action: async () => {
+      action: () => {
         plugin.settings.hoverMode = "dictionary";
-        await plugin.saveSettings();
-        plugin.updateToolbar();
+        void plugin.saveSettings().then(() => plugin.updateToolbar());
       }
     })
   ];
@@ -4030,13 +4027,14 @@ function openScriptureDropdown(plugin, anchor, ctx) {
     fullSpan.className = "arcadia-dropdown-item-hint";
     fullSpan.textContent = fullName;
     item.appendChild(fullSpan);
-    item.addEventListener("click", async (e) => {
+    item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       plugin.settings.scriptureTranslation = abbr;
-      await plugin.saveSettings();
-      plugin.updateToolbar();
-      closeDropdowns(plugin);
+      void plugin.saveSettings().then(() => {
+        plugin.updateToolbar();
+        closeDropdowns(plugin);
+      });
     });
     dropdown.appendChild(item);
   }
@@ -4316,91 +4314,93 @@ function showScripturePopup(plugin, anchorEl, refText) {
     return;
   if (plugin.hoverTimeout)
     clearTimeout(plugin.hoverTimeout);
-  plugin.hoverTimeout = setTimeout(async () => {
-    plugin.hideScripturePopup();
-    const popup = document.createElement("div");
-    popup.className = "arcadia-scripture-popup";
-    const header = document.createElement("div");
-    header.className = "arcadia-popup-header";
-    const refSpan = document.createElement("span");
-    refSpan.className = "arcadia-popup-ref";
-    refSpan.textContent = `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? "\u2013" + ref.endVerse : ""}`;
-    header.appendChild(refSpan);
-    const modeLabel = document.createElement("span");
-    modeLabel.className = "arcadia-popup-mode";
-    const mode = plugin.settings.hoverMode;
-    modeLabel.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-    header.appendChild(modeLabel);
-    popup.appendChild(header);
-    const content = document.createElement("div");
-    content.className = "arcadia-popup-content";
-    const loadingEl = document.createElement("em");
-    loadingEl.textContent = "Loading...";
-    content.appendChild(loadingEl);
-    popup.appendChild(content);
-    document.body.appendChild(popup);
-    plugin.scripturePopupEl = popup;
-    const rect = anchorEl.getBoundingClientRect();
-    popup.style.top = `${rect.bottom + 6}px`;
-    popup.style.left = `${rect.left}px`;
-    requestAnimationFrame(() => {
-      const popRect = popup.getBoundingClientRect();
-      if (popRect.right > window.innerWidth - 12) {
-        popup.style.left = `${window.innerWidth - popRect.width - 12}px`;
-      }
-      if (popRect.bottom > window.innerHeight - 12) {
-        popup.style.top = `${rect.top - popRect.height - 6}px`;
-      }
-    });
-    const hideHandler = (e) => {
-      const target = e.relatedTarget;
-      if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target)))
-        return;
-      setTimeout(() => {
-        if (popup.matches(":hover") || anchorEl.matches(":hover"))
-          return;
-        plugin.hideScripturePopup();
-        popup.removeEventListener("mouseleave", hideHandler);
-        anchorEl.removeEventListener("mouseleave", hideHandler);
-      }, 300);
-    };
-    popup.addEventListener("mouseenter", () => {
-      if (plugin.hoverTimeout)
-        clearTimeout(plugin.hoverTimeout);
-    });
-    popup.addEventListener("mouseleave", hideHandler);
-    anchorEl.addEventListener("mouseleave", hideHandler);
-    try {
-      let result = "";
-      switch (plugin.settings.hoverMode) {
-        case "bible":
-          result = await fetchBibleText(plugin, ref);
-          break;
-        case "commentary":
-          result = await fetchCommentary(plugin, ref);
-          break;
-        case "dictionary":
-          result = await fetchDictionary(plugin, ref);
-          break;
-      }
-      if (plugin.scripturePopupEl === popup) {
-        content.textContent = "";
-        const parser = new DOMParser();
-        const parsed = parser.parseFromString(result, "text/html");
-        const resultDiv = document.createElement("div");
-        while (parsed.body.firstChild) {
-          resultDiv.appendChild(parsed.body.firstChild);
+  plugin.hoverTimeout = setTimeout(() => {
+    void (async () => {
+      plugin.hideScripturePopup();
+      const popup = document.createElement("div");
+      popup.className = "arcadia-scripture-popup";
+      const header = document.createElement("div");
+      header.className = "arcadia-popup-header";
+      const refSpan = document.createElement("span");
+      refSpan.className = "arcadia-popup-ref";
+      refSpan.textContent = `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? "\u2013" + ref.endVerse : ""}`;
+      header.appendChild(refSpan);
+      const modeLabel = document.createElement("span");
+      modeLabel.className = "arcadia-popup-mode";
+      const mode = plugin.settings.hoverMode;
+      modeLabel.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+      header.appendChild(modeLabel);
+      popup.appendChild(header);
+      const content = document.createElement("div");
+      content.className = "arcadia-popup-content";
+      const loadingEl = document.createElement("em");
+      loadingEl.textContent = "Loading...";
+      content.appendChild(loadingEl);
+      popup.appendChild(content);
+      document.body.appendChild(popup);
+      plugin.scripturePopupEl = popup;
+      const rect = anchorEl.getBoundingClientRect();
+      popup.style.top = `${rect.bottom + 6}px`;
+      popup.style.left = `${rect.left}px`;
+      requestAnimationFrame(() => {
+        const popRect = popup.getBoundingClientRect();
+        if (popRect.right > window.innerWidth - 12) {
+          popup.style.left = `${window.innerWidth - popRect.width - 12}px`;
         }
-        content.appendChild(resultDiv);
+        if (popRect.bottom > window.innerHeight - 12) {
+          popup.style.top = `${rect.top - popRect.height - 6}px`;
+        }
+      });
+      const hideHandler = (e) => {
+        const target = e.relatedTarget;
+        if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target)))
+          return;
+        setTimeout(() => {
+          if (popup.matches(":hover") || anchorEl.matches(":hover"))
+            return;
+          plugin.hideScripturePopup();
+          popup.removeEventListener("mouseleave", hideHandler);
+          anchorEl.removeEventListener("mouseleave", hideHandler);
+        }, 300);
+      };
+      popup.addEventListener("mouseenter", () => {
+        if (plugin.hoverTimeout)
+          clearTimeout(plugin.hoverTimeout);
+      });
+      popup.addEventListener("mouseleave", hideHandler);
+      anchorEl.addEventListener("mouseleave", hideHandler);
+      try {
+        let result = "";
+        switch (plugin.settings.hoverMode) {
+          case "bible":
+            result = await fetchBibleText(plugin, ref);
+            break;
+          case "commentary":
+            result = await fetchCommentary(plugin, ref);
+            break;
+          case "dictionary":
+            result = await fetchDictionary(plugin, ref);
+            break;
+        }
+        if (plugin.scripturePopupEl === popup) {
+          content.textContent = "";
+          const parser = new DOMParser();
+          const parsed = parser.parseFromString(result, "text/html");
+          const resultDiv = document.createElement("div");
+          while (parsed.body.firstChild) {
+            resultDiv.appendChild(parsed.body.firstChild);
+          }
+          content.appendChild(resultDiv);
+        }
+      } catch (err) {
+        if (plugin.scripturePopupEl === popup) {
+          content.textContent = "";
+          const errEl = document.createElement("em");
+          errEl.textContent = `Error: ${err.message}`;
+          content.appendChild(errEl);
+        }
       }
-    } catch (err) {
-      if (plugin.scripturePopupEl === popup) {
-        content.textContent = "";
-        const errEl = document.createElement("em");
-        errEl.textContent = `Error: ${err.message}`;
-        content.appendChild(errEl);
-      }
-    }
+    })();
   }, 400);
 }
 function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEditorExtension, registerDomEvent) {
@@ -4565,30 +4565,30 @@ function registerCommands(plugin) {
   p.addCommand({ id: "insert-slide-columns", name: "Insert slide columns", editorCallback: (e) => insertSlideColumns(e) });
   p.addCommand({ id: "insert-slide-grid", name: "Insert slide grid", editorCallback: (e) => insertSlideGrid(e) });
   p.addCommand({ id: "insert-slide-background", name: "Insert slide background", editorCallback: (e) => insertSlideBackground(e) });
-  p.addCommand({ id: "cite-turabian", name: "Insert Turabian citation", editorCallback: (e) => insertCitationFootnote(e, "turabian") });
-  p.addCommand({ id: "cite-chicago", name: "Insert Chicago citation", editorCallback: (e) => insertCitationFootnote(e, "chicago") });
+  p.addCommand({ id: "cite-turabian", name: "Insert turabian citation", editorCallback: (e) => insertCitationFootnote(e, "turabian") });
+  p.addCommand({ id: "cite-chicago", name: "Insert chicago citation", editorCallback: (e) => insertCitationFootnote(e, "chicago") });
   p.addCommand({ id: "cite-apa-inline", name: "Insert APA inline citation", editorCallback: (e) => insertInlineCitation(e, "apa") });
   p.addCommand({ id: "cite-mla-inline", name: "Insert MLA inline citation", editorCallback: (e) => insertInlineCitation(e, "mla") });
   p.addCommand({ id: "generate-bibliography", name: "Generate bibliography", editorCallback: (e) => generateBibliography(e) });
   p.addCommand({ id: "create-missing-pages", name: "Create missing pages", callback: () => {
     void createUnresolvedPages(p);
   } });
-  p.addCommand({ id: "ai-convert-citations-turabian", name: "AI: Convert citations to Turabian", editorCallback: (e) => {
+  p.addCommand({ id: "ai-convert-citations-turabian", name: "AI: convert citations to turabian", editorCallback: (e) => {
     void aiConvertCitationsInDocument(p, e, "turabian");
   } });
-  p.addCommand({ id: "ai-convert-citations-chicago", name: "AI: Convert citations to Chicago", editorCallback: (e) => {
+  p.addCommand({ id: "ai-convert-citations-chicago", name: "AI: convert citations to chicago", editorCallback: (e) => {
     void aiConvertCitationsInDocument(p, e, "chicago");
   } });
-  p.addCommand({ id: "ai-convert-citations-apa", name: "AI: Convert citations to APA", editorCallback: (e) => {
+  p.addCommand({ id: "ai-convert-citations-apa", name: "AI: convert citations to APA", editorCallback: (e) => {
     void aiConvertCitationsInDocument(p, e, "apa");
   } });
-  p.addCommand({ id: "ai-convert-citations-mla", name: "AI: Convert citations to MLA", editorCallback: (e) => {
+  p.addCommand({ id: "ai-convert-citations-mla", name: "AI: convert citations to MLA", editorCallback: (e) => {
     void aiConvertCitationsInDocument(p, e, "mla");
   } });
-  p.addCommand({ id: "ai-link-citations", name: "AI: Link citations to Google Books", editorCallback: (e) => {
+  p.addCommand({ id: "ai-link-citations", name: "AI: link citations to google books", editorCallback: (e) => {
     void aiLinkCitations(p, e);
   } });
-  p.addCommand({ id: "ai-notes-to-slides", name: "AI: Convert notes to Slides", editorCallback: (e) => {
+  p.addCommand({ id: "ai-notes-to-slides", name: "AI: convert notes to slides", editorCallback: (e) => {
     void aiNotesToSlides(p, e);
   } });
   p.addCommand({ id: "zoom-in", name: "Zoom in", callback: () => p.executeCommand("window:zoom-in") });
@@ -4630,8 +4630,8 @@ function registerCommands(plugin) {
   p.addCommand({ id: "table-align-left", name: "Table: align column left", editorCallback: (e) => setColumnAlignment(e, "left") });
   p.addCommand({ id: "table-align-center", name: "Table: align column center", editorCallback: (e) => setColumnAlignment(e, "center") });
   p.addCommand({ id: "table-align-right", name: "Table: align column right", editorCallback: (e) => setColumnAlignment(e, "right") });
-  p.addCommand({ id: "table-sort-asc", name: "Table: sort column A\u2192Z", editorCallback: (e) => sortTableColumn(e, "asc") });
-  p.addCommand({ id: "table-sort-desc", name: "Table: sort column Z\u2192A", editorCallback: (e) => sortTableColumn(e, "desc") });
+  p.addCommand({ id: "table-sort-asc", name: "Table: sort column ascending", editorCallback: (e) => sortTableColumn(e, "asc") });
+  p.addCommand({ id: "table-sort-desc", name: "Table: sort column descending", editorCallback: (e) => sortTableColumn(e, "desc") });
   p.addCommand({ id: "csv-to-table", name: "CSV to table", editorCallback: (e) => csvToTable(e) });
   p.addCommand({ id: "table-to-csv", name: "Table to CSV", editorCallback: (e) => tableToCsv(e) });
   p.addCommand({ id: "transpose-table", name: "Transpose table", editorCallback: (e) => transposeTable(e) });
@@ -4723,7 +4723,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
     const leaf = this.app.workspace.getRightLeaf(false);
     if (leaf) {
       await leaf.setViewState({ type: VIEW_TYPE_TOC, active: true });
-      this.app.workspace.revealLeaf(leaf);
+      void this.app.workspace.revealLeaf(leaf);
     }
   }
   async toggleTOC() {

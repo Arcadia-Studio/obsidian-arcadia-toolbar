@@ -72,40 +72,36 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 			icon: 'eye-off',
 			tooltip: 'Hover lookup: off',
 			active: currentMode === 'off',
-			action: async () => {
+			action: () => {
 				plugin.settings.hoverMode = 'off';
-				await plugin.saveSettings();
-				plugin.updateToolbar();
+				void plugin.saveSettings().then(() => plugin.updateToolbar());
 			},
 		}),
 		createButton(plugin, {
 			icon: 'book',
-			tooltip: 'Hover lookup: Bible text',
+			tooltip: 'Hover lookup: bible text',
 			active: currentMode === 'bible',
-			action: async () => {
+			action: () => {
 				plugin.settings.hoverMode = 'bible';
-				await plugin.saveSettings();
-				plugin.updateToolbar();
+				void plugin.saveSettings().then(() => plugin.updateToolbar());
 			},
 		}),
 		createButton(plugin, {
 			icon: 'scroll-text',
 			tooltip: 'Hover lookup: commentary',
 			active: currentMode === 'commentary',
-			action: async () => {
+			action: () => {
 				plugin.settings.hoverMode = 'commentary';
-				await plugin.saveSettings();
-				plugin.updateToolbar();
+				void plugin.saveSettings().then(() => plugin.updateToolbar());
 			},
 		}),
 		createButton(plugin, {
 			icon: 'library',
 			tooltip: 'Hover lookup: dictionary',
 			active: currentMode === 'dictionary',
-			action: async () => {
+			action: () => {
 				plugin.settings.hoverMode = 'dictionary';
-				await plugin.saveSettings();
-				plugin.updateToolbar();
+				void plugin.saveSettings().then(() => plugin.updateToolbar());
 			},
 		}),
 	];
@@ -184,13 +180,14 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 		fullSpan.textContent = fullName;
 		item.appendChild(fullSpan);
 
-		item.addEventListener('click', async (e) => {
+		item.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 			plugin.settings.scriptureTranslation = abbr;
-			await plugin.saveSettings();
-			plugin.updateToolbar();
-			closeDropdowns(plugin);
+			void plugin.saveSettings().then(() => {
+				plugin.updateToolbar();
+				closeDropdowns(plugin);
+			});
 		});
 
 		dropdown.appendChild(item);

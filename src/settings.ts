@@ -15,8 +15,6 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		new Setting(containerEl).setName('General').setHeading();
-
 		// Tab Visibility
 		new Setting(containerEl).setName('Ribbon tabs').setHeading();
 
@@ -52,9 +50,8 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 
 		new Setting(containerEl)
-			.setName('Pin TOC on startup')
-
-			.setDesc('Automatically open the TOC panel when Obsidian starts')
+			.setName('Pin table of contents on startup')
+			.setDesc('Automatically open the table of contents panel when Obsidian starts')
 			.addToggle(t => t.setValue(this.plugin.settings.tocShowOnStartup)
 				.onChange(async v => {
 					this.plugin.settings.tocShowOnStartup = v;
@@ -67,7 +64,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Default translation')
-			.setDesc('Default Bible translation for scripture blocks')
+			.setDesc('Default bible translation for scripture blocks')
 			.addDropdown(d => {
 				for (const [code, name] of Object.entries(BIBLE_TRANSLATIONS)) {
 					d.addOption(code, `${code} \u2014 ${name}`);
@@ -84,13 +81,13 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName('Scripture hover lookup').setHeading();
 
 		containerEl.createEl('p', {
-			text: 'Hover over any scripture reference (e.g., John 3:16) to see a floating popup with Bible text, commentary, or dictionary content. Toggle modes from the Theology tab.',
+			text: 'Hover over any scripture reference (e.g., John 3:16) to see a floating popup with bible text, commentary, or dictionary content. Toggle modes from the theology tab.',
 			cls: 'setting-item-description',
 		});
 
 		new Setting(containerEl)
-			.setName('Hover Bible translation')
-			.setDesc('Translation used for Bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)')
+			.setName('Hover bible translation')
+			.setDesc('Translation used for bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)')
 			.addDropdown(d => {
 				const hoverTranslations: Record<string, string> = {
 					'kjv': 'KJV \u2014 King James Version',
@@ -145,7 +142,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName('AI integration').setHeading();
 
 		containerEl.createEl('p', {
-			text: 'Connect an AI provider to enable citation conversion, Google Books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.',
+			text: 'Connect an AI provider to enable citation conversion, google books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.',
 			cls: 'setting-item-description',
 		});
 
@@ -183,7 +180,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.setName('AI provider')
 			.setDesc('Choose your AI service provider')
 			.addDropdown(d => {
-				d.addOption('none', '\u2014 None \u2014');
+				d.addOption('none', '\u2014 none \u2014');
 				for (const [key, provider] of Object.entries(AI_PROVIDERS)) {
 					d.addOption(key, provider.name);
 				}
@@ -243,9 +240,9 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('License key')
-			.setDesc('Enter your Arcadia Toolbar Premium license key from Lemon Squeezy.')
+			.setDesc('Enter your Arcadia Toolbar premium license key from Lemon Squeezy.')
 			.addText(t => {
-				t.setPlaceholder('XXXX-XXXX-XXXX-XXXX')
+				t.setPlaceholder('xxxx-xxxx-xxxx-xxxx')
 					.setValue(this.plugin.settings.licenseKey)
 					.onChange(async v => {
 						this.plugin.settings.licenseKey = v.trim();
@@ -268,7 +265,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 						licenseStatusEl.textContent = `License status: Active${status.customerEmail ? ` (${status.customerEmail})` : ''}`;
 						licenseStatusEl.className = 'mod-success';
 					} else {
-						licenseStatusEl.textContent = 'License status: Invalid or expired. Check your key and try again.';
+						licenseStatusEl.textContent = 'License status: invalid or expired. Check your key and try again.';
 						licenseStatusEl.className = 'mod-warning';
 					}
 				})

@@ -66,20 +66,20 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'insert-slide-background', name: 'Insert slide background', editorCallback: (e: Editor) => so.insertSlideBackground(e) });
 
 	// References
-	p.addCommand({ id: 'cite-turabian', name: 'Insert Turabian citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'turabian') });
-	p.addCommand({ id: 'cite-chicago', name: 'Insert Chicago citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'chicago') });
+	p.addCommand({ id: 'cite-turabian', name: 'Insert turabian citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'turabian') });
+	p.addCommand({ id: 'cite-chicago', name: 'Insert chicago citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'chicago') });
 	p.addCommand({ id: 'cite-apa-inline', name: 'Insert APA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'apa') });
 	p.addCommand({ id: 'cite-mla-inline', name: 'Insert MLA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'mla') });
 	p.addCommand({ id: 'generate-bibliography', name: 'Generate bibliography', editorCallback: (e: Editor) => ec.generateBibliography(e) });
 	p.addCommand({ id: 'create-missing-pages', name: 'Create missing pages', callback: () => { void createUnresolvedPages(p); } });
 
 	// AI-powered
-	p.addCommand({ id: 'ai-convert-citations-turabian', name: 'AI: Convert citations to Turabian', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'turabian'); } });
-	p.addCommand({ id: 'ai-convert-citations-chicago', name: 'AI: Convert citations to Chicago', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'chicago'); } });
-	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: Convert citations to APA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); } });
-	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: Convert citations to MLA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); } });
-	p.addCommand({ id: 'ai-link-citations', name: 'AI: Link citations to Google Books', editorCallback: (e: Editor) => { void ai.aiLinkCitations(p, e); } });
-	p.addCommand({ id: 'ai-notes-to-slides', name: 'AI: Convert notes to Slides', editorCallback: (e: Editor) => { void ai.aiNotesToSlides(p, e); } });
+	p.addCommand({ id: 'ai-convert-citations-turabian', name: 'AI: convert citations to turabian', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'turabian'); } });
+	p.addCommand({ id: 'ai-convert-citations-chicago', name: 'AI: convert citations to chicago', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'chicago'); } });
+	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: convert citations to APA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); } });
+	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: convert citations to MLA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); } });
+	p.addCommand({ id: 'ai-link-citations', name: 'AI: link citations to google books', editorCallback: (e: Editor) => { void ai.aiLinkCitations(p, e); } });
+	p.addCommand({ id: 'ai-notes-to-slides', name: 'AI: convert notes to slides', editorCallback: (e: Editor) => { void ai.aiNotesToSlides(p, e); } });
 
 	// View
 	p.addCommand({ id: 'zoom-in', name: 'Zoom in', callback: () => p.executeCommand('window:zoom-in') });
@@ -122,8 +122,8 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'table-align-left', name: 'Table: align column left', editorCallback: (e: Editor) => setColumnAlignment(e, 'left') });
 	p.addCommand({ id: 'table-align-center', name: 'Table: align column center', editorCallback: (e: Editor) => setColumnAlignment(e, 'center') });
 	p.addCommand({ id: 'table-align-right', name: 'Table: align column right', editorCallback: (e: Editor) => setColumnAlignment(e, 'right') });
-	p.addCommand({ id: 'table-sort-asc', name: 'Table: sort column A\u2192Z', editorCallback: (e: Editor) => sortTableColumn(e, 'asc') });
-	p.addCommand({ id: 'table-sort-desc', name: 'Table: sort column Z\u2192A', editorCallback: (e: Editor) => sortTableColumn(e, 'desc') });
+	p.addCommand({ id: 'table-sort-asc', name: 'Table: sort column ascending', editorCallback: (e: Editor) => sortTableColumn(e, 'asc') });
+	p.addCommand({ id: 'table-sort-desc', name: 'Table: sort column descending', editorCallback: (e: Editor) => sortTableColumn(e, 'desc') });
 	p.addCommand({ id: 'csv-to-table', name: 'CSV to table', editorCallback: (e: Editor) => csvToTable(e) });
 	p.addCommand({ id: 'table-to-csv', name: 'Table to CSV', editorCallback: (e: Editor) => tableToCsv(e) });
 	p.addCommand({ id: 'transpose-table', name: 'Transpose table', editorCallback: (e: Editor) => transposeTable(e) });

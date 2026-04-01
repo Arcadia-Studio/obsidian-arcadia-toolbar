@@ -122,7 +122,7 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	// Build a word count display button
 	const wordCountBtn = document.createElement('button');
 	wordCountBtn.className = 'arcadia-btn arcadia-word-count';
-	wordCountBtn.setAttribute('title', 'Word Count');
+	wordCountBtn.setAttribute('title', 'Word count');
 	wordCountBtn.addEventListener('click', (e) => {
 		e.preventDefault();
 		e.stopPropagation();

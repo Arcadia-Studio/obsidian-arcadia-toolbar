@@ -34,11 +34,11 @@ export class PremiumModal extends Modal {
 
 		new Setting(contentEl)
 			.setName('License key')
-			.setDesc('Enter your license key from Lemon Squeezy')
+			.setDesc('Enter your license key from Lemon Squeezy.')
 			.addText(text => {
 				this.textInputEl = text.inputEl;
 				text
-					.setPlaceholder('XXXX-XXXX-XXXX-XXXX')
+					.setPlaceholder('xxxx-xxxx-xxxx-xxxx')
 					.onChange(async (value) => {
 						if (value.trim().length > 10) {
 							const status = await validateLicense(value.trim());

@@ -57,7 +57,7 @@ export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Pr
 		return resp.json.candidates[0].content.parts[0].text;
 	}
 
-	throw new Error(`Unknown AI provider format: ${provider.format}`);
+	throw new Error(`Unknown AI provider format: ${String((provider as Record<string, unknown>).format)}`);
 }
 
 // ============================================================================
@@ -67,7 +67,7 @@ export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Pr
 export async function aiGenerateTable(plugin: ArcadiaPluginInterface, editor: Editor): Promise<void> {
 	const description = editor.getSelection() || '';
 	if (!description.trim()) {
-		new Notice('Select text describing the table you want, then click Generate');
+		new Notice('Select text describing the table you want, then click generate');
 		return;
 	}
 	const prompt = `Generate a markdown table based on this description. Return ONLY the markdown table, no explanation:\n\n${description}`;

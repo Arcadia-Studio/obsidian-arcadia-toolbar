@@ -8,7 +8,7 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 
 	if (plugin.hoverTimeout) clearTimeout(plugin.hoverTimeout);
 
-	plugin.hoverTimeout = setTimeout(async () => {
+	plugin.hoverTimeout = setTimeout(() => { void (async () => {
 		plugin.hideScripturePopup();
 
 		const popup = document.createElement('div');
@@ -105,7 +105,7 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 				content.appendChild(errEl);
 			}
 		}
-	}, 400);
+	})(); }, 400);
 }
 
 export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMarkdownPostProcessor: (cb: (el: HTMLElement) => void) => void, registerEditorExtension: (ext: unknown) => void, registerDomEvent: (el: Document, event: string, cb: (e: MouseEvent) => void) => void): void {

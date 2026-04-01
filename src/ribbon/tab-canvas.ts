@@ -179,19 +179,21 @@ function openCanvasTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTM
 		descSpan.textContent = tmpl.desc;
 		item.appendChild(descSpan);
 
-		item.addEventListener('click', async (e) => {
+		item.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 			closeDropdowns(plugin);
 
-			try {
-				const fileName = `${tmpl.name.replace(/\s+/g, '-')}-${Date.now()}.canvas`;
-				const file = await plugin.app.vault.create(fileName, tmpl.content);
-				await plugin.app.workspace.getLeaf(false).openFile(file);
-			} catch (err) {
-				const { Notice } = await import('obsidian');
-				new Notice('Could not create canvas: ' + (err as Error).message);
-			}
+			void (async () => {
+				try {
+					const fileName = `${tmpl.name.replace(/\s+/g, '-')}-${Date.now()}.canvas`;
+					const file = await plugin.app.vault.create(fileName, tmpl.content);
+					await plugin.app.workspace.getLeaf(false).openFile(file);
+				} catch (err) {
+					const { Notice } = await import('obsidian');
+					new Notice('Could not create canvas: ' + (err as Error).message);
+				}
+			})();
 		});
 
 		dropdown.appendChild(item);

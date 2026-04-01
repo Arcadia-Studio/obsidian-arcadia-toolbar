@@ -109,7 +109,7 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		label: 'Heading',
 		openFn: (wrapper) => openHeadingDropdown(plugin, wrapper, ctx),
 	});
-	const headingGroup = addGroup(container, 'Headings', [headingTrigger]);
+	addGroup(container, 'Headings', [headingTrigger]);
 
 	// ---- Paragraph group ----
 	const paragraphBtns: HTMLElement[] = [

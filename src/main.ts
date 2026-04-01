@@ -30,7 +30,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 			this,
 			(cb) => this.registerMarkdownPostProcessor(cb),
 			(ext) => this.registerEditorExtension(ext as Parameters<typeof this.registerEditorExtension>[0]),
-			(el, event, cb) => this.registerDomEvent(el as Document, event as keyof DocumentEventMap, cb as (this: HTMLElement, ev: Event) => void)
+			(el, event, cb) => this.registerDomEvent(el, event as keyof DocumentEventMap, cb as (this: HTMLElement, ev: Event) => void)
 		);
 
 		// Close dropdowns on outside click
@@ -105,7 +105,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		const leaf = this.app.workspace.getRightLeaf(false);
 		if (leaf) {
 			await leaf.setViewState({ type: VIEW_TYPE_TOC, active: true });
-			this.app.workspace.revealLeaf(leaf);
+			void this.app.workspace.revealLeaf(leaf);
 		}
 	}
 

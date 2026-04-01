@@ -1,7 +1,6 @@
 import { setIcon } from 'obsidian';
 import type { ArcadiaPluginInterface, ArcadiaToolbarSettings, EditorContext } from '../types';
 import { isReadingView, getActiveEditor, getActiveMarkdownView } from '../utils/dom';
-import { closeDropdowns } from '../components/dropdown';
 import { buildHomeTab } from './tab-home';
 import { buildInsertTab } from './tab-insert';
 import { buildReferencesTab } from './tab-references';

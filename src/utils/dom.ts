@@ -1,4 +1,4 @@
-import { MarkdownView, Notice, TFile } from 'obsidian';
+import { MarkdownView, Notice } from 'obsidian';
 import type { ArcadiaPluginInterface, EditorContext } from '../types';
 
 /**

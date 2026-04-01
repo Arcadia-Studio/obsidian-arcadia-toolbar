@@ -179,7 +179,7 @@ export function tableToCsv(editor: Editor): void {
 		return c.includes(',') || c.includes('"') || c.includes('\n')
 			? '"' + c.replace(/"/g, '""') + '"' : c;
 	}).join(',')).join('\n');
-	navigator.clipboard.writeText(csv);
+	void navigator.clipboard.writeText(csv);
 	new Notice('Table copied as CSV to clipboard');
 }
 
