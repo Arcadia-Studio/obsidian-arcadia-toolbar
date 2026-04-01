@@ -81,13 +81,13 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName('Scripture hover lookup').setHeading();
 
 		containerEl.createEl('p', {
-			text: 'Hover over any scripture reference (e.g., John 3:16) to see a floating popup with bible text, commentary, or dictionary content. Toggle modes from the theology tab.',
+			text: 'Hover over any scripture reference to see a floating popup with bible text, commentary, or dictionary content. Toggle modes from the theology tab.',
 			cls: 'setting-item-description',
 		});
 
 		new Setting(containerEl)
 			.setName('Hover bible translation')
-			.setDesc('Translation used for bible hover popups (bible-api.com supports KJV, ASV, BBE, WEB, YLT)')
+			.setDesc('Translation used for bible hover popups')
 			.addDropdown(d => {
 				const hoverTranslations: Record<string, string> = {
 					'kjv': 'KJV \u2014 King James Version',
@@ -203,7 +203,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.addText(t => {
 				t.inputEl.type = 'password';
 				t.inputEl.addClass('arcadia-api-key-input');
-				t.setPlaceholder('sk-...')
+				t.setPlaceholder('Sk-...')
 					.setValue(this.plugin.settings.aiApiKey)
 					.onChange(async v => {
 						this.plugin.settings.aiApiKey = v;
@@ -240,9 +240,9 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('License key')
-			.setDesc('Enter your Arcadia Toolbar premium license key from Lemon Squeezy.')
+			.setDesc('Enter your premium license key')
 			.addText(t => {
-				t.setPlaceholder('xxxx-xxxx-xxxx-xxxx')
+				t.setPlaceholder('Xxxx-xxxx-xxxx-xxxx')
 					.setValue(this.plugin.settings.licenseKey)
 					.onChange(async v => {
 						this.plugin.settings.licenseKey = v.trim();
@@ -273,7 +273,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.addButton(btn => btn
-				.setButtonText('Get Arcadia Toolbar premium')
+				.setButtonText('Get premium')
 				.onClick(() => {
 					window.open('https://arcadia-studio.lemonsqueezy.com', '_blank');
 				})

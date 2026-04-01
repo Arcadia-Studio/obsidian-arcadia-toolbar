@@ -68,16 +68,16 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	// References
 	p.addCommand({ id: 'cite-turabian', name: 'Insert turabian citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'turabian') });
 	p.addCommand({ id: 'cite-chicago', name: 'Insert chicago citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'chicago') });
-	p.addCommand({ id: 'cite-apa-inline', name: 'Insert APA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'apa') });
-	p.addCommand({ id: 'cite-mla-inline', name: 'Insert MLA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'mla') });
+	p.addCommand({ id: 'cite-apa-inline', name: 'Insert apa inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'apa') });
+	p.addCommand({ id: 'cite-mla-inline', name: 'Insert mla inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'mla') });
 	p.addCommand({ id: 'generate-bibliography', name: 'Generate bibliography', editorCallback: (e: Editor) => ec.generateBibliography(e) });
 	p.addCommand({ id: 'create-missing-pages', name: 'Create missing pages', callback: () => { void createUnresolvedPages(p); } });
 
 	// AI-powered
 	p.addCommand({ id: 'ai-convert-citations-turabian', name: 'AI: convert citations to turabian', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'turabian'); } });
 	p.addCommand({ id: 'ai-convert-citations-chicago', name: 'AI: convert citations to chicago', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'chicago'); } });
-	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: convert citations to APA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); } });
-	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: convert citations to MLA', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); } });
+	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: convert citations to apa', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); } });
+	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: convert citations to mla', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); } });
 	p.addCommand({ id: 'ai-link-citations', name: 'AI: link citations to google books', editorCallback: (e: Editor) => { void ai.aiLinkCitations(p, e); } });
 	p.addCommand({ id: 'ai-notes-to-slides', name: 'AI: convert notes to slides', editorCallback: (e: Editor) => { void ai.aiNotesToSlides(p, e); } });
 
