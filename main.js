@@ -876,6 +876,7 @@ var ArcadiaTOCView = class extends import_obsidian.ItemView {
     }
   }
   async onClose() {
+    await Promise.resolve();
   }
 };
 

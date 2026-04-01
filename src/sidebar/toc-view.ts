@@ -100,6 +100,6 @@ export class ArcadiaTOCView extends ItemView {
 	}
 
 	async onClose(): Promise<void> {
-		// nothing to clean up
+		await Promise.resolve();
 	}
 }
