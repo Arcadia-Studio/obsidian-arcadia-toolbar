@@ -55,7 +55,7 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'insert-inline-math', name: 'Insert inline math', editorCallback: (e: Editor) => ec.insertInlineMath(e) });
 	p.addCommand({ id: 'insert-file-embed', name: 'Insert file embed', editorCallback: (e: Editor) => ec.insertFileEmbed(e) });
 	p.addCommand({ id: 'insert-mermaid', name: 'Insert Mermaid diagram', editorCallback: (e: Editor) => ec.insertMermaidBlock(e) });
-	p.addCommand({ id: 'insert-plantuml', name: 'Insert PlantUML block', editorCallback: (e: Editor) => ec.insertPlantUMLBlock(e) });
+	p.addCommand({ id: 'insert-plantuml', name: 'Insert plantuml block', editorCallback: (e: Editor) => ec.insertPlantUMLBlock(e) });
 	p.addCommand({ id: 'insert-template', name: 'Insert template', callback: () => plugin.executeCommand('templates:insert-template') });
 
 	// Slides

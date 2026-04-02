@@ -1006,7 +1006,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     new import_obsidian3.Setting(containerEl).setName("AI integration").setHeading();
     containerEl.createEl("p", {
-      text: "Connect an AI provider to enable citation conversion, google books linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.",
+      text: "Connect an AI provider to enable citation conversion, book linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.",
       cls: "setting-item-description"
     });
     let modelDropdown = null;
@@ -4558,7 +4558,7 @@ function registerCommands(plugin) {
   p.addCommand({ id: "insert-inline-math", name: "Insert inline math", editorCallback: (e) => insertInlineMath(e) });
   p.addCommand({ id: "insert-file-embed", name: "Insert file embed", editorCallback: (e) => insertFileEmbed(e) });
   p.addCommand({ id: "insert-mermaid", name: "Insert Mermaid diagram", editorCallback: (e) => insertMermaidBlock(e) });
-  p.addCommand({ id: "insert-plantuml", name: "Insert PlantUML block", editorCallback: (e) => insertPlantUMLBlock(e) });
+  p.addCommand({ id: "insert-plantuml", name: "Insert plantuml block", editorCallback: (e) => insertPlantUMLBlock(e) });
   p.addCommand({ id: "insert-template", name: "Insert template", callback: () => plugin.executeCommand("templates:insert-template") });
   p.addCommand({ id: "insert-slide-separator", name: "Insert slide separator", editorCallback: (e) => insertSlideSeparator(e) });
   p.addCommand({ id: "insert-speaker-notes", name: "Insert speaker notes", editorCallback: (e) => insertSpeakerNotes(e) });
