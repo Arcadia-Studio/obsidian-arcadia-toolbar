@@ -142,7 +142,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName('AI integration').setHeading();
 
 		containerEl.createEl('p', {
-			text: 'Connect an AI provider to enable citation conversion, book linking, and notes-to-slides features. AI-powered buttons appear grayed out until configured.',
+			text: 'Connect an AI provider to enable citation conversion, book linking, and notes-to-slides features.',
 			cls: 'setting-item-description',
 		});
 
