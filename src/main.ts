@@ -1,4 +1,4 @@
-import { MarkdownView, Plugin } from 'obsidian';
+import { Debouncer, MarkdownView, Notice, Plugin, debounce } from 'obsidian';
 import type { ArcadiaToolbarSettings, ArcadiaPluginInterface, EditorContext } from './types';
 import { VIEW_TYPE_TOC, DEFAULT_SETTINGS } from './types';
 import { ArcadiaTOCView } from './sidebar/toc-view';
@@ -9,6 +9,7 @@ import { setupScriptureHover, showScripturePopup } from './features/scripture-ho
 import { callAI } from './features/ai-integration';
 import { registerCommands } from './utils/commands';
 import { isPluginEnabled, executeCommand, openInNewLeaf, getActiveEditor, getActiveMarkdownView } from './utils/dom';
+import { validateLicense, isCacheValid, hasActiveLicense } from './license';
 
 export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPluginInterface {
 	settings!: ArcadiaToolbarSettings;
@@ -18,6 +19,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 	hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 	scriptureCache = new Map<string, string>();
 	_filteredTableBackup: { start: number; end: number; original: string } | null = null;
+	private debouncedToolbarUpdate: Debouncer<[], void> | null = null;
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
@@ -43,9 +45,10 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 			}
 		});
 
-		// Update toolbar on view changes
-		this.registerEvent(this.app.workspace.on('active-leaf-change', () => this.updateToolbar()));
-		this.registerEvent(this.app.workspace.on('layout-change', () => this.updateToolbar()));
+		// Update toolbar on view changes (debounced: layout-change can fire in bursts)
+		this.debouncedToolbarUpdate = debounce(() => this.updateToolbar(), 100, true);
+		this.registerEvent(this.app.workspace.on('active-leaf-change', () => this.debouncedToolbarUpdate?.()));
+		this.registerEvent(this.app.workspace.on('layout-change', () => this.debouncedToolbarUpdate?.()));
 
 		// Register all commands
 		registerCommands(this);
@@ -62,10 +65,14 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 			if (this.settings.tocPinned && this.settings.tocShowOnStartup) {
 				void this.activateTOC();
 			}
+			// Background license revalidation (fails soft when offline)
+			void this.refreshLicense();
 		});
 	}
 
 	onunload(): void {
+		// Prevent a pending debounced update from re-creating the toolbar after unload
+		this.debouncedToolbarUpdate?.cancel();
 		removeToolbar(this);
 		this.hideScripturePopup();
 		// Close any open dropdowns on unload
@@ -90,7 +97,36 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 	}
 
 	get isPremium(): boolean {
-		return this.settings.isPro && (this.settings.licenseStatus?.valid ?? false);
+		return this.settings.isPro && hasActiveLicense(this.settings.licenseStatus);
+	}
+
+	/**
+	 * Revalidate the stored license key in the background.
+	 * - Confirms and refreshes the cached status when the server is reachable.
+	 * - Keeps the cached status (grace period) when offline.
+	 * - Only disables premium when the server explicitly rejects the key.
+	 */
+	async refreshLicense(): Promise<void> {
+		const key = this.settings.licenseKey?.trim();
+		if (!key) return;
+		const cached = this.settings.licenseStatus;
+		if (cached?.valid && isCacheValid(cached)) return;
+
+		const result = await validateLicense(key);
+		if (result.outcome === 'valid') {
+			this.settings.licenseStatus = result.status;
+			this.settings.isPro = true;
+			await this.saveSettings();
+		} else if (result.outcome === 'invalid') {
+			const hadPremium = this.isPremium;
+			this.settings.licenseStatus = { valid: false, lastChecked: Date.now() };
+			this.settings.isPro = false;
+			await this.saveSettings();
+			if (hadPremium) {
+				new Notice('Arcadia Toolbar: your license key is no longer valid. Premium features are disabled. Check your key in settings.');
+			}
+		}
+		// 'offline': keep the cached status untouched; the grace period applies.
 	}
 
 	// ========================================================================

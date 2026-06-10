@@ -21,6 +21,8 @@ export function removeToolbar(plugin: ArcadiaPluginInterface): void {
 }
 
 export function updateToolbar(plugin: ArcadiaPluginInterface): void {
+	// Any open dropdown is anchored to the old toolbar; close it before re-rendering
+	plugin.closeDropdowns();
 	const view = getActiveMarkdownView(plugin);
 	if (!view) return;
 	removeToolbar(plugin);
@@ -64,10 +66,18 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 
 		tabBtn.appendChild(document.createTextNode(tab.label));
 
+		// Mark premium-gated tabs for free users
+		if (tab.id === 'theology' && !plugin.isPremium) {
+			const lockSpan = document.createElement('span');
+			lockSpan.className = 'arcadia-ribbon-tab-lock';
+			setIcon(lockSpan, 'lock');
+			tabBtn.appendChild(lockSpan);
+		}
+
 		tabBtn.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-			// BUG FIX: Only save when activeTab actually changes
+			// Only save when activeTab actually changes
 			if (plugin.settings.activeTab !== tab.id) {
 				plugin.settings.activeTab = tab.id;
 				void plugin.saveSettings();

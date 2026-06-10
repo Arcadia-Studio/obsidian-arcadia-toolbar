@@ -37,7 +37,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 			action: () => ctx && insertInternalLink(ctx.editor),
 		}),
 		createButton(plugin, {
-			icon: 'footnote',
+			icon: 'asterisk',
 			tooltip: 'Insert footnote',
 			action: () => ctx && insertFootnote(ctx.editor),
 		}),
@@ -154,7 +154,7 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 	];
 	const symbolsTrigger = createDropdownTrigger({
-		icon: 'omega',
+		icon: 'pilcrow',
 		tooltip: 'Insert symbol',
 		openFn: (wrapper) => openSymbolsDropdown(plugin, wrapper, ctx),
 	});

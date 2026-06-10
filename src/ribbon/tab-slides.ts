@@ -104,7 +104,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		}),
 		createButton(plugin, {
 			icon: 'zap',
-			tooltip: 'Insert fragment (Animate)',
+			tooltip: 'Insert fragment (animate)',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideFragment(activeCtx.editor);
@@ -126,7 +126,7 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	const elementBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'columns',
-			tooltip: 'Insert two-Column layout',
+			tooltip: 'Insert two-column layout',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertSlideColumns(activeCtx.editor);
@@ -152,12 +152,13 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 	});
 	addGroup(container, 'Themes', [themeTrigger]);
 
-	// ---- AI Tools group ----
+	// ---- AI Tools group (premium) ----
 	const aiBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'sparkles',
-			tooltip: 'Convert notes to Slides (AI)',
+			tooltip: 'Convert notes to slides (AI)',
 			requiresAI: true,
+			requiresPremium: true,
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) void aiNotesToSlides(plugin, activeCtx.editor);

@@ -4,6 +4,8 @@ import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
 import { createDropdownTrigger, positionDropdown, closeDropdowns } from '../components/dropdown';
 import {
+	addTableRow,
+	deleteTableRow,
 	setColumnAlignment,
 	sortTableColumn,
 	csvToTable,
@@ -24,7 +26,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	// ---- Tables group (size picker + templates dropdown) ----
 	const sizePickerTrigger = createDropdownTrigger({
 		icon: 'table',
-		tooltip: 'Insert table (Size picker)',
+		tooltip: 'Insert table (size picker)',
 		label: 'New table',
 		openFn: (wrapper) => openTableSizeDropdown(plugin, wrapper, ctx),
 	});
@@ -43,20 +45,25 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		createButton(plugin, {
 			icon: 'plus-square',
 			tooltip: 'Add row above',
-			action: () => plugin.executeCommand('editor:insert-newline-above'),
+			action: () => {
+				const activeCtx = plugin.getActiveEditor();
+				if (activeCtx) addTableRow(activeCtx.editor, 'above');
+			},
+		}),
+		createButton(plugin, {
+			icon: 'plus-circle',
+			tooltip: 'Add row below',
+			action: () => {
+				const activeCtx = plugin.getActiveEditor();
+				if (activeCtx) addTableRow(activeCtx.editor, 'below');
+			},
 		}),
 		createButton(plugin, {
 			icon: 'minus-square',
 			tooltip: 'Delete current row',
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
-				if (!activeCtx) return;
-				const cursor = activeCtx.editor.getCursor();
-				activeCtx.editor.replaceRange(
-					'',
-					{ line: cursor.line, ch: 0 },
-					{ line: cursor.line + 1, ch: 0 }
-				);
+				if (activeCtx) deleteTableRow(activeCtx.editor);
 			},
 		}),
 		createButton(plugin, {
@@ -176,12 +183,13 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	];
 	addGroup(container, 'Charts', chartBtns);
 
-	// ---- AI Tools group ----
+	// ---- AI Tools group (premium) ----
 	const aiBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'sparkles',
 			tooltip: 'Generate table with AI',
 			requiresAI: true,
+			requiresPremium: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) void aiGenerateTable(plugin, activeCtx.editor);
@@ -191,6 +199,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 			icon: 'wand',
 			tooltip: 'Fill table data with AI',
 			requiresAI: true,
+			requiresPremium: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) void aiFillTableData(plugin, activeCtx.editor);
@@ -200,6 +209,7 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 			icon: 'calculator',
 			tooltip: 'Add calculated column with AI',
 			requiresAI: true,
+			requiresPremium: true,
 			action: () => {
 				const activeCtx = plugin.getActiveEditor();
 				if (activeCtx) void aiAddCalculatedColumn(plugin, activeCtx.editor);
@@ -248,7 +258,8 @@ function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 			cell.addEventListener('click', (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				insertSizedTable(plugin, ctx, hoveredRow, hoveredCol);
+				// Use the clicked cell's coordinates (hover state is unreliable on touch input)
+				insertSizedTable(plugin, ctx, r + 1, c + 1);
 				closeDropdowns(plugin);
 			});
 

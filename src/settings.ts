@@ -1,13 +1,13 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import type { ArcadiaPluginInterface } from './types';
 import { BIBLE_TRANSLATIONS, COMMENTARIES, BIBLE_DICTIONARIES, AI_PROVIDERS } from './types';
-import { validateLicense } from './license';
+import { validateLicense, hasActiveLicense } from './license';
 
 export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 	plugin: ArcadiaPluginInterface;
 
-	constructor(app: App, plugin: ArcadiaPluginInterface & { addSettingTab?: unknown }) {
-		super(app, plugin as unknown as import('obsidian').Plugin);
+	constructor(app: App, plugin: ArcadiaPluginInterface & Plugin) {
+		super(app, plugin);
 		this.plugin = plugin;
 	}
 
@@ -67,7 +67,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.setDesc('Default bible translation for scripture blocks')
 			.addDropdown(d => {
 				for (const [code, name] of Object.entries(BIBLE_TRANSLATIONS)) {
-					d.addOption(code, `${code} \u2014 ${name}`);
+					d.addOption(code, `${code} (${name})`);
 				}
 				d.setValue(this.plugin.settings.scriptureTranslation)
 					.onChange(async v => {
@@ -90,12 +90,12 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.setDesc('Translation used for bible hover popups')
 			.addDropdown(d => {
 				const hoverTranslations: Record<string, string> = {
-					'kjv': 'KJV \u2014 King James Version',
-					'asv': 'ASV \u2014 American Standard Version',
-					'bbe': 'BBE \u2014 Bible in Basic English',
-					'darby': 'DARBY \u2014 Darby Translation',
-					'web': 'WEB \u2014 World English Bible',
-					'ylt': "YLT \u2014 Young's Literal Translation",
+					'kjv': 'KJV (King James Version)',
+					'asv': 'ASV (American Standard Version)',
+					'bbe': 'BBE (Bible in Basic English)',
+					'darby': 'DARBY (Darby Translation)',
+					'web': 'WEB (World English Bible)',
+					'ylt': "YLT (Young's Literal Translation)",
 				};
 				for (const [code, name] of Object.entries(hoverTranslations)) {
 					d.addOption(code, name);
@@ -180,7 +180,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.setName('AI provider')
 			.setDesc('Choose your AI service provider')
 			.addDropdown(d => {
-				d.addOption('none', '\u2014 none \u2014');
+				d.addOption('none', 'None');
 				for (const [key, provider] of Object.entries(AI_PROVIDERS)) {
 					d.addOption(key, provider.name);
 				}
@@ -203,7 +203,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			.addText(t => {
 				t.inputEl.type = 'password';
 				t.inputEl.addClass('arcadia-api-key-input');
-				t.setPlaceholder('Sk-...')
+				t.setPlaceholder('sk-...')
 					.setValue(this.plugin.settings.aiApiKey)
 					.onChange(async v => {
 						this.plugin.settings.aiApiKey = v;
@@ -228,7 +228,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName('License').setHeading();
 
 		const licenseStatus = this.plugin.settings.licenseStatus;
-		const isPro = this.plugin.settings.isPro && licenseStatus?.valid;
+		const isPro = this.plugin.settings.isPro && hasActiveLicense(licenseStatus);
 		const statusDesc = isPro
 			? `Active${licenseStatus?.customerEmail ? ` (${licenseStatus.customerEmail})` : ''}${licenseStatus?.expiresAt ? ` - expires ${licenseStatus.expiresAt}` : ''}`
 			: 'No active license. Enter your license key and click Validate.';
@@ -254,18 +254,31 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 				.setCta()
 				.onClick(async () => {
 					const key = this.plugin.settings.licenseKey.trim();
-					if (!key) return;
+					if (!key) {
+						licenseStatusEl.textContent = 'License status: enter a license key first.';
+						licenseStatusEl.className = 'mod-warning';
+						return;
+					}
 					btn.setButtonText('Checking...').setDisabled(true);
-					const status = await validateLicense(key);
-					this.plugin.settings.licenseStatus = status;
-					this.plugin.settings.isPro = status.valid;
-					await this.plugin.saveSettings();
+					const result = await validateLicense(key);
 					btn.setButtonText('Validate').setDisabled(false);
-					if (status.valid) {
-						licenseStatusEl.textContent = `License status: Active${status.customerEmail ? ` (${status.customerEmail})` : ''}`;
+					if (result.outcome === 'valid') {
+						this.plugin.settings.licenseStatus = result.status;
+						this.plugin.settings.isPro = true;
+						await this.plugin.saveSettings();
+						this.plugin.updateToolbar();
+						licenseStatusEl.textContent = `License status: Active${result.status.customerEmail ? ` (${result.status.customerEmail})` : ''}`;
 						licenseStatusEl.className = 'mod-success';
-					} else {
+					} else if (result.outcome === 'invalid') {
+						this.plugin.settings.licenseStatus = { valid: false, lastChecked: Date.now() };
+						this.plugin.settings.isPro = false;
+						await this.plugin.saveSettings();
+						this.plugin.updateToolbar();
 						licenseStatusEl.textContent = 'License status: invalid or expired. Check your key and try again.';
+						licenseStatusEl.className = 'mod-warning';
+					} else {
+						// Offline: keep any cached valid status so paying users are not locked out
+						licenseStatusEl.textContent = `License status: ${result.message}`;
 						licenseStatusEl.className = 'mod-warning';
 					}
 				})

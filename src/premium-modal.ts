@@ -1,4 +1,4 @@
-import { App, Modal, Setting } from 'obsidian';
+import { App, Modal, Notice, Setting } from 'obsidian';
 import { validateLicense, LicenseStatus } from './license';
 
 interface PremiumPlugin {
@@ -14,6 +14,7 @@ export class PremiumModal extends Modal {
 	private plugin: PremiumPlugin;
 	private featureName: string;
 	private textInputEl: HTMLInputElement | null = null;
+	private validating = false;
 
 	constructor(app: App, plugin: PremiumPlugin, featureName: string) {
 		super(app);
@@ -32,6 +33,8 @@ export class PremiumModal extends Modal {
 			cls: 'setting-item-description',
 		});
 
+		const statusEl = contentEl.createEl('p', { cls: 'setting-item-description' });
+
 		new Setting(contentEl)
 			.setName('License key')
 			.setDesc('Enter your license key')
@@ -40,15 +43,24 @@ export class PremiumModal extends Modal {
 				text
 					.setPlaceholder('Xxxx-xxxx-xxxx-xxxx')
 					.onChange(async (value) => {
-						if (value.trim().length > 10) {
-							const status = await validateLicense(value.trim());
-							if (status.valid) {
-								this.plugin.settings.licenseKey = value.trim();
-								this.plugin.settings.licenseStatus = status;
+						const key = value.trim();
+						if (key.length <= 10 || this.validating) return;
+						this.validating = true;
+						statusEl.setText('Checking license key...');
+						try {
+							const result = await validateLicense(key);
+							if (result.outcome === 'valid') {
+								this.plugin.settings.licenseKey = key;
+								this.plugin.settings.licenseStatus = result.status;
 								this.plugin.settings.isPro = true;
 								await this.plugin.saveSettings();
+								new Notice('License activated. Premium features are now unlocked.');
 								this.close();
+							} else {
+								statusEl.setText(result.message);
 							}
+						} finally {
+							this.validating = false;
 						}
 					});
 			});

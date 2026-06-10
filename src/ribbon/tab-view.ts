@@ -1,7 +1,7 @@
 import type { ArcadiaPluginInterface, EditorContext } from '../types';
 import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
-import { showDocStats } from '../utils/dom';
+import { showDocStats, isReadingView } from '../utils/dom';
 
 export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
 	// ---- TOC group ----
@@ -24,12 +24,20 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 		createButton(plugin, {
 			icon: 'edit-3',
 			tooltip: 'Editing view',
-			action: () => plugin.executeCommand('markdown:toggle-preview'),
+			action: () => {
+				const view = plugin.getActiveMarkdownView();
+				// Only toggle when currently in reading view
+				if (view && isReadingView(view)) plugin.executeCommand('markdown:toggle-preview');
+			},
 		}),
 		createButton(plugin, {
 			icon: 'book-open',
 			tooltip: 'Reading view',
-			action: () => plugin.executeCommand('markdown:toggle-preview'),
+			action: () => {
+				const view = plugin.getActiveMarkdownView();
+				// Only toggle when currently in editing view
+				if (view && !isReadingView(view)) plugin.executeCommand('markdown:toggle-preview');
+			},
 		}),
 		createButton(plugin, {
 			icon: 'columns',

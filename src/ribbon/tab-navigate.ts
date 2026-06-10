@@ -71,7 +71,7 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 		createButton(plugin, {
 			icon: 'git-fork',
 			tooltip: 'Open graph view',
-			action: () => plugin.executeCommand('app:open-graph-view'),
+			action: () => plugin.executeCommand('graph:open'),
 		}),
 		createButton(plugin, {
 			icon: 'star',

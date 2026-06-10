@@ -2,9 +2,9 @@
 
 ![Arcadia Toolbar](docs/screenshot.png)
 
-A Word-style tabbed ribbon toolbar for Obsidian with formatting commands, insert tools, a pinnable Table of Contents sidebar, and a Theology tab with scripture hover and commentary lookup.
+Arcadia Toolbar brings a Word-processor-style ribbon to Obsidian: eleven tabs of one-click tools for formatting, tables, citations, slides, navigation, and study work, all sitting above the editor where you expect them. If you came to Obsidian from Word, OneNote, or Google Docs and miss having your tools visible, this plugin closes that gap without changing how your Markdown files are stored.
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue)
+![Version](https://img.shields.io/badge/version-3.0.7-blue)
 ![Obsidian](https://img.shields.io/badge/Obsidian-1.0+-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -12,48 +12,71 @@ A Word-style tabbed ribbon toolbar for Obsidian with formatting commands, insert
 
 ## Features
 
-### Free
-- All 10 standard tabs: Home, Insert, Format, Tables, Links, Media, Canvas, View, Tools, and More
-- Core formatting commands (bold, italic, underline, strikethrough, highlight, headings)
-- Basic table tools (insert table, add/remove rows and columns)
-- Table of Contents sidebar (pinnable, OneNote-style, opens in the right panel)
-- Toolbar updates automatically when switching between notes
-- Per-tab visibility toggles in Settings
-
-### Premium
-- Theology tab with scripture hover popups (fetch and display Bible verse text on hover) and commentary lookup
-- Custom tab builder to create personal tabs with your own command groups
-- Settings sync across devices
-- AI integration button row for direct AI prompts from the toolbar
-- Get Premium at [arcadia-studio.lemonsqueezy.com](https://arcadia-studio.lemonsqueezy.com)
+| Feature | Free | Premium |
+| ------- | :--: | :-----: |
+| Home tab: bold, italic, underline, highlight, font and background colors, headings, lists, alignment, indent | Yes | Yes |
+| Insert tab: links, images, embeds, tables, code blocks, callouts, footnotes, symbols, math | Yes | Yes |
+| Data tab: table size picker, templates, add/delete rows, sort, filter, transpose, CSV import and export | Yes | Yes |
+| References tab: Turabian, Chicago, APA, and MLA citations plus bibliography generation | Yes | Yes |
+| Slides tab: slide breaks, layouts, themes, speaker notes (Advanced Slides) | Yes | Yes |
+| View, Navigate, Templates, Canvas, and Review tabs | Yes | Yes |
+| Table of contents sidebar (pinnable, follows the active note) | Yes | Yes |
+| Per-tab visibility toggles in settings | Yes | Yes |
+| Theology tab: scripture blocks, cross-references, commentary and language notes | No | Yes |
+| Scripture hover lookup: Bible text, commentary, or dictionary popups on any reference | No | Yes |
+| AI tools row: generate and fill tables, calculated columns, citation conversion, notes to slides (bring your own API key) | No | Yes |
 
 ## Installation
 
-1. Open Obsidian Settings
-2. Go to Community Plugins and disable Safe Mode
-3. Click Browse and search for "Arcadia Toolbar"
-4. Install and enable the plugin
+The Community Plugins listing is pending review. Until it is approved, install with one of these methods:
 
-## Manual Installation
+### Manual install (GitHub releases)
 
-1. Download the latest release from [GitHub Releases](https://github.com/Arcadia-Studio/obsidian-arcadia-toolbar/releases)
-2. Extract to your vault's `.obsidian/plugins/arcadia-toolbar/` folder
-3. Reload Obsidian and enable the plugin
+1. Download `main.js`, `manifest.json`, and `styles.css` from the latest [GitHub release](https://github.com/Arcadia-Studio/obsidian-arcadia-toolbar/releases)
+2. Create the folder `.obsidian/plugins/arcadia-toolbar/` inside your vault and copy the three files into it
+3. Reload Obsidian, then enable Arcadia Toolbar under Settings > Community plugins
 
-## Usage
+### BRAT
 
-The toolbar appears at the top of the editor pane when a Markdown note is active. Click any tab to switch to that command group. The toolbar hides automatically when no Markdown editor is open.
+1. Install the [BRAT](https://obsidian.md/plugins?id=obsidian42-brat) plugin
+2. In BRAT, choose "Add beta plugin" and enter `Arcadia-Studio/obsidian-arcadia-toolbar`
+3. Enable Arcadia Toolbar under Settings > Community plugins
 
-Toggle the Table of Contents sidebar with the ribbon icon (list-tree) or the "Toggle Table of Contents" command. The TOC sidebar reflects headings from the active note and updates as you edit.
+## Quick start
 
-Configure which tabs are visible, the active tab on startup, and TOC behavior in Settings > Arcadia Toolbar.
+1. Open any Markdown note in editing view. The ribbon appears at the top of the editor pane.
+2. Click a tab (Home, Insert, Data, and so on) to switch tool groups. The active tab is remembered.
+3. Select text and click a formatting button, or place the cursor and click an insert button.
+4. For table tools, place the cursor inside any Markdown table, then use the Data tab.
+5. Toggle the table of contents sidebar with the list icon in Obsidian's left ribbon or the "Toggle table of contents" command.
 
-## Premium License
+The ribbon hides its editing tabs in reading view and shows a short notice instead. Tabs you never use can be hidden in settings.
 
-Arcadia Toolbar uses a freemium model. Core features are free. Premium features require a license key from [Lemon Squeezy](https://arcadia-studio.lemonsqueezy.com).
+## Settings reference
 
-To activate: Settings > Arcadia Toolbar > Enter License Key
+| Setting | What it does |
+| ------- | ------------ |
+| Ribbon tabs | One toggle per tab (Home, Insert, Theology, View, Navigate, Templates, Canvas, References, Review, Data, Slides) |
+| Pin table of contents on startup | Opens the TOC panel automatically when Obsidian starts |
+| Default translation | Translation label used by scripture blocks (ESV, NIV, KJV, NASB, NLT, CSB, NKJV, RSV) |
+| Hover bible translation | Translation used for Bible text popups (KJV, ASV, BBE, DARBY, WEB, YLT) |
+| Default commentary | Public domain commentary source for hover popups (Barnes, Matthew Henry, Gill, Clarke, JFB, Cambridge) |
+| Default dictionary | Bible dictionary source for hover popups |
+| AI provider | OpenAI, Anthropic, Google, xAI, or Microsoft Copilot |
+| API key | Your own AI API key, stored locally in this vault's plugin data |
+| Model | Model selection for the chosen provider |
+| License key | Premium license entry and validation |
 
-## About Arcadia Studio
+## Pricing
 
-Arcadia Studio builds productivity tools for Obsidian users. [arcadia-studio.lemonsqueezy.com](https://arcadia-studio.lemonsqueezy.com)
+Core features are free. The Theology tab, scripture hover lookup, and the AI tools row require a premium license from [arcadia-studio.lemonsqueezy.com](https://arcadia-studio.lemonsqueezy.com).
+
+To activate: Settings > Arcadia Toolbar > License key, then click Validate. Validation is cached, and a grace period keeps premium features working when you are offline.
+
+## Support
+
+Questions, bug reports, and feature requests: [arcadiastudio77@gmail.com](mailto:arcadiastudio77@gmail.com), or open an issue on the [GitHub repository](https://github.com/Arcadia-Studio/obsidian-arcadia-toolbar).
+
+## License
+
+The source code is licensed under the [MIT license](LICENSE). A premium license unlocks the premium feature set; it does not change the code license.

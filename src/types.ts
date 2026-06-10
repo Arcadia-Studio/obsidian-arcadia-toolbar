@@ -58,25 +58,25 @@ export const COMMON_SYMBOLS = [
 
 export const SLIDE_LAYOUTS = [
 	{
-		name: 'Title Slide',
+		name: 'Title slide',
 		icon: 'layout-template',
 		desc: 'Centered title and subtitle',
 		template: '\n---\n\n<!-- .slide: style="text-align: center;" -->\n\n# Presentation Title\n\n## Subtitle\n\nnote:\nSpeaker notes here\n',
 	},
 	{
-		name: 'Title + Content',
+		name: 'Title + content',
 		icon: 'file-text',
 		desc: 'Title with bullet points',
 		template: '\n---\n\n# Slide Title\n\n- First point\n- Second point\n- Third point\n\nnote:\nSpeaker notes here\n',
 	},
 	{
-		name: 'Title + Image',
+		name: 'Title + image',
 		icon: 'image',
 		desc: 'Title with image placeholder',
 		template: '\n---\n\n# Slide Title\n\n![[image.jpg]]\n\nnote:\nSpeaker notes here\n',
 	},
 	{
-		name: 'Two Column',
+		name: 'Two column',
 		icon: 'columns-2',
 		desc: 'Side-by-side content',
 		template: '\n---\n\n# Slide Title\n\n<split even gap="2">\n\nLeft column content\n\nRight column content\n\n</split>\n\nnote:\nSpeaker notes here\n',
@@ -88,19 +88,19 @@ export const SLIDE_LAYOUTS = [
 		template: '\n---\n\n# Comparison\n\n<split even gap="2">\n\n### Option A\n\n- Point one\n- Point two\n\n### Option B\n\n- Point one\n- Point two\n\n</split>\n\nnote:\nSpeaker notes here\n',
 	},
 	{
-		name: 'Image + Caption',
+		name: 'Image + caption',
 		icon: 'image-plus',
 		desc: 'Large image with side caption',
 		template: '\n---\n\n# Slide Title\n\n<split left="2" right="1" gap="2">\n\n![[image.jpg]]\n\n*Caption text goes here*\n\n</split>\n\nnote:\nSpeaker notes here\n',
 	},
 	{
-		name: 'Section Header',
+		name: 'Section header',
 		icon: 'heading',
 		desc: 'Bold section divider',
 		template: '\n---\n\n<!-- .slide: style="text-align: center;" -->\n\n# Section Title\n\nnote:\n\n',
 	},
 	{
-		name: 'Blank Slide',
+		name: 'Blank slide',
 		icon: 'square',
 		desc: 'Empty slide with notes',
 		template: '\n---\n\n\n\nnote:\nSpeaker notes here\n',
@@ -141,37 +141,37 @@ export const CITATION_STYLES: Record<string, {
 
 export const TABLE_TEMPLATES: { name: string; icon: string; desc: string; template: string }[] = [
 	{
-		name: 'Data Table',
+		name: 'Data table',
 		icon: 'table-2',
 		desc: 'Simple data table with 4 columns',
 		template: '\n| Name | Category | Value | Notes |\n| ---- | -------- | ----- | ----- |\n| Item 1 | Type A | 100 | |\n| Item 2 | Type B | 200 | |\n| Item 3 | Type A | 150 | |\n',
 	},
 	{
-		name: 'Comparison Table',
+		name: 'Comparison table',
 		icon: 'git-compare',
 		desc: 'Compare features across options',
 		template: '\n| Feature | Option A | Option B | Option C |\n| ------- | :------: | :------: | :------: |\n| Price | $10 | $20 | $30 |\n| Speed | Fast | Medium | Slow |\n| Support | Email | Phone | 24/7 |\n| Rating | \u2605\u2605\u2605 | \u2605\u2605\u2605\u2605 | \u2605\u2605\u2605\u2605\u2605 |\n',
 	},
 	{
-		name: 'Pricing Table',
+		name: 'Pricing table',
 		icon: 'credit-card',
 		desc: 'Product/service pricing tiers',
 		template: '\n| Plan | Monthly | Annual | Features |\n| ---- | ------: | -----: | -------- |\n| Basic | $9 | $99 | Core features |\n| Pro | $29 | $299 | Advanced tools |\n| Enterprise | $99 | $999 | Full suite |\n',
 	},
 	{
-		name: 'Weekly Schedule',
+		name: 'Weekly schedule',
 		icon: 'calendar',
 		desc: 'Mon-Fri schedule grid',
 		template: '\n| Time | Monday | Tuesday | Wednesday | Thursday | Friday |\n| ---- | ------ | ------- | --------- | -------- | ------ |\n| 9:00 | | | | | |\n| 10:00 | | | | | |\n| 11:00 | | | | | |\n| 12:00 | *Lunch* | *Lunch* | *Lunch* | *Lunch* | *Lunch* |\n| 1:00 | | | | | |\n| 2:00 | | | | | |\n',
 	},
 	{
-		name: 'Grade/Score Table',
+		name: 'Grade/score table',
 		icon: 'award',
 		desc: 'Track grades or scores',
 		template: '\n| # | Student | Assignment 1 | Assignment 2 | Final | Average |\n| - | ------- | -----------: | -----------: | ----: | ------: |\n| 1 | | | | | |\n| 2 | | | | | |\n| 3 | | | | | |\n',
 	},
 	{
-		name: 'Pros & Cons',
+		name: 'Pros & cons',
 		icon: 'scale',
 		desc: 'Two-column pros and cons',
 		template: '\n| Pros | Cons |\n| ---- | ---- |\n| Advantage 1 | Disadvantage 1 |\n| Advantage 2 | Disadvantage 2 |\n| Advantage 3 | Disadvantage 3 |\n',

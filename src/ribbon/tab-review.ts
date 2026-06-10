@@ -30,7 +30,7 @@ export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 		createButton(plugin, {
 			icon: 'link-2',
 			tooltip: 'Check unresolved links',
-			action: () => plugin.executeCommand('app:open-graph-view'),
+			action: () => plugin.executeCommand('graph:open'),
 		}),
 		createButton(plugin, {
 			icon: 'file-plus',

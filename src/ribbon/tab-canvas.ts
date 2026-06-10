@@ -7,13 +7,13 @@ import { setIcon } from 'obsidian';
 // Canvas template definitions
 const CANVAS_TEMPLATES: { name: string; icon: string; desc: string; content: string }[] = [
 	{
-		name: 'Blank Canvas',
+		name: 'Blank canvas',
 		icon: 'square',
 		desc: 'Empty canvas',
 		content: '{"nodes":[],"edges":[]}',
 	},
 	{
-		name: 'Mind Map',
+		name: 'Mind map',
 		icon: 'git-branch',
 		desc: 'Central node with branches',
 		content: JSON.stringify({

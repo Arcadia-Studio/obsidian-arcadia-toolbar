@@ -1,5 +1,5 @@
 /* ============================================================================
-   ARCADIA TOOLBAR v3.0 — TABBED RIBBON + TOC
+   ARCADIA TOOLBAR v3.0 - TABBED RIBBON + TOC
    ============================================================================ */
 
 /* ============================================================================
@@ -531,7 +531,7 @@
 }
 
 /* ============================================================================
-   TABLE OF CONTENTS — SIDEBAR VIEW (Document Outline)
+   TABLE OF CONTENTS - SIDEBAR VIEW (Document Outline)
    ============================================================================ */
 
 .arcadia-toc-container .view-content {
@@ -687,7 +687,7 @@
    SYMBOLS DROPDOWN
    ============================================================================ */
 
-.arcadia-symbols-grid {
+.arcadia-symbol-grid {
 	display: grid;
 	grid-template-columns: repeat(8, 1fr);
 	gap: 2px;
@@ -781,7 +781,7 @@
 	border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Template dropdown — scrollable list */
+/* Template dropdown - scrollable list */
 .arcadia-template-menu {
 	max-height: 320px;
 	overflow-y: auto;
@@ -938,23 +938,17 @@
 }
 
 /* ===== TABLE SIZE PICKER ===== */
-.arcadia-table-picker-dropdown {
+.arcadia-table-picker {
 	padding: 10px;
 	min-width: 220px;
 }
-.arcadia-table-picker-label {
-	font-size: 12px;
-	font-weight: 600;
-	margin-bottom: 8px;
-	color: var(--text-normal);
-}
-.arcadia-table-picker-grid {
+.arcadia-table-size-grid {
 	display: grid;
 	grid-template-columns: repeat(8, 24px);
 	grid-template-rows: repeat(8, 24px);
 	gap: 2px;
 }
-.arcadia-table-picker-cell {
+.arcadia-table-size-cell {
 	width: 24px;
 	height: 24px;
 	border: 1px solid var(--background-modifier-border);
@@ -962,12 +956,12 @@
 	cursor: pointer;
 	transition: background-color 0.05s;
 }
-.arcadia-table-picker-cell:hover,
-.arcadia-table-picker-cell-active {
+.arcadia-table-size-cell:hover,
+.arcadia-table-size-cell-hover {
 	background: var(--interactive-accent);
 	border-color: var(--interactive-accent);
 }
-.arcadia-table-picker-size {
+.arcadia-table-size-label {
 	text-align: center;
 	font-size: 12px;
 	color: var(--text-muted);
@@ -1023,6 +1017,149 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+/* ============================================================================
+   GENERIC DROPDOWN ITEMS
+   ============================================================================ */
+
+.arcadia-dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 6px 10px;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-normal);
+	cursor: pointer;
+	text-align: left;
+	font-size: 12.5px;
+	transition: background 0.1s ease;
+}
+
+.arcadia-dropdown-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.arcadia-dropdown-item svg {
+	width: 14px;
+	height: 14px;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.arcadia-dropdown-item-active {
+	background: var(--background-modifier-hover);
+	font-weight: 600;
+}
+
+.arcadia-dropdown-item-hint {
+	margin-left: auto;
+	padding-left: 12px;
+	font-size: 11px;
+	color: var(--text-faint);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 220px;
+}
+
+.arcadia-dropdown-divider {
+	border-top: 1px solid var(--background-modifier-border);
+	margin: 6px 0;
+}
+
+.arcadia-dropdown-subtitle {
+	font-size: 11px;
+	color: var(--text-muted);
+	padding: 0 10px 4px;
+}
+
+.arcadia-dropdown-section-label {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--text-faint);
+	padding: 4px 10px;
+}
+
+.arcadia-dropdown-empty {
+	padding: 12px 10px;
+	font-size: 12px;
+	color: var(--text-faint);
+	text-align: center;
+}
+
+.arcadia-recent-files-dropdown {
+	max-height: 340px;
+	overflow-y: auto;
+	min-width: 240px;
+}
+
+/* ============================================================================
+   PREMIUM LOCK STATES
+   ============================================================================ */
+
+.arcadia-btn-locked {
+	opacity: 0.6;
+}
+
+.arcadia-btn-locked::after {
+	content: '\1F512';
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 8px;
+	line-height: 1;
+	pointer-events: none;
+}
+
+.arcadia-ribbon-tab-lock {
+	display: flex;
+	align-items: center;
+	margin-left: 2px;
+	opacity: 0.6;
+}
+
+.arcadia-ribbon-tab-lock svg {
+	width: 10px;
+	height: 10px;
+}
+
+.arcadia-premium-panel {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 16px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.arcadia-premium-panel-icon {
+	display: flex;
+	align-items: center;
+	color: var(--text-faint);
+}
+
+.arcadia-premium-panel-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.arcadia-premium-panel-btn {
+	padding: 0 10px;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.arcadia-premium-panel-btn:hover {
+	background: var(--interactive-accent-hover);
+	color: var(--text-on-accent);
 }
 
 /* ============================================================================

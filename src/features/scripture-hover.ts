@@ -3,6 +3,8 @@ import { SCRIPTURE_REF_REGEX, BOOK_LOOKUP } from '../types';
 import { parseScriptureRef, fetchBibleText, fetchCommentary, fetchDictionary } from './bible-api';
 
 export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTMLElement, refText: string): void {
+	// Scripture hover lookup is a premium feature
+	if (!plugin.isPremium) return;
 	const ref = parseScriptureRef(refText);
 	if (!ref) return;
 
@@ -111,7 +113,7 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMarkdownPostProcessor: (cb: (el: HTMLElement) => void) => void, registerEditorExtension: (ext: unknown) => void, registerDomEvent: (el: Document, event: string, cb: (e: MouseEvent) => void) => void): void {
 	// === READING MODE: MarkdownPostProcessor ===
 	registerMarkdownPostProcessor((el: HTMLElement) => {
-		if (plugin.settings.hoverMode === 'off') return;
+		if (plugin.settings.hoverMode === 'off' || !plugin.isPremium) return;
 
 		const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
 		const textNodes: Text[] = [];
@@ -209,7 +211,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 				}
 
 				buildDecorations(view: ScriptureEditorView) {
-					if (plugin.settings.hoverMode === 'off') {
+					if (plugin.settings.hoverMode === 'off' || !plugin.isPremium) {
 						return Decoration.none;
 					}
 

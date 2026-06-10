@@ -256,20 +256,24 @@ ${text}`;
 		}
 
 		const baseName = activeFile.basename;
-		const parentPath = activeFile.parent?.path || '';
-		// Fix: use standard separator instead of em dash
-		const slidesPath = parentPath ? `${parentPath}/${baseName} - Slides.md` : `${baseName} - Slides.md`;
+		const parentPath = activeFile.parent?.path && activeFile.parent.path !== '/' ? activeFile.parent.path : '';
+		const buildPath = (suffix: string) =>
+			parentPath ? `${parentPath}/${baseName} - Slides${suffix}.md` : `${baseName} - Slides${suffix}.md`;
+
+		// Never overwrite an existing note: find a free file name
+		let slidesPath = buildPath('');
+		for (let n = 2; plugin.app.vault.getAbstractFileByPath(slidesPath) && n < 100; n++) {
+			slidesPath = buildPath(` ${n}`);
+		}
 
 		const slidesContent = `---\ntheme: black\ntransition: slide\n---\n\n${result}`;
 
-		await plugin.app.vault.create(slidesPath, slidesContent);
-
-		const slidesFile = plugin.app.vault.getAbstractFileByPath(slidesPath);
+		const slidesFile = await plugin.app.vault.create(slidesPath, slidesContent);
 		if (slidesFile instanceof TFile) {
 			await plugin.app.workspace.getLeaf('split').openFile(slidesFile);
 		}
 
-		new Notice(`Slides created: "${baseName} - Slides.md"`);
+		new Notice(`Slides created: "${slidesPath}"`);
 	} catch (err: unknown) {
 		new Notice(`AI error: ${(err as Error).message}`);
 	}

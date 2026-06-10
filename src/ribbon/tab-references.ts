@@ -12,6 +12,7 @@ import {
 	aiConvertCitationsInDocument,
 	aiLinkCitations,
 } from '../features/ai-integration';
+import { PremiumModal } from '../premium-modal';
 import { setIcon } from 'obsidian';
 
 export function buildReferencesTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
@@ -43,17 +44,24 @@ export function buildReferencesTab(plugin: ArcadiaPluginInterface, container: HT
 	];
 	addGroup(container, 'Bibliography', bibBtns);
 
-	// ---- AI Tools group ----
+	// ---- AI Tools group (premium) ----
 	const convertTrigger = createDropdownTrigger({
 		icon: 'repeat',
 		tooltip: 'Convert citations (AI)',
-		openFn: (wrapper) => openAIConvertDropdown(plugin, wrapper, ctx),
+		openFn: (wrapper) => {
+			if (!plugin.isPremium) {
+				new PremiumModal(plugin.app, plugin, 'Convert citations (AI)').open();
+				return;
+			}
+			openAIConvertDropdown(plugin, wrapper, ctx);
+		},
 	});
 
 	const linkCitationsBtn = createButton(plugin, {
 		icon: 'external-link',
 		tooltip: 'Link citations to Google Books (AI)',
 		requiresAI: true,
+		requiresPremium: true,
 		action: () => { if (ctx) void aiLinkCitations(plugin, ctx.editor); },
 	});
 
@@ -73,7 +81,7 @@ function openCitationDropdown(
 
 	const title = document.createElement('div');
 	title.className = 'arcadia-dropdown-title';
-	title.textContent = mode === 'footnote' ? 'Footnote Citation Style' : 'Inline Citation Style';
+	title.textContent = mode === 'footnote' ? 'Footnote citation style' : 'Inline citation style';
 	dropdown.appendChild(title);
 
 	for (const [key, style] of Object.entries(CITATION_STYLES)) {

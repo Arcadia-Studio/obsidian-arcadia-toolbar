@@ -1,4 +1,12 @@
-# Arcadia Toolbar v2.0 — Tabbed Ribbon + Pinned TOC
+---
+file-role: arcadia
+status: draft
+notebook: The Study
+created: 2026-05-28
+updated: 2026-05-28
+---
+
+# Arcadia Toolbar v2.0: Tabbed Ribbon + Pinned TOC
 
 ## Overview
 

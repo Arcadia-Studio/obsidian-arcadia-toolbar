@@ -67,8 +67,9 @@ export function applyFontColor(plugin: ArcadiaPluginInterface, editor: Editor, c
 		editor.replaceSelection(`<font color="${color}">${selection}</font>`);
 	} else {
 		const cursor = editor.getCursor();
-		editor.replaceRange(`<font color="${color}"></font>`, cursor);
-		editor.setCursor({ line: cursor.line, ch: cursor.ch + 22 });
+		const openTag = `<font color="${color}">`;
+		editor.replaceRange(`${openTag}</font>`, cursor);
+		editor.setCursor({ line: cursor.line, ch: cursor.ch + openTag.length });
 	}
 }
 
@@ -84,8 +85,9 @@ export function applyBackgroundColor(plugin: ArcadiaPluginInterface, editor: Edi
 		editor.replaceSelection(`<mark style="background:${color}">${selection}</mark>`);
 	} else {
 		const cursor = editor.getCursor();
-		editor.replaceRange(`<mark style="background:${color}"></mark>`, cursor);
-		editor.setCursor({ line: cursor.line, ch: cursor.ch + 30 + color.length });
+		const openTag = `<mark style="background:${color}">`;
+		editor.replaceRange(`${openTag}</mark>`, cursor);
+		editor.setCursor({ line: cursor.line, ch: cursor.ch + openTag.length });
 	}
 }
 
@@ -402,8 +404,9 @@ export function insertVerseHighlight(editor: Editor): void {
 		editor.replaceSelection(`<span class="verse-highlight">${selection}</span>`);
 	} else {
 		const cursor = editor.getCursor();
-		editor.replaceRange('<span class="verse-highlight"></span>', cursor);
-		editor.setCursor({ line: cursor.line, ch: cursor.ch + 33 });
+		const openTag = '<span class="verse-highlight">';
+		editor.replaceRange(`${openTag}</span>`, cursor);
+		editor.setCursor({ line: cursor.line, ch: cursor.ch + openTag.length });
 	}
 }
 

@@ -81,6 +81,42 @@ export function renderTable(rows: string[][]): string {
 // TABLE OPERATIONS
 // ============================================================================
 
+/** Insert an empty row above or below the current row, keeping the header block intact */
+export function addTableRow(editor: Editor, where: 'above' | 'below'): void {
+	const tc = getTableContext(editor);
+	if (!tc) { new Notice('Place cursor inside a table'); return; }
+	const colCount = tc.rows[0].length;
+	const newRow = '| ' + new Array(colCount).fill('   ').join(' | ') + ' |';
+	const firstDataRow = tc.separatorRow === -1 ? 1 : tc.separatorRow + 1;
+	if (where === 'below') {
+		// From the header or separator, insert as the first data row
+		const anchor = Math.max(tc.currentRow, firstDataRow - 1);
+		const insertLine = tc.tableStart + anchor;
+		editor.replaceRange('\n' + newRow, { line: insertLine, ch: editor.getLine(insertLine).length });
+	} else {
+		// Never insert above the header/separator block
+		const anchor = Math.max(tc.currentRow, firstDataRow);
+		const insertLine = tc.tableStart + anchor;
+		editor.replaceRange(newRow + '\n', { line: insertLine, ch: 0 });
+	}
+}
+
+/** Delete the current data row (header and separator rows are protected) */
+export function deleteTableRow(editor: Editor): void {
+	const tc = getTableContext(editor);
+	if (!tc) { new Notice('Place cursor inside a table'); return; }
+	if (tc.currentRow === 0 || tc.currentRow === tc.separatorRow) {
+		new Notice('Cannot delete the header or separator row');
+		return;
+	}
+	const newRows = tc.rows.filter((_, i) => i !== tc.currentRow);
+	editor.replaceRange(
+		renderTable(newRows),
+		{ line: tc.tableStart, ch: 0 },
+		{ line: tc.tableEnd, ch: editor.getLine(tc.tableEnd).length }
+	);
+}
+
 export function setColumnAlignment(editor: Editor, align: 'left' | 'center' | 'right'): void {
 	const tc = getTableContext(editor);
 	if (!tc || tc.separatorRow === -1) { new Notice('Place cursor inside a table with a separator row'); return; }

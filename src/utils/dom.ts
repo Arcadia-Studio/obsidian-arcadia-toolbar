@@ -6,14 +6,22 @@ import type { ArcadiaPluginInterface, EditorContext } from '../types';
  * Each cast is documented with why it is necessary.
  */
 
-/** Check if a community plugin is enabled. Uses private API: app.plugins.enabledPlugins */
+/** Check if a community or core plugin is enabled. Uses private APIs: app.plugins / app.internalPlugins */
 export function isPluginEnabled(plugin: ArcadiaPluginInterface, pluginId: string): boolean {
-	return (plugin.app as unknown as { plugins?: { enabledPlugins?: Set<string> } }).plugins?.enabledPlugins?.has(pluginId) ?? false;
+	const appWithPlugins = plugin.app as unknown as {
+		plugins?: { enabledPlugins?: Set<string> };
+		internalPlugins?: { getEnabledPluginById?: (id: string) => unknown };
+	};
+	if (appWithPlugins.plugins?.enabledPlugins?.has(pluginId)) return true;
+	return Boolean(appWithPlugins.internalPlugins?.getEnabledPluginById?.(pluginId));
 }
 
 /** Execute an Obsidian command by ID. Uses private API: app.commands.executeCommandById */
 export function executeCommand(plugin: ArcadiaPluginInterface, commandId: string): void {
-	(plugin.app as unknown as { commands: { executeCommandById(id: string): void } }).commands.executeCommandById(commandId);
+	const ran = (plugin.app as unknown as { commands: { executeCommandById(id: string): boolean } }).commands.executeCommandById(commandId);
+	if (ran === false) {
+		new Notice('That action is not available right now. The command may require a different view or a plugin that is not enabled.');
+	}
 }
 
 /** Open a command result in a new split leaf */
@@ -62,7 +70,7 @@ export function showWordCountGoal(plugin: ArcadiaPluginInterface, editor: { getV
 	const progress = Math.min(100, Math.round((words / nextTarget) * 100));
 	const bar = '\u2588'.repeat(Math.round(progress / 5)) + '\u2591'.repeat(20 - Math.round(progress / 5));
 	new Notice(
-		`Writing Goal Progress\n` +
+		`Writing goal progress\n` +
 		`Words: ${words.toLocaleString()} / ${nextTarget.toLocaleString()}\n` +
 		`[${bar}] ${progress}%\n` +
 		`Remaining: ${Math.max(0, nextTarget - words).toLocaleString()} words`,
@@ -102,7 +110,7 @@ export function showDocStats(plugin: ArcadiaPluginInterface): void {
 	const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
 	const readingTime = Math.ceil(words / 225);
 	new Notice(
-		`Document Statistics\n` +
+		`Document statistics\n` +
 		`Words: ${words.toLocaleString()}\n` +
 		`Characters: ${chars.toLocaleString()} (${charsNoSpaces.toLocaleString()} without spaces)\n` +
 		`Lines: ${lines.toLocaleString()}\n` +
@@ -142,14 +150,22 @@ export async function createUnresolvedPages(plugin: ArcadiaPluginInterface): Pro
 	}
 
 	let created = 0;
+	let failed = 0;
 	for (const name of unresolvedSet) {
 		const filePath = `${folderPath}/${name}.md`;
 		const exists = plugin.app.vault.getAbstractFileByPath(filePath);
 		if (!exists) {
-			await plugin.app.vault.create(filePath, `# ${name}\n\n`);
-			created++;
+			try {
+				await plugin.app.vault.create(filePath, `# ${name}\n\n`);
+				created++;
+			} catch (err) {
+				// Link names can contain characters or subpaths the vault rejects
+				failed++;
+				console.error(`Arcadia Toolbar: could not create "${filePath}"`, err);
+			}
 		}
 	}
 
-	new Notice(`Created ${created} new page${created !== 1 ? 's' : ''} in "${folderPath}/" folder`);
+	const summary = `Created ${created} new page${created !== 1 ? 's' : ''} in "${folderPath}/" folder`;
+	new Notice(failed > 0 ? `${summary} (${failed} could not be created)` : summary);
 }

@@ -3,6 +3,7 @@ import { BIBLE_TRANSLATIONS } from '../types';
 import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
 import { createDropdownTrigger, positionDropdown, closeDropdowns } from '../components/dropdown';
+import { PremiumModal } from '../premium-modal';
 import {
 	insertScriptureBlock,
 	insertCrossReference,
@@ -13,6 +14,11 @@ import {
 import { setIcon } from 'obsidian';
 
 export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
+	// The theology tab is a premium feature
+	if (!plugin.isPremium) {
+		buildLockedPanel(plugin, container);
+		return;
+	}
 	// ---- Scripture dropdown ----
 	const scriptureTrigger = createDropdownTrigger({
 		icon: 'book-open',
@@ -26,7 +32,7 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	const refBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'git-branch',
-			tooltip: 'Insert cross-Reference',
+			tooltip: 'Insert cross-reference',
 			action: () => {
 				const activeCtx = ctx || plugin.getActiveEditor();
 				if (activeCtx) insertCrossReference(activeCtx.editor);
@@ -108,6 +114,33 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 	addGroup(container, 'Hover lookup', hoverBtns);
 }
 
+function buildLockedPanel(plugin: ArcadiaPluginInterface, container: HTMLElement): void {
+	const panel = document.createElement('div');
+	panel.className = 'arcadia-premium-panel';
+
+	const iconEl = document.createElement('span');
+	iconEl.className = 'arcadia-premium-panel-icon';
+	setIcon(iconEl, 'lock');
+	panel.appendChild(iconEl);
+
+	const textEl = document.createElement('span');
+	textEl.className = 'arcadia-premium-panel-text';
+	textEl.textContent = 'The theology tab (scripture blocks, hover lookup, commentary) is a premium feature.';
+	panel.appendChild(textEl);
+
+	const unlockBtn = document.createElement('button');
+	unlockBtn.className = 'arcadia-btn arcadia-premium-panel-btn';
+	unlockBtn.textContent = 'Unlock premium';
+	unlockBtn.addEventListener('click', (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		new PremiumModal(plugin.app, plugin, 'Theology tab').open();
+	});
+	panel.appendChild(unlockBtn);
+
+	container.appendChild(panel);
+}
+
 function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
@@ -138,7 +171,7 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 	setIcon(insertIcon, 'book-open');
 	insertItem.appendChild(insertIcon);
 	const insertText = document.createElement('span');
-	insertText.textContent = `Insert Block (${plugin.settings.scriptureTranslation})`;
+	insertText.textContent = `Insert block (${plugin.settings.scriptureTranslation})`;
 	insertItem.appendChild(insertText);
 	insertItem.addEventListener('click', (e) => {
 		e.preventDefault();

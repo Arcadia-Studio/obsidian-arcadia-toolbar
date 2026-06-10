@@ -2,6 +2,25 @@ import { requestUrl } from 'obsidian';
 import type { ArcadiaPluginInterface, ParsedScriptureRef } from '../types';
 import { BOOK_LOOKUP, SCRIPTURE_REF_REGEX, COMMENTARIES, BIBLE_DICTIONARIES } from '../types';
 
+/** Cap the in-memory lookup cache so long sessions do not grow unbounded */
+const MAX_CACHE_ENTRIES = 200;
+
+function cacheSet(plugin: ArcadiaPluginInterface, key: string, value: string): void {
+	if (plugin.scriptureCache.size >= MAX_CACHE_ENTRIES) {
+		const oldest = plugin.scriptureCache.keys().next().value;
+		if (oldest !== undefined) plugin.scriptureCache.delete(oldest);
+	}
+	plugin.scriptureCache.set(key, value);
+}
+
+function escapeHtml(text: string): string {
+	return text
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+}
+
 export function parseScriptureRef(text: string): ParsedScriptureRef | null {
 	SCRIPTURE_REF_REGEX.lastIndex = 0;
 	const m = SCRIPTURE_REF_REGEX.exec(text);
@@ -41,19 +60,18 @@ export async function fetchBibleText(plugin: ArcadiaPluginInterface, ref: Parsed
 		let result = '';
 		if (data.verses && data.verses.length > 0) {
 			result = data.verses.map((v: { verse: number; text: string }) =>
-				`<b>${v.verse}</b> ${v.text.trim()}`
+				`<b>${v.verse}</b> ${escapeHtml(v.text.trim())}`
 			).join(' ');
 		} else if (data.text) {
-			result = data.text.trim();
+			result = escapeHtml(data.text.trim());
 		}
 
-		const formatted = `<div class="arcadia-popup-source">${data.translation_name || trans.toUpperCase()}</div>${result}`;
-		plugin.scriptureCache.set(cacheKey, formatted);
+		const formatted = `<div class="arcadia-popup-source">${escapeHtml(data.translation_name || trans.toUpperCase())}</div>${result}`;
+		cacheSet(plugin, cacheKey, formatted);
 		return formatted;
 	} catch (err: unknown) {
-		// BUG FIX: Do NOT cache error responses
-		const fallback = `Could not fetch verse: ${(err as Error).message}`;
-		return fallback;
+		// Do not cache error responses
+		return `Could not fetch verse: ${(err as Error).message}`;
 	}
 }
 
@@ -73,20 +91,19 @@ export async function fetchCommentary(plugin: ArcadiaPluginInterface, ref: Parse
 			const url = `https://biblehub.com/commentaries/${commentary.hubKey}/${ref.hubPath}/${ref.chapter}.htm`;
 			const resp = await requestUrl({ url });
 			chapterHtml = resp.text;
-			plugin.scriptureCache.set(chapterCacheKey, chapterHtml);
+			cacheSet(plugin, chapterCacheKey, chapterHtml);
 		}
 
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(chapterHtml, 'text/html');
 
 		const verseText = extractVerseCommentary(doc, ref.verse);
-		const formatted = `<div class="arcadia-popup-source">${commentary.name}</div>${verseText}`;
-		plugin.scriptureCache.set(cacheKey, formatted);
+		const formatted = `<div class="arcadia-popup-source">${escapeHtml(commentary.name)}</div>${verseText}`;
+		cacheSet(plugin, cacheKey, formatted);
 		return formatted;
 	} catch (err: unknown) {
-		// BUG FIX: Do NOT cache error responses
-		const fallback = `Could not fetch commentary: ${(err as Error).message}`;
-		return fallback;
+		// Do not cache error responses
+		return `Could not fetch commentary: ${(err as Error).message}`;
 	}
 }
 
@@ -112,7 +129,9 @@ function extractVerseCommentary(doc: Document, verse: number): string {
 		text = text
 			.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
 			.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+			.replace(/<(?:iframe|object|embed|form|input|link|meta)[^>]*>/gi, '')
 			.replace(/<img[^>]*>/gi, '')
+			.replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
 			.replace(/class="[^"]*"/gi, '')
 			.replace(/style="[^"]*"/gi, '')
 			.replace(/id="[^"]*"/gi, '')
@@ -143,12 +162,12 @@ export async function fetchDictionary(plugin: ArcadiaPluginInterface, ref: Parse
 	try {
 		await fetchBibleText(plugin, ref);
 
-		const result = `<div class="arcadia-popup-source">${dict.name}</div>` +
+		const result = `<div class="arcadia-popup-source">${escapeHtml(dict.name)}</div>` +
 			`<em>Dictionary lookup for ${ref.canonical} ${ref.chapter}:${ref.verse}</em><br><br>` +
 			`<small>Tip: Dictionary mode works best with an AI API key configured. ` +
 			`Enable AI in settings for automatic term identification and lookup.</small>`;
 
-		plugin.scriptureCache.set(cacheKey, result);
+		cacheSet(plugin, cacheKey, result);
 		return result;
 	} catch (err: unknown) {
 		return `Could not fetch dictionary: ${(err as Error).message}`;

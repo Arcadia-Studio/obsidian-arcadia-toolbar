@@ -1,17 +1,27 @@
-import { Command, Editor, Notice } from 'obsidian';
+import { Command, Editor } from 'obsidian';
 import type { ArcadiaPluginInterface } from '../types';
 import * as ec from '../features/editor-commands';
 import * as so from '../features/slide-operations';
 import * as ai from '../features/ai-integration';
-import { getTableContext, renderTable, setColumnAlignment, sortTableColumn, csvToTable, tableToCsv, transposeTable, numberTableRows, filterTableRows, clearTableFilter } from '../features/table-operations';
+import { addTableRow, deleteTableRow, setColumnAlignment, sortTableColumn, csvToTable, tableToCsv, transposeTable, numberTableRows, filterTableRows, clearTableFilter } from '../features/table-operations';
 import { readAloud, stopSpeaking, showDocStats, createUnresolvedPages } from './dom';
+import { PremiumModal } from '../premium-modal';
 
 export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: (cmd: Command) => Command }): void {
 	const p = plugin;
 
+	/** Wrap a premium editor action: free users get the upgrade modal instead */
+	const premiumEditorAction = (featureName: string, action: (e: Editor) => void) => (e: Editor): void => {
+		if (!p.isPremium) {
+			new PremiumModal(p.app, p, featureName).open();
+			return;
+		}
+		action(e);
+	};
+
 	// Undo/Redo
-	p.addCommand({ id: 'undo', name: 'Undo', editorCallback: (e: Editor) => (e as unknown as { undo(): void }).undo() });
-	p.addCommand({ id: 'redo', name: 'Redo', editorCallback: (e: Editor) => (e as unknown as { redo(): void }).redo() });
+	p.addCommand({ id: 'undo', name: 'Undo', editorCallback: (e: Editor) => e.undo() });
+	p.addCommand({ id: 'redo', name: 'Redo', editorCallback: (e: Editor) => e.redo() });
 
 	// Text formatting
 	p.addCommand({ id: 'toggle-bold', name: 'Toggle bold', editorCallback: (e: Editor) => ec.toggleWrap(e, '**') });
@@ -48,15 +58,15 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'insert-horizontal-rule', name: 'Insert horizontal rule', editorCallback: (e: Editor) => ec.insertHorizontalRule(e) });
 	p.addCommand({ id: 'insert-callout', name: 'Insert callout', editorCallback: (e: Editor) => ec.insertCallout(e) });
 	p.addCommand({ id: 'insert-footnote', name: 'Insert footnote', editorCallback: (e: Editor) => ec.insertFootnote(e) });
-	p.addCommand({ id: 'insert-scripture', name: 'Insert scripture block', editorCallback: (e: Editor) => ec.insertScriptureBlock(p, e) });
+	p.addCommand({ id: 'insert-scripture', name: 'Insert scripture block', editorCallback: premiumEditorAction('Insert scripture block', (e) => ec.insertScriptureBlock(p, e)) });
 
 	// Math & Embeds
 	p.addCommand({ id: 'insert-latex-block', name: 'Insert LaTeX block', editorCallback: (e: Editor) => ec.insertLatexBlock(e) });
 	p.addCommand({ id: 'insert-inline-math', name: 'Insert inline math', editorCallback: (e: Editor) => ec.insertInlineMath(e) });
 	p.addCommand({ id: 'insert-file-embed', name: 'Insert file embed', editorCallback: (e: Editor) => ec.insertFileEmbed(e) });
 	p.addCommand({ id: 'insert-mermaid', name: 'Insert Mermaid diagram', editorCallback: (e: Editor) => ec.insertMermaidBlock(e) });
-	p.addCommand({ id: 'insert-plantuml', name: 'Insert plantuml block', editorCallback: (e: Editor) => ec.insertPlantUMLBlock(e) });
-	p.addCommand({ id: 'insert-template', name: 'Insert template', callback: () => plugin.executeCommand('templates:insert-template') });
+	p.addCommand({ id: 'insert-plantuml', name: 'Insert PlantUML block', editorCallback: (e: Editor) => ec.insertPlantUMLBlock(e) });
+	p.addCommand({ id: 'insert-template', name: 'Insert template', callback: () => plugin.executeCommand('insert-template') });
 
 	// Slides
 	p.addCommand({ id: 'insert-slide-separator', name: 'Insert slide separator', editorCallback: (e: Editor) => so.insertSlideSeparator(e) });
@@ -66,20 +76,20 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'insert-slide-background', name: 'Insert slide background', editorCallback: (e: Editor) => so.insertSlideBackground(e) });
 
 	// References
-	p.addCommand({ id: 'cite-turabian', name: 'Insert turabian citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'turabian') });
-	p.addCommand({ id: 'cite-chicago', name: 'Insert chicago citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'chicago') });
-	p.addCommand({ id: 'cite-apa-inline', name: 'Insert apa inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'apa') });
-	p.addCommand({ id: 'cite-mla-inline', name: 'Insert mla inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'mla') });
+	p.addCommand({ id: 'cite-turabian', name: 'Insert Turabian citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'turabian') });
+	p.addCommand({ id: 'cite-chicago', name: 'Insert Chicago citation', editorCallback: (e: Editor) => ec.insertCitationFootnote(e, 'chicago') });
+	p.addCommand({ id: 'cite-apa-inline', name: 'Insert APA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'apa') });
+	p.addCommand({ id: 'cite-mla-inline', name: 'Insert MLA inline citation', editorCallback: (e: Editor) => ec.insertInlineCitation(e, 'mla') });
 	p.addCommand({ id: 'generate-bibliography', name: 'Generate bibliography', editorCallback: (e: Editor) => ec.generateBibliography(e) });
 	p.addCommand({ id: 'create-missing-pages', name: 'Create missing pages', callback: () => { void createUnresolvedPages(p); } });
 
-	// AI-powered
-	p.addCommand({ id: 'ai-convert-citations-turabian', name: 'AI: convert citations to turabian', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'turabian'); } });
-	p.addCommand({ id: 'ai-convert-citations-chicago', name: 'AI: convert citations to chicago', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'chicago'); } });
-	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: convert citations to apa', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); } });
-	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: convert citations to mla', editorCallback: (e: Editor) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); } });
-	p.addCommand({ id: 'ai-link-citations', name: 'AI: link citations to google books', editorCallback: (e: Editor) => { void ai.aiLinkCitations(p, e); } });
-	p.addCommand({ id: 'ai-notes-to-slides', name: 'AI: convert notes to slides', editorCallback: (e: Editor) => { void ai.aiNotesToSlides(p, e); } });
+	// AI-powered (premium)
+	p.addCommand({ id: 'ai-convert-citations-turabian', name: 'AI: convert citations to Turabian', editorCallback: premiumEditorAction('AI: convert citations', (e) => { void ai.aiConvertCitationsInDocument(p, e, 'turabian'); }) });
+	p.addCommand({ id: 'ai-convert-citations-chicago', name: 'AI: convert citations to Chicago', editorCallback: premiumEditorAction('AI: convert citations', (e) => { void ai.aiConvertCitationsInDocument(p, e, 'chicago'); }) });
+	p.addCommand({ id: 'ai-convert-citations-apa', name: 'AI: convert citations to APA', editorCallback: premiumEditorAction('AI: convert citations', (e) => { void ai.aiConvertCitationsInDocument(p, e, 'apa'); }) });
+	p.addCommand({ id: 'ai-convert-citations-mla', name: 'AI: convert citations to MLA', editorCallback: premiumEditorAction('AI: convert citations', (e) => { void ai.aiConvertCitationsInDocument(p, e, 'mla'); }) });
+	p.addCommand({ id: 'ai-link-citations', name: 'AI: link citations to Google Books', editorCallback: premiumEditorAction('AI: link citations', (e) => { void ai.aiLinkCitations(p, e); }) });
+	p.addCommand({ id: 'ai-notes-to-slides', name: 'AI: convert notes to slides', editorCallback: premiumEditorAction('AI: convert notes to slides', (e) => { void ai.aiNotesToSlides(p, e); }) });
 
 	// View
 	p.addCommand({ id: 'zoom-in', name: 'Zoom in', callback: () => p.executeCommand('window:zoom-in') });
@@ -104,21 +114,9 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'doc-stats', name: 'Document statistics', callback: () => showDocStats(p) });
 
 	// Data tab
-	p.addCommand({ id: 'table-add-row', name: 'Table: add row below', editorCallback: (e: Editor) => {
-		const tc = getTableContext(e);
-		if (!tc) { new Notice('Place cursor inside a table'); return; }
-		const colCount = tc.rows[0].length;
-		const newRow = '| ' + new Array(colCount).fill('   ').join(' | ') + ' |';
-		const insertLine = tc.tableStart + tc.currentRow;
-		e.replaceRange('\n' + newRow, { line: insertLine, ch: e.getLine(insertLine).length });
-	}});
-	p.addCommand({ id: 'table-delete-row', name: 'Table: delete current row', editorCallback: (e: Editor) => {
-		const tc = getTableContext(e);
-		if (!tc) return;
-		if (tc.currentRow === 0 || tc.currentRow === tc.separatorRow) return;
-		const newRows = tc.rows.filter((_, i) => i !== tc.currentRow);
-		e.replaceRange(renderTable(newRows), { line: tc.tableStart, ch: 0 }, { line: tc.tableEnd, ch: e.getLine(tc.tableEnd).length });
-	}});
+	p.addCommand({ id: 'table-add-row', name: 'Table: add row below', editorCallback: (e: Editor) => addTableRow(e, 'below') });
+	p.addCommand({ id: 'table-add-row-above', name: 'Table: add row above', editorCallback: (e: Editor) => addTableRow(e, 'above') });
+	p.addCommand({ id: 'table-delete-row', name: 'Table: delete current row', editorCallback: (e: Editor) => deleteTableRow(e) });
 	p.addCommand({ id: 'table-align-left', name: 'Table: align column left', editorCallback: (e: Editor) => setColumnAlignment(e, 'left') });
 	p.addCommand({ id: 'table-align-center', name: 'Table: align column center', editorCallback: (e: Editor) => setColumnAlignment(e, 'center') });
 	p.addCommand({ id: 'table-align-right', name: 'Table: align column right', editorCallback: (e: Editor) => setColumnAlignment(e, 'right') });
@@ -130,7 +128,7 @@ export function registerCommands(plugin: ArcadiaPluginInterface & { addCommand: 
 	p.addCommand({ id: 'number-rows', name: 'Number table rows', editorCallback: (e: Editor) => numberTableRows(e) });
 	p.addCommand({ id: 'filter-table', name: 'Table: filter rows', editorCallback: (e: Editor) => filterTableRows(p, e) });
 	p.addCommand({ id: 'clear-table-filter', name: 'Table: clear filter', editorCallback: (e: Editor) => clearTableFilter(p, e) });
-	p.addCommand({ id: 'ai-generate-table', name: 'AI: generate table', editorCallback: (e: Editor) => { void ai.aiGenerateTable(p, e); } });
-	p.addCommand({ id: 'ai-fill-table', name: 'AI: fill table data', editorCallback: (e: Editor) => { void ai.aiFillTableData(p, e); } });
-	p.addCommand({ id: 'ai-calc-column', name: 'AI: add calculated column', editorCallback: (e: Editor) => { void ai.aiAddCalculatedColumn(p, e); } });
+	p.addCommand({ id: 'ai-generate-table', name: 'AI: generate table', editorCallback: premiumEditorAction('AI: generate table', (e) => { void ai.aiGenerateTable(p, e); }) });
+	p.addCommand({ id: 'ai-fill-table', name: 'AI: fill table data', editorCallback: premiumEditorAction('AI: fill table data', (e) => { void ai.aiFillTableData(p, e); }) });
+	p.addCommand({ id: 'ai-calc-column', name: 'AI: add calculated column', editorCallback: premiumEditorAction('AI: add calculated column', (e) => { void ai.aiAddCalculatedColumn(p, e); }) });
 }

@@ -25,7 +25,7 @@ export function buildTemplatesTab(plugin: ArcadiaPluginInterface, container: HTM
 		}),
 		createButton(plugin, {
 			icon: 'copy',
-			tooltip: 'Insert template (Core)',
+			tooltip: 'Insert template (core)',
 			action: () => plugin.executeCommand('insert-template'),
 		}),
 	];
@@ -35,7 +35,7 @@ export function buildTemplatesTab(plugin: ArcadiaPluginInterface, container: HTM
 	const dailyBtns: HTMLElement[] = [
 		createButton(plugin, {
 			icon: 'calendar',
-			tooltip: 'Open today\'s Daily Note',
+			tooltip: 'Open today\'s daily note',
 			action: () => plugin.executeCommand('daily-notes'),
 		}),
 		createButton(plugin, {
