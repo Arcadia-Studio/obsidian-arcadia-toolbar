@@ -2,6 +2,19 @@ import { requestUrl, Editor, Notice, TFile } from 'obsidian';
 import type { ArcadiaPluginInterface } from '../types';
 import { AI_PROVIDERS, CITATION_STYLES } from '../types';
 
+// Minimal response shapes for the supported AI provider APIs (only the fields read here).
+interface OpenAIChatResponse {
+	choices: { message: { content: string } }[];
+}
+
+interface AnthropicMessageResponse {
+	content: { text: string }[];
+}
+
+interface GoogleGenerateContentResponse {
+	candidates: { content: { parts: { text: string }[] } }[];
+}
+
 export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Promise<string> {
 	const provider = AI_PROVIDERS[plugin.settings.aiProvider];
 	if (!provider || !plugin.settings.aiApiKey) {
@@ -24,7 +37,8 @@ export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Pr
 				max_tokens: 4096,
 			}),
 		});
-		return resp.json.choices[0].message.content;
+		const data = resp.json as OpenAIChatResponse;
+		return data.choices[0].message.content;
 	}
 
 	if (provider.format === 'anthropic') {
@@ -42,7 +56,8 @@ export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Pr
 				messages: [{ role: 'user', content: prompt }],
 			}),
 		});
-		return resp.json.content[0].text;
+		const data = resp.json as AnthropicMessageResponse;
+		return data.content[0].text;
 	}
 
 	if (provider.format === 'google') {
@@ -54,7 +69,8 @@ export async function callAI(plugin: ArcadiaPluginInterface, prompt: string): Pr
 				contents: [{ parts: [{ text: prompt }] }],
 			}),
 		});
-		return resp.json.candidates[0].content.parts[0].text;
+		const data = resp.json as GoogleGenerateContentResponse;
+		return data.candidates[0].content.parts[0].text;
 	}
 
 	throw new Error(`Unknown AI provider format: ${String((provider as Record<string, unknown>).format)}`);

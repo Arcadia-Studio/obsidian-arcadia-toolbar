@@ -28,6 +28,15 @@ export type LicenseCheckResult =
 	| { outcome: 'invalid'; message: string }
 	| { outcome: 'offline'; message: string };
 
+/** Shape of the Lemon Squeezy license validate response (only the fields read here). */
+interface LemonSqueezyValidateResponse {
+	valid?: boolean;
+	error?: string | null;
+	instance?: { id?: string } | null;
+	meta?: { customer_email?: string } | null;
+	license_key?: { expires_at?: string | null } | null;
+}
+
 export async function validateLicense(licenseKey: string, instanceName = 'obsidian'): Promise<LicenseCheckResult> {
 	try {
 		const response = await requestUrl({
@@ -41,25 +50,22 @@ export async function validateLicense(licenseKey: string, instanceName = 'obsidi
 			throw: false,
 		});
 
-		let data: Record<string, unknown> | null = null;
+		let data: LemonSqueezyValidateResponse | null = null;
 		try {
-			data = response.json as Record<string, unknown>;
+			data = response.json as LemonSqueezyValidateResponse;
 		} catch {
 			data = null;
 		}
 
 		if (data && data.valid === true) {
-			const instance = data.instance as { id?: string } | undefined;
-			const meta = data.meta as { customer_email?: string } | undefined;
-			const keyInfo = data.license_key as { expires_at?: string } | undefined;
 			const now = Date.now();
 			return {
 				outcome: 'valid',
 				status: {
 					valid: true,
-					instanceId: instance?.id,
-					customerEmail: meta?.customer_email,
-					expiresAt: keyInfo?.expires_at ?? undefined,
+					instanceId: data.instance?.id,
+					customerEmail: data.meta?.customer_email,
+					expiresAt: data.license_key?.expires_at ?? undefined,
 					lastChecked: now,
 					lastValidated: now,
 				},

@@ -171,30 +171,19 @@ export function buildSlidesTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 function openLayoutsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Slide layouts';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Slide layouts' });
 
 	for (const layout of SLIDE_LAYOUTS) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, layout.icon);
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = layout.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: layout.name });
 
-		const descSpan = document.createElement('span');
-		descSpan.className = 'arcadia-dropdown-item-hint';
-		descSpan.textContent = layout.desc;
-		item.appendChild(descSpan);
+		item.createSpan({ cls: 'arcadia-dropdown-item-hint', text: layout.desc });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -205,8 +194,6 @@ function openLayoutsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 			}
 			closeDropdowns(plugin);
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);
@@ -215,25 +202,17 @@ function openLayoutsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 function openThemesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Slide theme';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Slide theme' });
 
 	for (const theme of SLIDE_THEMES) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, theme.icon);
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = theme.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: theme.name });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -244,8 +223,6 @@ function openThemesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement,
 			}
 			closeDropdowns(plugin);
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

@@ -5,7 +5,7 @@ import { createDropdownTrigger, positionDropdown, closeDropdowns } from '../comp
 import { getRecentFiles } from '../utils/dom';
 import { setIcon } from 'obsidian';
 
-export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
+export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTMLElement, _ctx: EditorContext | null): void {
 	// ---- Search group ----
 	const searchBtns: HTMLElement[] = [
 		createButton(plugin, {
@@ -126,38 +126,27 @@ export function buildNavigateTab(plugin: ArcadiaPluginInterface, container: HTML
 function openRecentFilesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu arcadia-recent-files-dropdown';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu arcadia-recent-files-dropdown' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Recent files';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Recent files' });
 
 	const recentFiles = getRecentFiles(plugin);
 	const filesToShow = recentFiles.slice(0, 15);
 
 	if (filesToShow.length === 0) {
-		const emptyEl = document.createElement('div');
-		emptyEl.className = 'arcadia-dropdown-empty';
-		emptyEl.textContent = 'No recent files';
-		dropdown.appendChild(emptyEl);
+		dropdown.createDiv({ cls: 'arcadia-dropdown-empty', text: 'No recent files' });
 	} else {
 		for (const filePath of filesToShow) {
-			const item = document.createElement('button');
-			item.className = 'arcadia-dropdown-item';
+			const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-			const iconSpan = document.createElement('span');
+			const iconSpan = item.createSpan();
 			setIcon(iconSpan, 'file-text');
-			item.appendChild(iconSpan);
 
-			const nameSpan = document.createElement('span');
 			// Show just the file name, not the full path
 			const parts = filePath.split('/');
 			const fileName = parts[parts.length - 1].replace(/\.md$/, '');
-			nameSpan.textContent = fileName;
+			const nameSpan = item.createSpan({ text: fileName });
 			nameSpan.setAttribute('title', filePath);
-			item.appendChild(nameSpan);
 
 			item.addEventListener('click', (e) => {
 				e.preventDefault();
@@ -168,8 +157,6 @@ function openRecentFilesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEle
 				}
 				closeDropdowns(plugin);
 			});
-
-			dropdown.appendChild(item);
 		}
 	}
 

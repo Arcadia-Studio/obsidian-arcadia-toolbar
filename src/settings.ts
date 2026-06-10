@@ -157,10 +157,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 			const provider = AI_PROVIDERS[this.plugin.settings.aiProvider];
 			if (provider) {
 				for (const m of provider.models) {
-					const opt = document.createElement('option');
-					opt.value = m;
-					opt.textContent = m;
-					modelDropdown.appendChild(opt);
+					modelDropdown.createEl('option', { value: m, text: m });
 				}
 				if (provider.models.includes(this.plugin.settings.aiModel)) {
 					modelDropdown.value = this.plugin.settings.aiModel;
@@ -169,10 +166,7 @@ export class ArcadiaToolbarSettingTab extends PluginSettingTab {
 					this.plugin.settings.aiModel = provider.models[0];
 				}
 			} else {
-				const opt = document.createElement('option');
-				opt.value = '';
-				opt.textContent = 'Select a provider first';
-				modelDropdown.appendChild(opt);
+				modelDropdown.createEl('option', { value: '', text: 'Select a provider first' });
 			}
 		};
 

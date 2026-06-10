@@ -431,7 +431,7 @@ export interface ArcadiaPluginInterface {
 	toolbarEl: HTMLElement | null;
 	activeDropdown: HTMLElement | null;
 	scripturePopupEl: HTMLElement | null;
-	hoverTimeout: ReturnType<typeof setTimeout> | null;
+	hoverTimeout: number | null;
 	scriptureCache: Map<string, string>;
 	_filteredTableBackup: { start: number; end: number; original: string } | null;
 

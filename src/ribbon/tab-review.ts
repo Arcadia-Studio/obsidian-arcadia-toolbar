@@ -9,7 +9,7 @@ import {
 	createUnresolvedPages,
 } from '../utils/dom';
 
-export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
+export function buildReviewTab(plugin: ArcadiaPluginInterface, container: HTMLElement, _ctx: EditorContext | null): void {
 	// ---- Proofing group ----
 	const proofingBtns: HTMLElement[] = [
 		createButton(plugin, {

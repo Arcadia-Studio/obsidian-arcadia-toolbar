@@ -384,7 +384,7 @@ var init_table_operations = __esm({
             this.onSubmit(this.result);
           }
         });
-        const btnContainer = contentEl.createEl("div", { cls: "modal-button-container" });
+        const btnContainer = contentEl.createDiv({ cls: "modal-button-container" });
         const submitBtn = btnContainer.createEl("button", { text: "Filter", cls: "mod-cta" });
         submitBtn.addEventListener("click", () => {
           this.close();
@@ -392,7 +392,7 @@ var init_table_operations = __esm({
         });
         const cancelBtn = btnContainer.createEl("button", { text: "Cancel" });
         cancelBtn.addEventListener("click", () => this.close());
-        setTimeout(() => inputEl.focus(), 10);
+        activeWindow.setTimeout(() => inputEl.focus(), 10);
       }
       onClose() {
         this.contentEl.empty();
@@ -868,40 +868,40 @@ var ArcadiaTOCView = class extends import_obsidian.ItemView {
     content.empty();
     const activeView = this.app.workspace.getActiveViewOfType(import_obsidian.MarkdownView);
     if (!activeView || !activeView.file) {
-      const empty = content.createEl("div", { cls: "arcadia-toc-empty" });
-      const iconContainer = empty.createEl("div", { cls: "arcadia-toc-empty-icon" });
+      const empty = content.createDiv({ cls: "arcadia-toc-empty" });
+      const iconContainer = empty.createDiv({ cls: "arcadia-toc-empty-icon" });
       (0, import_obsidian.setIcon)(iconContainer, "file-text");
-      empty.createEl("div", { text: "Open a document to see its outline", cls: "arcadia-toc-empty-text" });
+      empty.createDiv({ text: "Open a document to see its outline", cls: "arcadia-toc-empty-text" });
       return;
     }
-    const header = content.createEl("div", { cls: "arcadia-toc-header" });
-    const titleRow = header.createEl("div", { cls: "arcadia-toc-title-row" });
-    const iconEl = titleRow.createEl("span", { cls: "arcadia-toc-header-icon" });
+    const header = content.createDiv({ cls: "arcadia-toc-header" });
+    const titleRow = header.createDiv({ cls: "arcadia-toc-title-row" });
+    const iconEl = titleRow.createSpan({ cls: "arcadia-toc-header-icon" });
     (0, import_obsidian.setIcon)(iconEl, "list-tree");
-    titleRow.createEl("span", { text: "Contents", cls: "arcadia-toc-title" });
-    header.createEl("div", {
+    titleRow.createSpan({ text: "Contents", cls: "arcadia-toc-title" });
+    header.createDiv({
       text: activeView.file.basename,
       cls: "arcadia-toc-filename"
     });
     const cache = this.app.metadataCache.getFileCache(activeView.file);
     if (!(cache == null ? void 0 : cache.headings) || cache.headings.length === 0) {
-      const empty = content.createEl("div", { cls: "arcadia-toc-empty" });
-      empty.createEl("div", { text: "No headings in this document", cls: "arcadia-toc-empty-text" });
+      const empty = content.createDiv({ cls: "arcadia-toc-empty" });
+      empty.createDiv({ text: "No headings in this document", cls: "arcadia-toc-empty-text" });
       return;
     }
     const editor = activeView.editor;
     const cursorLine = editor.getCursor().line;
-    const list = content.createEl("div", { cls: "arcadia-toc-list" });
+    const list = content.createDiv({ cls: "arcadia-toc-list" });
     for (let i = 0; i < cache.headings.length; i++) {
       const heading = cache.headings[i];
       const nextLine = i + 1 < cache.headings.length ? cache.headings[i + 1].position.start.line : Infinity;
       const isActive = cursorLine >= heading.position.start.line && cursorLine < nextLine;
-      const item = list.createEl("div", {
+      const item = list.createDiv({
         cls: `arcadia-toc-item arcadia-toc-level-${heading.level}${isActive ? " arcadia-toc-active" : ""}`
       });
-      const bullet = item.createEl("span", { cls: "arcadia-toc-bullet" });
+      const bullet = item.createSpan({ cls: "arcadia-toc-bullet" });
       bullet.textContent = heading.level <= 2 ? "\u25CF" : "\u25CB";
-      item.createEl("span", { text: heading.heading, cls: "arcadia-toc-text" });
+      item.createSpan({ text: heading.heading, cls: "arcadia-toc-text" });
       item.addEventListener("click", () => {
         const line = heading.position.start.line;
         editor.setCursor(line, 0);
@@ -926,7 +926,7 @@ var import_obsidian2 = require("obsidian");
 var LICENSE_CACHE_DURATION = 24 * 60 * 60 * 1e3;
 var OFFLINE_GRACE_PERIOD = 30 * 24 * 60 * 60 * 1e3;
 async function validateLicense(licenseKey, instanceName = "obsidian") {
-  var _a;
+  var _a, _b, _c, _d;
   try {
     const response = await (0, import_obsidian2.requestUrl)({
       url: "https://api.lemonsqueezy.com/v1/licenses/validate",
@@ -945,17 +945,14 @@ async function validateLicense(licenseKey, instanceName = "obsidian") {
       data = null;
     }
     if (data && data.valid === true) {
-      const instance = data.instance;
-      const meta = data.meta;
-      const keyInfo = data.license_key;
       const now = Date.now();
       return {
         outcome: "valid",
         status: {
           valid: true,
-          instanceId: instance == null ? void 0 : instance.id,
-          customerEmail: meta == null ? void 0 : meta.customer_email,
-          expiresAt: (_a = keyInfo == null ? void 0 : keyInfo.expires_at) != null ? _a : void 0,
+          instanceId: (_a = data.instance) == null ? void 0 : _a.id,
+          customerEmail: (_b = data.meta) == null ? void 0 : _b.customer_email,
+          expiresAt: (_d = (_c = data.license_key) == null ? void 0 : _c.expires_at) != null ? _d : void 0,
           lastChecked: now,
           lastValidated: now
         }
@@ -1091,10 +1088,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
       const provider = AI_PROVIDERS[this.plugin.settings.aiProvider];
       if (provider) {
         for (const m of provider.models) {
-          const opt = document.createElement("option");
-          opt.value = m;
-          opt.textContent = m;
-          modelDropdown.appendChild(opt);
+          modelDropdown.createEl("option", { value: m, text: m });
         }
         if (provider.models.includes(this.plugin.settings.aiModel)) {
           modelDropdown.value = this.plugin.settings.aiModel;
@@ -1103,10 +1097,7 @@ var ArcadiaToolbarSettingTab = class extends import_obsidian3.PluginSettingTab {
           this.plugin.settings.aiModel = provider.models[0];
         }
       } else {
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "Select a provider first";
-        modelDropdown.appendChild(opt);
+        modelDropdown.createEl("option", { value: "", text: "Select a provider first" });
       }
     };
     new import_obsidian3.Setting(containerEl).setName("AI provider").setDesc("Choose your AI service provider").addDropdown((d) => {
@@ -1237,7 +1228,7 @@ function getRecentFiles(plugin) {
 function getUnresolvedLinks(plugin) {
   return plugin.app.metadataCache.unresolvedLinks || null;
 }
-function showWordCountGoal(plugin, editor) {
+function showWordCountGoal(_plugin, editor) {
   const text = editor.getValue();
   const words = text.trim().split(/\s+/).filter((w) => w.length > 0).length;
   const targets = [250, 500, 750, 1e3, 1500, 2e3, 3e3, 5e3, 1e4];
@@ -1430,8 +1421,7 @@ function createButton(plugin, options) {
       disabledReason = " (requires AI API key, configure in settings)";
   }
   const locked = requiresPremium === true && !plugin.isPremium;
-  const el = document.createElement("button");
-  el.className = "arcadia-btn";
+  const el = createEl("button", { cls: "arcadia-btn" });
   if (!enabled && !locked) {
     el.classList.add("arcadia-btn-disabled");
   }
@@ -1452,10 +1442,7 @@ function createButton(plugin, options) {
   }
   (0, import_obsidian6.setIcon)(el, icon);
   if (label) {
-    const labelEl = document.createElement("span");
-    labelEl.className = "arcadia-btn-label";
-    labelEl.textContent = label;
-    el.appendChild(labelEl);
+    el.createSpan({ cls: "arcadia-btn-label", text: label });
   }
   if (locked) {
     el.addEventListener("click", (e) => {
@@ -1477,56 +1464,38 @@ function createButton(plugin, options) {
 
 // src/components/group.ts
 function addGroup(container, label, buttons) {
-  const group = document.createElement("div");
-  group.className = "arcadia-group";
-  const buttonsRow = document.createElement("div");
-  buttonsRow.className = "arcadia-group-buttons";
+  const group = container.createDiv({ cls: "arcadia-group" });
+  const buttonsRow = group.createDiv({ cls: "arcadia-group-buttons" });
   for (const btn of buttons) {
     buttonsRow.appendChild(btn);
   }
-  group.appendChild(buttonsRow);
-  const labelEl = document.createElement("div");
-  labelEl.className = "arcadia-group-label";
-  labelEl.textContent = label;
-  group.appendChild(labelEl);
-  const sep = document.createElement("div");
-  sep.className = "arcadia-group-separator";
-  container.appendChild(group);
-  container.appendChild(sep);
+  group.createDiv({ cls: "arcadia-group-label", text: label });
+  container.createDiv({ cls: "arcadia-group-separator" });
   return group;
 }
 
 // src/components/dropdown.ts
 var import_obsidian7 = require("obsidian");
 function createDropdownTrigger(options) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "arcadia-dropdown-wrapper";
-  const btnEl = document.createElement("button");
-  btnEl.className = "arcadia-btn";
+  const wrapper = createDiv({ cls: "arcadia-dropdown-wrapper" });
+  const btnEl = wrapper.createEl("button", { cls: "arcadia-btn" });
   btnEl.setAttribute("title", options.tooltip);
-  const iconSpan = document.createElement("span");
+  const iconSpan = btnEl.createSpan();
   (0, import_obsidian7.setIcon)(iconSpan, options.icon);
-  btnEl.appendChild(iconSpan);
   if (options.label) {
-    const labelEl = document.createElement("span");
-    labelEl.className = "arcadia-btn-label";
-    labelEl.textContent = options.label;
-    btnEl.appendChild(labelEl);
+    btnEl.createSpan({ cls: "arcadia-btn-label", text: options.label });
   }
-  const arrow = document.createElement("span");
-  arrow.className = "arcadia-dropdown-arrow";
+  const arrow = btnEl.createSpan({ cls: "arcadia-dropdown-arrow" });
   (0, import_obsidian7.setIcon)(arrow, "chevron-down");
-  btnEl.appendChild(arrow);
   btnEl.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     options.openFn(wrapper);
   });
-  wrapper.appendChild(btnEl);
   return wrapper;
 }
 function positionDropdown(plugin, dropdown, anchor) {
-  document.body.appendChild(dropdown);
+  activeDocument.body.appendChild(dropdown);
   plugin.activeDropdown = dropdown;
   const rect = anchor.getBoundingClientRect();
   dropdown.style.top = `${rect.bottom + 4}px`;
@@ -2004,45 +1973,33 @@ var CITATION_STYLES_LOCAL = CITATION_STYLES;
 // src/components/color-picker.ts
 var import_obsidian9 = require("obsidian");
 function addColorButton(plugin, group, type, iconName, tooltip, currentColor, ctx) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "arcadia-dropdown-wrapper";
-  const btnEl = document.createElement("button");
-  btnEl.className = "arcadia-btn arcadia-color-btn";
+  const wrapper = createDiv({ cls: "arcadia-dropdown-wrapper" });
+  const btnEl = wrapper.createEl("button", { cls: "arcadia-btn arcadia-color-btn" });
   btnEl.setAttribute("title", tooltip);
-  const iconSpan = document.createElement("span");
-  iconSpan.className = "arcadia-color-icon";
+  const iconSpan = btnEl.createSpan({ cls: "arcadia-color-icon" });
   (0, import_obsidian9.setIcon)(iconSpan, iconName);
-  btnEl.appendChild(iconSpan);
-  const bar = document.createElement("span");
-  bar.className = "arcadia-color-bar";
+  const bar = btnEl.createSpan({ cls: "arcadia-color-bar" });
   bar.style.setProperty("--arcadia-color-bar-bg", currentColor === "transparent" ? "#ccc" : currentColor);
-  btnEl.appendChild(bar);
-  const arrow = document.createElement("span");
-  arrow.className = "arcadia-dropdown-arrow";
+  const arrow = btnEl.createSpan({ cls: "arcadia-dropdown-arrow" });
   (0, import_obsidian9.setIcon)(arrow, "chevron-down");
-  btnEl.appendChild(arrow);
   btnEl.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     openColorDropdown(plugin, wrapper, type, ctx);
   });
-  wrapper.appendChild(btnEl);
   group.querySelector(".arcadia-group-buttons").appendChild(wrapper);
 }
 function openColorDropdown(plugin, wrapper, type, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = type === "font-color" ? "Font color" : "Background color";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({
+    cls: "arcadia-dropdown-title",
+    text: type === "font-color" ? "Font color" : "Background color"
+  });
   const colors = type === "font-color" ? FONT_COLORS : BACKGROUND_COLORS;
-  const grid = document.createElement("div");
-  grid.className = "arcadia-color-grid";
+  const grid = dropdown.createDiv({ cls: "arcadia-color-grid" });
   for (const color of colors) {
-    const swatch = document.createElement("button");
-    swatch.className = "arcadia-color-swatch";
+    const swatch = grid.createEl("button", { cls: "arcadia-color-swatch" });
     if (color === "transparent") {
       swatch.textContent = "\u2715";
       swatch.addClass("arcadia-color-swatch-transparent");
@@ -2061,9 +2018,7 @@ function openColorDropdown(plugin, wrapper, type, ctx) {
       closeDropdowns(plugin);
       plugin.updateToolbar();
     });
-    grid.appendChild(swatch);
   }
-  dropdown.appendChild(grid);
   positionDropdown(plugin, dropdown, wrapper);
 }
 
@@ -2199,12 +2154,8 @@ function buildHomeTab(plugin, container, ctx) {
 }
 function openHeadingDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Heading style";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Heading style" });
   const levels = [
     { level: 1, label: "Heading 1" },
     { level: 2, label: "Heading 2" },
@@ -2214,14 +2165,10 @@ function openHeadingDropdown(plugin, anchor, ctx) {
     { level: 6, label: "Heading 6" }
   ];
   for (const { level, label } of levels) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian10.setIcon)(iconSpan, "heading");
-    item.appendChild(iconSpan);
-    const text = document.createElement("span");
-    text.textContent = label;
-    item.appendChild(text);
+    item.createSpan({ text: label });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -2229,19 +2176,12 @@ function openHeadingDropdown(plugin, anchor, ctx) {
         insertHeading(ctx.editor, level);
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
-  const divider = document.createElement("div");
-  divider.className = "arcadia-dropdown-divider";
-  dropdown.appendChild(divider);
-  const removeItem = document.createElement("button");
-  removeItem.className = "arcadia-dropdown-item";
-  const removeIcon = document.createElement("span");
+  dropdown.createDiv({ cls: "arcadia-dropdown-divider" });
+  const removeItem = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+  const removeIcon = removeItem.createSpan();
   (0, import_obsidian10.setIcon)(removeIcon, "x");
-  removeItem.appendChild(removeIcon);
-  const removeText = document.createElement("span");
-  removeText.textContent = "Remove heading";
-  removeItem.appendChild(removeText);
+  removeItem.createSpan({ text: "Remove heading" });
   removeItem.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -2249,17 +2189,12 @@ function openHeadingDropdown(plugin, anchor, ctx) {
       removeHeading(ctx.editor);
     closeDropdowns(plugin);
   });
-  dropdown.appendChild(removeItem);
   positionDropdown(plugin, dropdown, anchor);
 }
 function openAlignmentDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Text alignment";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Text alignment" });
   const alignments = [
     { icon: "align-left", label: "Align left", value: "left" },
     { icon: "align-center", label: "Align center", value: "center" },
@@ -2267,14 +2202,10 @@ function openAlignmentDropdown(plugin, anchor, ctx) {
     { icon: "align-justify", label: "Justify", value: "justify" }
   ];
   for (const { icon, label, value } of alignments) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian10.setIcon)(iconSpan, icon);
-    item.appendChild(iconSpan);
-    const text = document.createElement("span");
-    text.textContent = label;
-    item.appendChild(text);
+    item.createSpan({ text: label });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -2282,7 +2213,6 @@ function openAlignmentDropdown(plugin, anchor, ctx) {
         setAlignment(ctx.editor, value);
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
@@ -2421,21 +2351,13 @@ function buildInsertTab(plugin, container, ctx) {
 }
 function openSymbolsDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu arcadia-symbols-dropdown";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Insert symbol";
-  dropdown.appendChild(title);
-  const grid = document.createElement("div");
-  grid.className = "arcadia-symbol-grid";
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu arcadia-symbols-dropdown" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Insert symbol" });
+  const grid = dropdown.createDiv({ cls: "arcadia-symbol-grid" });
   for (const sym of COMMON_SYMBOLS) {
-    const btn = document.createElement("button");
-    btn.className = "arcadia-symbol-btn";
+    const btn = grid.createEl("button", { cls: "arcadia-symbol-btn" });
     btn.setAttribute("title", sym.name);
-    const charSpan = document.createElement("span");
-    charSpan.textContent = sym.char;
-    btn.appendChild(charSpan);
+    btn.createSpan({ text: sym.char });
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -2444,9 +2366,7 @@ function openSymbolsDropdown(plugin, anchor, ctx) {
       }
       closeDropdowns(plugin);
     });
-    grid.appendChild(btn);
   }
-  dropdown.appendChild(grid);
   positionDropdown(plugin, dropdown, anchor);
 }
 
@@ -2472,7 +2392,8 @@ async function callAI(plugin, prompt) {
         max_tokens: 4096
       })
     });
-    return resp.json.choices[0].message.content;
+    const data = resp.json;
+    return data.choices[0].message.content;
   }
   if (provider.format === "anthropic") {
     const resp = await (0, import_obsidian12.requestUrl)({
@@ -2489,7 +2410,8 @@ async function callAI(plugin, prompt) {
         messages: [{ role: "user", content: prompt }]
       })
     });
-    return resp.json.content[0].text;
+    const data = resp.json;
+    return data.content[0].text;
   }
   if (provider.format === "google") {
     const resp = await (0, import_obsidian12.requestUrl)({
@@ -2500,7 +2422,8 @@ async function callAI(plugin, prompt) {
         contents: [{ parts: [{ text: prompt }] }]
       })
     });
-    return resp.json.candidates[0].content.parts[0].text;
+    const data = resp.json;
+    return data.candidates[0].content.parts[0].text;
   }
   throw new Error(`Unknown AI provider format: ${String(provider.format)}`);
 }
@@ -2760,29 +2683,21 @@ function buildReferencesTab(plugin, container, ctx) {
 }
 function openCitationDropdown(plugin, anchor, ctx, mode) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = mode === "footnote" ? "Footnote citation style" : "Inline citation style";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({
+    cls: "arcadia-dropdown-title",
+    text: mode === "footnote" ? "Footnote citation style" : "Inline citation style"
+  });
   for (const [key, style] of Object.entries(CITATION_STYLES)) {
     if (mode === "footnote" && style.type !== "footnote")
       continue;
     if (mode === "inline" && style.type !== "inline")
       continue;
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian13.setIcon)(iconSpan, "book-open");
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = style.name;
-    item.appendChild(nameSpan);
-    const templateSpan = document.createElement("span");
-    templateSpan.className = "arcadia-dropdown-item-hint";
-    templateSpan.textContent = style.template;
-    item.appendChild(templateSpan);
+    item.createSpan({ text: style.name });
+    item.createSpan({ cls: "arcadia-dropdown-item-hint", text: style.template });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -2795,30 +2710,21 @@ function openCitationDropdown(plugin, anchor, ctx, mode) {
       }
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
 function openAIConvertDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Convert citations to...";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Convert citations to..." });
   for (const [key, style] of Object.entries(CITATION_STYLES)) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
     if (!plugin.isAIConfigured()) {
       item.classList.add("arcadia-btn-disabled");
     }
-    const iconSpan = document.createElement("span");
+    const iconSpan = item.createSpan();
     (0, import_obsidian13.setIcon)(iconSpan, "sparkles");
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = style.name;
-    item.appendChild(nameSpan);
+    item.createSpan({ text: style.name });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -2827,13 +2733,12 @@ function openAIConvertDropdown(plugin, anchor, ctx) {
       }
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
 
 // src/ribbon/tab-review.ts
-function buildReviewTab(plugin, container, ctx) {
+function buildReviewTab(plugin, container, _ctx) {
   const proofingBtns = [
     createButton(plugin, {
       icon: "spell-check",
@@ -2916,7 +2821,7 @@ function buildReviewTab(plugin, container, ctx) {
 }
 
 // src/ribbon/tab-view.ts
-function buildViewTab(plugin, container, ctx) {
+function buildViewTab(plugin, container, _ctx) {
   const tocBtns = [
     createButton(plugin, {
       icon: "list",
@@ -3030,8 +2935,7 @@ function buildViewTab(plugin, container, ctx) {
       action: () => showDocStats(plugin)
     })
   ];
-  const wordCountBtn = document.createElement("button");
-  wordCountBtn.className = "arcadia-btn arcadia-word-count";
+  const wordCountBtn = createEl("button", { cls: "arcadia-btn arcadia-word-count" });
   wordCountBtn.setAttribute("title", "Word count");
   wordCountBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -3042,15 +2946,9 @@ function buildViewTab(plugin, container, ctx) {
   if (activeCtx) {
     const text = activeCtx.editor.getValue();
     const wordCount = text.trim().split(/\s+/).filter((w) => w.length > 0).length;
-    const countSpan = document.createElement("span");
-    countSpan.className = "arcadia-btn-label";
-    countSpan.textContent = `${wordCount.toLocaleString()} words`;
-    wordCountBtn.appendChild(countSpan);
+    wordCountBtn.createSpan({ cls: "arcadia-btn-label", text: `${wordCount.toLocaleString()} words` });
   } else {
-    const countSpan = document.createElement("span");
-    countSpan.className = "arcadia-btn-label";
-    countSpan.textContent = "-- words";
-    wordCountBtn.appendChild(countSpan);
+    wordCountBtn.createSpan({ cls: "arcadia-btn-label", text: "-- words" });
   }
   infoBtns.push(wordCountBtn);
   addGroup(container, "Info", infoBtns);
@@ -3058,7 +2956,7 @@ function buildViewTab(plugin, container, ctx) {
 
 // src/ribbon/tab-navigate.ts
 var import_obsidian14 = require("obsidian");
-function buildNavigateTab(plugin, container, ctx) {
+function buildNavigateTab(plugin, container, _ctx) {
   const searchBtns = [
     createButton(plugin, {
       icon: "search",
@@ -3164,32 +3062,21 @@ function buildNavigateTab(plugin, container, ctx) {
 }
 function openRecentFilesDropdown(plugin, anchor) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu arcadia-recent-files-dropdown";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Recent files";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu arcadia-recent-files-dropdown" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Recent files" });
   const recentFiles = getRecentFiles(plugin);
   const filesToShow = recentFiles.slice(0, 15);
   if (filesToShow.length === 0) {
-    const emptyEl = document.createElement("div");
-    emptyEl.className = "arcadia-dropdown-empty";
-    emptyEl.textContent = "No recent files";
-    dropdown.appendChild(emptyEl);
+    dropdown.createDiv({ cls: "arcadia-dropdown-empty", text: "No recent files" });
   } else {
     for (const filePath of filesToShow) {
-      const item = document.createElement("button");
-      item.className = "arcadia-dropdown-item";
-      const iconSpan = document.createElement("span");
+      const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+      const iconSpan = item.createSpan();
       (0, import_obsidian14.setIcon)(iconSpan, "file-text");
-      item.appendChild(iconSpan);
-      const nameSpan = document.createElement("span");
       const parts = filePath.split("/");
       const fileName = parts[parts.length - 1].replace(/\.md$/, "");
-      nameSpan.textContent = fileName;
+      const nameSpan = item.createSpan({ text: fileName });
       nameSpan.setAttribute("title", filePath);
-      item.appendChild(nameSpan);
       item.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -3199,7 +3086,6 @@ function openRecentFilesDropdown(plugin, anchor) {
         }
         closeDropdowns(plugin);
       });
-      dropdown.appendChild(item);
     }
   }
   positionDropdown(plugin, dropdown, anchor);
@@ -3354,7 +3240,7 @@ var CANVAS_TEMPLATES = [
     })
   }
 ];
-function buildCanvasTab(plugin, container, ctx) {
+function buildCanvasTab(plugin, container, _ctx) {
   const canvasBtns = [
     createButton(plugin, {
       icon: "layout-grid",
@@ -3435,25 +3321,14 @@ function buildCanvasTab(plugin, container, ctx) {
 }
 function openCanvasTemplatesDropdown(plugin, anchor) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Canvas templates";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Canvas templates" });
   for (const tmpl of CANVAS_TEMPLATES) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian15.setIcon)(iconSpan, tmpl.icon);
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = tmpl.name;
-    item.appendChild(nameSpan);
-    const descSpan = document.createElement("span");
-    descSpan.className = "arcadia-dropdown-item-hint";
-    descSpan.textContent = tmpl.desc;
-    item.appendChild(descSpan);
+    item.createSpan({ text: tmpl.name });
+    item.createSpan({ cls: "arcadia-dropdown-item-hint", text: tmpl.desc });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -3469,7 +3344,6 @@ function openCanvasTemplatesDropdown(plugin, anchor) {
         }
       })();
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
@@ -3677,14 +3551,9 @@ function buildDataTab(plugin, container, ctx) {
 }
 function openTableSizeDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu arcadia-table-picker";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Table size";
-  dropdown.appendChild(title);
-  const grid = document.createElement("div");
-  grid.className = "arcadia-table-size-grid";
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu arcadia-table-picker" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Table size" });
+  const grid = dropdown.createDiv({ cls: "arcadia-table-size-grid" });
   const MAX_COLS = 8;
   const MAX_ROWS = 8;
   let hoveredRow = 0;
@@ -3693,8 +3562,7 @@ function openTableSizeDropdown(plugin, anchor, ctx) {
   for (let r = 0; r < MAX_ROWS; r++) {
     cells[r] = [];
     for (let c = 0; c < MAX_COLS; c++) {
-      const cell = document.createElement("div");
-      cell.className = "arcadia-table-size-cell";
+      const cell = grid.createDiv({ cls: "arcadia-table-size-cell" });
       cell.dataset.row = String(r + 1);
       cell.dataset.col = String(c + 1);
       cell.addEventListener("mouseover", () => {
@@ -3710,7 +3578,6 @@ function openTableSizeDropdown(plugin, anchor, ctx) {
         closeDropdowns(plugin);
       });
       cells[r][c] = cell;
-      grid.appendChild(cell);
     }
   }
   function updateHighlight() {
@@ -3724,11 +3591,7 @@ function openTableSizeDropdown(plugin, anchor, ctx) {
       }
     }
   }
-  dropdown.appendChild(grid);
-  const sizeLabel = document.createElement("div");
-  sizeLabel.className = "arcadia-table-size-label";
-  sizeLabel.textContent = "Hover to select size";
-  dropdown.appendChild(sizeLabel);
+  const sizeLabel = dropdown.createDiv({ cls: "arcadia-table-size-label", text: "Hover to select size" });
   positionDropdown(plugin, dropdown, anchor);
 }
 function insertSizedTable(plugin, ctx, rows, cols) {
@@ -3750,25 +3613,14 @@ ${dataRows}
 }
 function openTableTemplatesDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Table templates";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Table templates" });
   for (const tmpl of TABLE_TEMPLATES) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian16.setIcon)(iconSpan, tmpl.icon);
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = tmpl.name;
-    item.appendChild(nameSpan);
-    const descSpan = document.createElement("span");
-    descSpan.className = "arcadia-dropdown-item-hint";
-    descSpan.textContent = tmpl.desc;
-    item.appendChild(descSpan);
+    item.createSpan({ text: tmpl.name });
+    item.createSpan({ cls: "arcadia-dropdown-item-hint", text: tmpl.desc });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -3778,7 +3630,6 @@ function openTableTemplatesDropdown(plugin, anchor, ctx) {
       }
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
@@ -4023,25 +3874,14 @@ function buildSlidesTab(plugin, container, ctx) {
 }
 function openLayoutsDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Slide layouts";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Slide layouts" });
   for (const layout of SLIDE_LAYOUTS) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian18.setIcon)(iconSpan, layout.icon);
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = layout.name;
-    item.appendChild(nameSpan);
-    const descSpan = document.createElement("span");
-    descSpan.className = "arcadia-dropdown-item-hint";
-    descSpan.textContent = layout.desc;
-    item.appendChild(descSpan);
+    item.createSpan({ text: layout.name });
+    item.createSpan({ cls: "arcadia-dropdown-item-hint", text: layout.desc });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -4051,27 +3891,18 @@ function openLayoutsDropdown(plugin, anchor, ctx) {
       }
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
 function openThemesDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Slide theme";
-  dropdown.appendChild(title);
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Slide theme" });
   for (const theme of SLIDE_THEMES) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
-    const iconSpan = document.createElement("span");
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+    const iconSpan = item.createSpan();
     (0, import_obsidian18.setIcon)(iconSpan, theme.icon);
-    item.appendChild(iconSpan);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = theme.name;
-    item.appendChild(nameSpan);
+    item.createSpan({ text: theme.name });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -4081,7 +3912,6 @@ function openThemesDropdown(plugin, anchor, ctx) {
       }
       closeDropdowns(plugin);
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
@@ -4184,52 +4014,31 @@ function buildTheologyTab(plugin, container, ctx) {
   addGroup(container, "Hover lookup", hoverBtns);
 }
 function buildLockedPanel(plugin, container) {
-  const panel = document.createElement("div");
-  panel.className = "arcadia-premium-panel";
-  const iconEl = document.createElement("span");
-  iconEl.className = "arcadia-premium-panel-icon";
+  const panel = container.createDiv({ cls: "arcadia-premium-panel" });
+  const iconEl = panel.createSpan({ cls: "arcadia-premium-panel-icon" });
   (0, import_obsidian19.setIcon)(iconEl, "lock");
-  panel.appendChild(iconEl);
-  const textEl = document.createElement("span");
-  textEl.className = "arcadia-premium-panel-text";
-  textEl.textContent = "The theology tab (scripture blocks, hover lookup, commentary) is a premium feature.";
-  panel.appendChild(textEl);
-  const unlockBtn = document.createElement("button");
-  unlockBtn.className = "arcadia-btn arcadia-premium-panel-btn";
-  unlockBtn.textContent = "Unlock premium";
+  panel.createSpan({
+    cls: "arcadia-premium-panel-text",
+    text: "The theology tab (scripture blocks, hover lookup, commentary) is a premium feature."
+  });
+  const unlockBtn = panel.createEl("button", { cls: "arcadia-btn arcadia-premium-panel-btn", text: "Unlock premium" });
   unlockBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     new PremiumModal(plugin.app, plugin, "Theology tab").open();
   });
-  panel.appendChild(unlockBtn);
-  container.appendChild(panel);
 }
 function openScriptureDropdown(plugin, anchor, ctx) {
   closeDropdowns(plugin);
-  const dropdown = document.createElement("div");
-  dropdown.className = "arcadia-dropdown-menu";
-  const title = document.createElement("div");
-  title.className = "arcadia-dropdown-title";
-  title.textContent = "Insert scripture block";
-  dropdown.appendChild(title);
-  const currentEl = document.createElement("div");
-  currentEl.className = "arcadia-dropdown-subtitle";
-  const currentLabel = document.createElement("span");
-  currentLabel.textContent = `Current: ${plugin.settings.scriptureTranslation}`;
-  currentEl.appendChild(currentLabel);
-  dropdown.appendChild(currentEl);
-  const divider = document.createElement("div");
-  divider.className = "arcadia-dropdown-divider";
-  dropdown.appendChild(divider);
-  const insertItem = document.createElement("button");
-  insertItem.className = "arcadia-dropdown-item";
-  const insertIcon = document.createElement("span");
+  const dropdown = createDiv({ cls: "arcadia-dropdown-menu" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-title", text: "Insert scripture block" });
+  const currentEl = dropdown.createDiv({ cls: "arcadia-dropdown-subtitle" });
+  currentEl.createSpan({ text: `Current: ${plugin.settings.scriptureTranslation}` });
+  dropdown.createDiv({ cls: "arcadia-dropdown-divider" });
+  const insertItem = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
+  const insertIcon = insertItem.createSpan();
   (0, import_obsidian19.setIcon)(insertIcon, "book-open");
-  insertItem.appendChild(insertIcon);
-  const insertText = document.createElement("span");
-  insertText.textContent = `Insert block (${plugin.settings.scriptureTranslation})`;
-  insertItem.appendChild(insertText);
+  insertItem.createSpan({ text: `Insert block (${plugin.settings.scriptureTranslation})` });
   insertItem.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -4238,30 +4047,17 @@ function openScriptureDropdown(plugin, anchor, ctx) {
       insertScriptureBlock(plugin, activeCtx.editor);
     closeDropdowns(plugin);
   });
-  dropdown.appendChild(insertItem);
-  const divider2 = document.createElement("div");
-  divider2.className = "arcadia-dropdown-divider";
-  dropdown.appendChild(divider2);
-  const transTitle = document.createElement("div");
-  transTitle.className = "arcadia-dropdown-section-label";
-  transTitle.textContent = "Switch translation";
-  dropdown.appendChild(transTitle);
+  dropdown.createDiv({ cls: "arcadia-dropdown-divider" });
+  dropdown.createDiv({ cls: "arcadia-dropdown-section-label", text: "Switch translation" });
   for (const [abbr, fullName] of Object.entries(BIBLE_TRANSLATIONS)) {
-    const item = document.createElement("button");
-    item.className = "arcadia-dropdown-item";
+    const item = dropdown.createEl("button", { cls: "arcadia-dropdown-item" });
     if (abbr === plugin.settings.scriptureTranslation) {
       item.classList.add("arcadia-dropdown-item-active");
     }
-    const iconSpan = document.createElement("span");
+    const iconSpan = item.createSpan();
     (0, import_obsidian19.setIcon)(iconSpan, abbr === plugin.settings.scriptureTranslation ? "check" : "book");
-    item.appendChild(iconSpan);
-    const abbrSpan = document.createElement("span");
-    abbrSpan.textContent = abbr;
-    item.appendChild(abbrSpan);
-    const fullSpan = document.createElement("span");
-    fullSpan.className = "arcadia-dropdown-item-hint";
-    fullSpan.textContent = fullName;
-    item.appendChild(fullSpan);
+    item.createSpan({ text: abbr });
+    item.createSpan({ cls: "arcadia-dropdown-item-hint", text: fullName });
     item.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -4271,7 +4067,6 @@ function openScriptureDropdown(plugin, anchor, ctx) {
         closeDropdowns(plugin);
       });
     });
-    dropdown.appendChild(item);
   }
   positionDropdown(plugin, dropdown, anchor);
 }
@@ -4291,10 +4086,8 @@ function updateToolbar(plugin) {
   removeToolbar(plugin);
   const isReading = isReadingView(view);
   const ctx = isReading ? null : getActiveEditor(plugin);
-  plugin.toolbarEl = document.createElement("div");
-  plugin.toolbarEl.className = "arcadia-ribbon";
-  const tabBar = document.createElement("div");
-  tabBar.className = "arcadia-ribbon-tabbar";
+  plugin.toolbarEl = createDiv({ cls: "arcadia-ribbon" });
+  const tabBar = createDiv({ cls: "arcadia-ribbon-tabbar" });
   const tabs = [
     { id: "home", label: "Home", icon: "home", setting: "showHomeTab" },
     { id: "insert", label: "Insert", icon: "plus-circle", setting: "showInsertTab" },
@@ -4311,19 +4104,16 @@ function updateToolbar(plugin) {
   for (const tab of tabs) {
     if (!plugin.settings[tab.setting])
       continue;
-    const tabBtn = document.createElement("button");
-    tabBtn.className = `arcadia-ribbon-tab${plugin.settings.activeTab === tab.id ? " arcadia-ribbon-tab-active" : ""}`;
+    const tabBtn = tabBar.createEl("button", {
+      cls: `arcadia-ribbon-tab${plugin.settings.activeTab === tab.id ? " arcadia-ribbon-tab-active" : ""}`
+    });
     tabBtn.dataset.tab = tab.id;
-    const iconSpan = document.createElement("span");
-    iconSpan.className = "arcadia-ribbon-tab-icon";
+    const iconSpan = tabBtn.createSpan({ cls: "arcadia-ribbon-tab-icon" });
     (0, import_obsidian20.setIcon)(iconSpan, tab.icon);
-    tabBtn.appendChild(iconSpan);
-    tabBtn.appendChild(document.createTextNode(tab.label));
+    tabBtn.appendText(tab.label);
     if (tab.id === "theology" && !plugin.isPremium) {
-      const lockSpan = document.createElement("span");
-      lockSpan.className = "arcadia-ribbon-tab-lock";
+      const lockSpan = tabBtn.createSpan({ cls: "arcadia-ribbon-tab-lock" });
       (0, import_obsidian20.setIcon)(lockSpan, "lock");
-      tabBtn.appendChild(lockSpan);
     }
     tabBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -4334,22 +4124,15 @@ function updateToolbar(plugin) {
       }
       plugin.updateToolbar();
     });
-    tabBar.appendChild(tabBtn);
   }
-  const tabWrapper = document.createElement("div");
-  tabWrapper.className = "arcadia-ribbon-tabbar-wrapper";
-  const scrollLeft = document.createElement("button");
-  scrollLeft.className = "arcadia-tab-scroll-btn arcadia-tab-scroll-left";
+  const tabWrapper = plugin.toolbarEl.createDiv({ cls: "arcadia-ribbon-tabbar-wrapper" });
+  const scrollLeft = tabWrapper.createEl("button", { cls: "arcadia-tab-scroll-btn arcadia-tab-scroll-left" });
   (0, import_obsidian20.setIcon)(scrollLeft, "chevron-left");
   scrollLeft.addEventListener("click", () => tabBar.scrollBy({ left: -120, behavior: "smooth" }));
-  const scrollRight = document.createElement("button");
-  scrollRight.className = "arcadia-tab-scroll-btn arcadia-tab-scroll-right";
+  tabWrapper.appendChild(tabBar);
+  const scrollRight = tabWrapper.createEl("button", { cls: "arcadia-tab-scroll-btn arcadia-tab-scroll-right" });
   (0, import_obsidian20.setIcon)(scrollRight, "chevron-right");
   scrollRight.addEventListener("click", () => tabBar.scrollBy({ left: 120, behavior: "smooth" }));
-  tabWrapper.appendChild(scrollLeft);
-  tabWrapper.appendChild(tabBar);
-  tabWrapper.appendChild(scrollRight);
-  plugin.toolbarEl.appendChild(tabWrapper);
   const updateScrollArrows = () => {
     const canScrollL = tabBar.scrollLeft > 0;
     const canScrollR = tabBar.scrollLeft + tabBar.clientWidth < tabBar.scrollWidth - 1;
@@ -4357,13 +4140,12 @@ function updateToolbar(plugin) {
     scrollRight.classList.toggle("arcadia-tab-scroll-visible", canScrollR);
   };
   tabBar.addEventListener("scroll", updateScrollArrows);
-  setTimeout(updateScrollArrows, 50);
+  activeWindow.setTimeout(updateScrollArrows, 50);
   const activeTabEl = tabBar.querySelector(".arcadia-ribbon-tab-active");
   if (activeTabEl) {
-    setTimeout(() => activeTabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }), 60);
+    activeWindow.setTimeout(() => activeTabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }), 60);
   }
-  const content = document.createElement("div");
-  content.className = "arcadia-ribbon-content";
+  const content = plugin.toolbarEl.createDiv({ cls: "arcadia-ribbon-content" });
   const editorTabs = ["home", "insert", "theology", "canvas", "references", "templates", "data"];
   const activeTab = plugin.settings.activeTab;
   if (ctx) {
@@ -4404,10 +4186,7 @@ function updateToolbar(plugin) {
     }
   } else {
     if (editorTabs.includes(activeTab)) {
-      const msg = document.createElement("div");
-      msg.className = "arcadia-reading-notice";
-      msg.textContent = "Switch to editing view to use this tab";
-      content.appendChild(msg);
+      content.createDiv({ cls: "arcadia-reading-notice", text: "Switch to editing view to use this tab" });
     } else {
       switch (activeTab) {
         case "navigate":
@@ -4425,7 +4204,6 @@ function updateToolbar(plugin) {
       }
     }
   }
-  plugin.toolbarEl.appendChild(content);
   view.contentEl.insertBefore(plugin.toolbarEl, view.contentEl.firstChild);
 }
 
@@ -4567,31 +4345,24 @@ function showScripturePopup(plugin, anchorEl, refText) {
   if (!ref)
     return;
   if (plugin.hoverTimeout)
-    clearTimeout(plugin.hoverTimeout);
-  plugin.hoverTimeout = setTimeout(() => {
+    activeWindow.clearTimeout(plugin.hoverTimeout);
+  plugin.hoverTimeout = activeWindow.setTimeout(() => {
     void (async () => {
       plugin.hideScripturePopup();
-      const popup = document.createElement("div");
-      popup.className = "arcadia-scripture-popup";
-      const header = document.createElement("div");
-      header.className = "arcadia-popup-header";
-      const refSpan = document.createElement("span");
-      refSpan.className = "arcadia-popup-ref";
-      refSpan.textContent = `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? "\u2013" + ref.endVerse : ""}`;
-      header.appendChild(refSpan);
-      const modeLabel = document.createElement("span");
-      modeLabel.className = "arcadia-popup-mode";
+      const popup = createDiv({ cls: "arcadia-scripture-popup" });
+      const header = popup.createDiv({ cls: "arcadia-popup-header" });
+      header.createSpan({
+        cls: "arcadia-popup-ref",
+        text: `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? "\u2013" + ref.endVerse : ""}`
+      });
       const mode = plugin.settings.hoverMode;
-      modeLabel.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-      header.appendChild(modeLabel);
-      popup.appendChild(header);
-      const content = document.createElement("div");
-      content.className = "arcadia-popup-content";
-      const loadingEl = document.createElement("em");
-      loadingEl.textContent = "Loading...";
-      content.appendChild(loadingEl);
-      popup.appendChild(content);
-      document.body.appendChild(popup);
+      header.createSpan({
+        cls: "arcadia-popup-mode",
+        text: mode.charAt(0).toUpperCase() + mode.slice(1)
+      });
+      const content = popup.createDiv({ cls: "arcadia-popup-content" });
+      content.createEl("em", { text: "Loading..." });
+      activeDocument.body.appendChild(popup);
       plugin.scripturePopupEl = popup;
       const rect = anchorEl.getBoundingClientRect();
       popup.style.top = `${rect.bottom + 6}px`;
@@ -4609,7 +4380,7 @@ function showScripturePopup(plugin, anchorEl, refText) {
         const target = e.relatedTarget;
         if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target)))
           return;
-        setTimeout(() => {
+        activeWindow.setTimeout(() => {
           if (popup.matches(":hover") || anchorEl.matches(":hover"))
             return;
           plugin.hideScripturePopup();
@@ -4619,7 +4390,7 @@ function showScripturePopup(plugin, anchorEl, refText) {
       };
       popup.addEventListener("mouseenter", () => {
         if (plugin.hoverTimeout)
-          clearTimeout(plugin.hoverTimeout);
+          activeWindow.clearTimeout(plugin.hoverTimeout);
       });
       popup.addEventListener("mouseleave", hideHandler);
       anchorEl.addEventListener("mouseleave", hideHandler);
@@ -4640,18 +4411,15 @@ function showScripturePopup(plugin, anchorEl, refText) {
           content.textContent = "";
           const parser = new DOMParser();
           const parsed = parser.parseFromString(result, "text/html");
-          const resultDiv = document.createElement("div");
+          const resultDiv = content.createDiv();
           while (parsed.body.firstChild) {
             resultDiv.appendChild(parsed.body.firstChild);
           }
-          content.appendChild(resultDiv);
         }
       } catch (err) {
         if (plugin.scripturePopupEl === popup) {
           content.textContent = "";
-          const errEl = document.createElement("em");
-          errEl.textContent = `Error: ${err.message}`;
-          content.appendChild(errEl);
+          content.createEl("em", { text: `Error: ${err.message}` });
         }
       }
     })();
@@ -4661,7 +4429,7 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
   registerMarkdownPostProcessor((el) => {
     if (plugin.settings.hoverMode === "off" || !plugin.isPremium)
       return;
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const walker = el.doc.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const textNodes = [];
     while (walker.nextNode()) {
       textNodes.push(walker.currentNode);
@@ -4681,16 +4449,14 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
       }
       if (matches.length === 0)
         continue;
-      const frag = document.createDocumentFragment();
+      const frag = createFragment();
       let lastIdx = 0;
       for (const match of matches) {
         if (match.index > lastIdx) {
-          frag.appendChild(document.createTextNode(text.substring(lastIdx, match.index)));
+          frag.appendText(text.substring(lastIdx, match.index));
         }
-        const span = document.createElement("span");
-        span.className = "arcadia-scripture-ref";
+        const span = frag.createSpan({ cls: "arcadia-scripture-ref", text: match.text });
         span.dataset.ref = match.text;
-        span.textContent = match.text;
         span.addEventListener("mouseenter", () => {
           showScripturePopup(plugin, span, match.text);
         });
@@ -4698,17 +4464,16 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
           const related = e.relatedTarget;
           if (related && related.closest(".arcadia-scripture-popup"))
             return;
-          setTimeout(() => {
+          activeWindow.setTimeout(() => {
             if (plugin.scripturePopupEl && !plugin.scripturePopupEl.matches(":hover")) {
               plugin.hideScripturePopup();
             }
           }, 300);
         });
-        frag.appendChild(span);
         lastIdx = match.index + match.length;
       }
       if (lastIdx < text.length) {
-        frag.appendChild(document.createTextNode(text.substring(lastIdx)));
+        frag.appendText(text.substring(lastIdx));
       }
       node.parentNode.replaceChild(frag, node);
     }
@@ -4758,7 +4523,7 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
       { decorations: (v) => v.decorations }
     );
     registerEditorExtension(scriptureHoverPlugin);
-    registerDomEvent(document, "mouseover", (e) => {
+    registerDomEvent(activeDocument, "mouseover", (e) => {
       var _a;
       const target = e.target;
       if (target.closest(".arcadia-scripture-popup"))
@@ -4913,7 +4678,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
       (ext) => this.registerEditorExtension(ext),
       (el, event, cb) => this.registerDomEvent(el, event, cb)
     );
-    this.registerDomEvent(document, "click", (e) => {
+    this.registerDomEvent(activeDocument, "click", (e) => {
       if (this.activeDropdown) {
         const target = e.target;
         if (!target.closest(".arcadia-dropdown-wrapper")) {
@@ -4954,7 +4719,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
     const data = await this.loadData();
     this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
     if (data && "showDrawTab" in data && !("showCanvasTab" in data)) {
-      this.settings.showCanvasTab = data.showDrawTab;
+      this.settings.showCanvasTab = Boolean(data.showDrawTab);
     }
     if (this.settings.activeTab === "draw") {
       this.settings.activeTab = "canvas";
@@ -5051,7 +4816,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
   }
   hideScripturePopup() {
     if (this.hoverTimeout) {
-      clearTimeout(this.hoverTimeout);
+      activeWindow.clearTimeout(this.hoverTimeout);
       this.hoverTimeout = null;
     }
     if (this.scripturePopupEl) {

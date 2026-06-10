@@ -76,33 +76,25 @@ function openCitationDropdown(
 ): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = mode === 'footnote' ? 'Footnote citation style' : 'Inline citation style';
-	dropdown.appendChild(title);
+	dropdown.createDiv({
+		cls: 'arcadia-dropdown-title',
+		text: mode === 'footnote' ? 'Footnote citation style' : 'Inline citation style',
+	});
 
 	for (const [key, style] of Object.entries(CITATION_STYLES)) {
 		if (mode === 'footnote' && style.type !== 'footnote') continue;
 		if (mode === 'inline' && style.type !== 'inline') continue;
 
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, 'book-open');
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = style.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: style.name });
 
-		const templateSpan = document.createElement('span');
-		templateSpan.className = 'arcadia-dropdown-item-hint';
-		templateSpan.textContent = style.template;
-		item.appendChild(templateSpan);
+		item.createSpan({ cls: 'arcadia-dropdown-item-hint', text: style.template });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -116,8 +108,6 @@ function openCitationDropdown(
 			}
 			closeDropdowns(plugin);
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);
@@ -130,29 +120,21 @@ function openAIConvertDropdown(
 ): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Convert citations to...';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Convert citations to...' });
 
 	for (const [key, style] of Object.entries(CITATION_STYLES)) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
 		if (!plugin.isAIConfigured()) {
 			item.classList.add('arcadia-btn-disabled');
 		}
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, 'sparkles');
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = style.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: style.name });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -162,8 +144,6 @@ function openAIConvertDropdown(
 			}
 			closeDropdowns(plugin);
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

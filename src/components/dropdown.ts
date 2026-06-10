@@ -9,28 +9,20 @@ export interface DropdownTriggerOptions {
 }
 
 export function createDropdownTrigger(options: DropdownTriggerOptions): HTMLElement {
-	const wrapper = document.createElement('div');
-	wrapper.className = 'arcadia-dropdown-wrapper';
+	const wrapper = createDiv({ cls: 'arcadia-dropdown-wrapper' });
 
-	const btnEl = document.createElement('button');
-	btnEl.className = 'arcadia-btn';
+	const btnEl = wrapper.createEl('button', { cls: 'arcadia-btn' });
 	btnEl.setAttribute('title', options.tooltip);
 
-	const iconSpan = document.createElement('span');
+	const iconSpan = btnEl.createSpan();
 	setIcon(iconSpan, options.icon);
-	btnEl.appendChild(iconSpan);
 
 	if (options.label) {
-		const labelEl = document.createElement('span');
-		labelEl.className = 'arcadia-btn-label';
-		labelEl.textContent = options.label;
-		btnEl.appendChild(labelEl);
+		btnEl.createSpan({ cls: 'arcadia-btn-label', text: options.label });
 	}
 
-	const arrow = document.createElement('span');
-	arrow.className = 'arcadia-dropdown-arrow';
+	const arrow = btnEl.createSpan({ cls: 'arcadia-dropdown-arrow' });
 	setIcon(arrow, 'chevron-down');
-	btnEl.appendChild(arrow);
 
 	btnEl.addEventListener('click', (e) => {
 		e.preventDefault();
@@ -38,12 +30,11 @@ export function createDropdownTrigger(options: DropdownTriggerOptions): HTMLElem
 		options.openFn(wrapper);
 	});
 
-	wrapper.appendChild(btnEl);
 	return wrapper;
 }
 
 export function positionDropdown(plugin: ArcadiaPluginInterface, dropdown: HTMLElement, anchor: HTMLElement): void {
-	document.body.appendChild(dropdown);
+	activeDocument.body.appendChild(dropdown);
 	plugin.activeDropdown = dropdown;
 
 	const rect = anchor.getBoundingClientRect();

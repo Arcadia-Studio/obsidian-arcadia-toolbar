@@ -5,6 +5,14 @@ import { BOOK_LOOKUP, SCRIPTURE_REF_REGEX, COMMENTARIES, BIBLE_DICTIONARIES } fr
 /** Cap the in-memory lookup cache so long sessions do not grow unbounded */
 const MAX_CACHE_ENTRIES = 200;
 
+/** Response shape returned by bible-api.com (only the fields read here). */
+interface BibleApiResponse {
+	error?: string;
+	verses?: { verse: number; text: string }[];
+	text?: string;
+	translation_name?: string;
+}
+
 function cacheSet(plugin: ArcadiaPluginInterface, key: string, value: string): void {
 	if (plugin.scriptureCache.size >= MAX_CACHE_ENTRIES) {
 		const oldest = plugin.scriptureCache.keys().next().value;
@@ -53,13 +61,13 @@ export async function fetchBibleText(plugin: ArcadiaPluginInterface, ref: Parsed
 	try {
 		const url = `https://bible-api.com/${encodeURIComponent(verseRange)}?translation=${trans}`;
 		const resp = await requestUrl({ url });
-		const data = resp.json;
+		const data = resp.json as BibleApiResponse;
 
 		if (data.error) throw new Error(data.error);
 
 		let result = '';
 		if (data.verses && data.verses.length > 0) {
-			result = data.verses.map((v: { verse: number; text: string }) =>
+			result = data.verses.map((v) =>
 				`<b>${v.verse}</b> ${escapeHtml(v.text.trim())}`
 			).join(' ');
 		} else if (data.text) {

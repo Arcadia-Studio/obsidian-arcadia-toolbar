@@ -32,8 +32,7 @@ export function createButton(plugin: ArcadiaPluginInterface, options: ButtonOpti
 
 	const locked = requiresPremium === true && !plugin.isPremium;
 
-	const el = document.createElement('button');
-	el.className = 'arcadia-btn';
+	const el = createEl('button', { cls: 'arcadia-btn' });
 
 	if (!enabled && !locked) {
 		el.classList.add('arcadia-btn-disabled');
@@ -57,10 +56,7 @@ export function createButton(plugin: ArcadiaPluginInterface, options: ButtonOpti
 	setIcon(el, icon);
 
 	if (label) {
-		const labelEl = document.createElement('span');
-		labelEl.className = 'arcadia-btn-label';
-		labelEl.textContent = label;
-		el.appendChild(labelEl);
+		el.createSpan({ cls: 'arcadia-btn-label', text: label });
 	}
 
 	if (locked) {

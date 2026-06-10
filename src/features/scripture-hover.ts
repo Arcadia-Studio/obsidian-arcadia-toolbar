@@ -8,41 +8,33 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 	const ref = parseScriptureRef(refText);
 	if (!ref) return;
 
-	if (plugin.hoverTimeout) clearTimeout(plugin.hoverTimeout);
+	if (plugin.hoverTimeout) activeWindow.clearTimeout(plugin.hoverTimeout);
 
-	plugin.hoverTimeout = setTimeout(() => { void (async () => {
+	plugin.hoverTimeout = activeWindow.setTimeout(() => { void (async () => {
 		plugin.hideScripturePopup();
 
-		const popup = document.createElement('div');
-		popup.className = 'arcadia-scripture-popup';
+		const popup = createDiv({ cls: 'arcadia-scripture-popup' });
 
 		// Header
-		const header = document.createElement('div');
-		header.className = 'arcadia-popup-header';
+		const header = popup.createDiv({ cls: 'arcadia-popup-header' });
 
-		const refSpan = document.createElement('span');
-		refSpan.className = 'arcadia-popup-ref';
-		refSpan.textContent = `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? '\u2013' + ref.endVerse : ''}`;
-		header.appendChild(refSpan);
+		header.createSpan({
+			cls: 'arcadia-popup-ref',
+			text: `${ref.canonical} ${ref.chapter}:${ref.verse}${ref.endVerse ? '\u2013' + ref.endVerse : ''}`,
+		});
 
-		const modeLabel = document.createElement('span');
-		modeLabel.className = 'arcadia-popup-mode';
 		const mode = plugin.settings.hoverMode;
-		modeLabel.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-		header.appendChild(modeLabel);
-
-		popup.appendChild(header);
+		header.createSpan({
+			cls: 'arcadia-popup-mode',
+			text: mode.charAt(0).toUpperCase() + mode.slice(1),
+		});
 
 		// Loading state
-		const content = document.createElement('div');
-		content.className = 'arcadia-popup-content';
-		const loadingEl = document.createElement('em');
-		loadingEl.textContent = 'Loading...';
-		content.appendChild(loadingEl);
-		popup.appendChild(content);
+		const content = popup.createDiv({ cls: 'arcadia-popup-content' });
+		content.createEl('em', { text: 'Loading...' });
 
 		// Position popup near the anchor element
-		document.body.appendChild(popup);
+		activeDocument.body.appendChild(popup);
 		plugin.scripturePopupEl = popup;
 
 		const rect = anchorEl.getBoundingClientRect();
@@ -63,14 +55,14 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 		const hideHandler = (e: MouseEvent) => {
 			const target = e.relatedTarget as HTMLElement;
 			if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target))) return;
-			setTimeout(() => {
+			activeWindow.setTimeout(() => {
 				if (popup.matches(':hover') || anchorEl.matches(':hover')) return;
 				plugin.hideScripturePopup();
 				popup.removeEventListener('mouseleave', hideHandler);
 				anchorEl.removeEventListener('mouseleave', hideHandler);
 			}, 300);
 		};
-		popup.addEventListener('mouseenter', () => { if (plugin.hoverTimeout) clearTimeout(plugin.hoverTimeout); });
+		popup.addEventListener('mouseenter', () => { if (plugin.hoverTimeout) activeWindow.clearTimeout(plugin.hoverTimeout); });
 		popup.addEventListener('mouseleave', hideHandler);
 		anchorEl.addEventListener('mouseleave', hideHandler);
 
@@ -93,18 +85,15 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 				content.textContent = '';
 				const parser = new DOMParser();
 				const parsed = parser.parseFromString(result, 'text/html');
-				const resultDiv = document.createElement('div');
+				const resultDiv = content.createDiv();
 				while (parsed.body.firstChild) {
 					resultDiv.appendChild(parsed.body.firstChild);
 				}
-				content.appendChild(resultDiv);
 			}
 		} catch (err: unknown) {
 			if (plugin.scripturePopupEl === popup) {
 				content.textContent = '';
-				const errEl = document.createElement('em');
-				errEl.textContent = `Error: ${(err as Error).message}`;
-				content.appendChild(errEl);
+				content.createEl('em', { text: `Error: ${(err as Error).message}` });
 			}
 		}
 	})(); }, 400);
@@ -115,7 +104,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 	registerMarkdownPostProcessor((el: HTMLElement) => {
 		if (plugin.settings.hoverMode === 'off' || !plugin.isPremium) return;
 
-		const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+		const walker = el.doc.createTreeWalker(el, NodeFilter.SHOW_TEXT);
 		const textNodes: Text[] = [];
 		while (walker.nextNode()) {
 			textNodes.push(walker.currentNode as Text);
@@ -137,16 +126,14 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 
 			if (matches.length === 0) continue;
 
-			const frag = document.createDocumentFragment();
+			const frag = createFragment();
 			let lastIdx = 0;
 			for (const match of matches) {
 				if (match.index > lastIdx) {
-					frag.appendChild(document.createTextNode(text.substring(lastIdx, match.index)));
+					frag.appendText(text.substring(lastIdx, match.index));
 				}
-				const span = document.createElement('span');
-				span.className = 'arcadia-scripture-ref';
+				const span = frag.createSpan({ cls: 'arcadia-scripture-ref', text: match.text });
 				span.dataset.ref = match.text;
-				span.textContent = match.text;
 
 				span.addEventListener('mouseenter', () => {
 					showScripturePopup(plugin, span, match.text);
@@ -154,18 +141,17 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 				span.addEventListener('mouseleave', (e) => {
 					const related = e.relatedTarget as HTMLElement;
 					if (related && related.closest('.arcadia-scripture-popup')) return;
-					setTimeout(() => {
+					activeWindow.setTimeout(() => {
 						if (plugin.scripturePopupEl && !plugin.scripturePopupEl.matches(':hover')) {
 							plugin.hideScripturePopup();
 						}
 					}, 300);
 				});
 
-				frag.appendChild(span);
 				lastIdx = match.index + match.length;
 			}
 			if (lastIdx < text.length) {
-				frag.appendChild(document.createTextNode(text.substring(lastIdx)));
+				frag.appendText(text.substring(lastIdx));
 			}
 
 			node.parentNode!.replaceChild(frag, node);
@@ -243,7 +229,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 		registerEditorExtension(scriptureHoverPlugin);
 
 		// Add hover listener for CM6 decorated spans
-		registerDomEvent(document, 'mouseover', (e: MouseEvent) => {
+		registerDomEvent(activeDocument, 'mouseover', (e: MouseEvent) => {
 			const target = e.target as HTMLElement;
 			if (target.closest('.arcadia-scripture-popup')) return;
 			if (target.classList?.contains('arcadia-scripture-ref') || target.closest('.arcadia-scripture-ref')) {

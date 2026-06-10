@@ -175,25 +175,17 @@ export function buildInsertTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 function openSymbolsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu arcadia-symbols-dropdown';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu arcadia-symbols-dropdown' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Insert symbol';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Insert symbol' });
 
-	const grid = document.createElement('div');
-	grid.className = 'arcadia-symbol-grid';
+	const grid = dropdown.createDiv({ cls: 'arcadia-symbol-grid' });
 
 	for (const sym of SYMBOLS) {
-		const btn = document.createElement('button');
-		btn.className = 'arcadia-symbol-btn';
+		const btn = grid.createEl('button', { cls: 'arcadia-symbol-btn' });
 		btn.setAttribute('title', sym.name);
 
-		const charSpan = document.createElement('span');
-		charSpan.textContent = sym.char;
-		btn.appendChild(charSpan);
+		btn.createSpan({ text: sym.char });
 
 		btn.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -203,9 +195,7 @@ function openSymbolsDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 			}
 			closeDropdowns(plugin);
 		});
-		grid.appendChild(btn);
 	}
 
-	dropdown.appendChild(grid);
 	positionDropdown(plugin, dropdown, anchor);
 }

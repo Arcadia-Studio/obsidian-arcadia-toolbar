@@ -164,13 +164,9 @@ export function buildHomeTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Heading style';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Heading style' });
 
 	const levels: { level: number; label: string }[] = [
 		{ level: 1, label: 'Heading 1' },
@@ -183,42 +179,30 @@ function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 	];
 
 	for (const { level, label } of levels) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
-		const iconSpan = document.createElement('span');
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, 'heading');
-		item.appendChild(iconSpan);
-		const text = document.createElement('span');
-		text.textContent = label;
-		item.appendChild(text);
+		item.createSpan({ text: label });
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 			if (ctx) insertHeading(ctx.editor, level);
 			closeDropdowns(plugin);
 		});
-		dropdown.appendChild(item);
 	}
 
-	const divider = document.createElement('div');
-	divider.className = 'arcadia-dropdown-divider';
-	dropdown.appendChild(divider);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-divider' });
 
-	const removeItem = document.createElement('button');
-	removeItem.className = 'arcadia-dropdown-item';
-	const removeIcon = document.createElement('span');
+	const removeItem = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
+	const removeIcon = removeItem.createSpan();
 	setIcon(removeIcon, 'x');
-	removeItem.appendChild(removeIcon);
-	const removeText = document.createElement('span');
-	removeText.textContent = 'Remove heading';
-	removeItem.appendChild(removeText);
+	removeItem.createSpan({ text: 'Remove heading' });
 	removeItem.addEventListener('click', (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		if (ctx) removeHeading(ctx.editor);
 		closeDropdowns(plugin);
 	});
-	dropdown.appendChild(removeItem);
 
 	positionDropdown(plugin, dropdown, anchor);
 }
@@ -226,13 +210,9 @@ function openHeadingDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement
 function openAlignmentDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Text alignment';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Text alignment' });
 
 	const alignments: { icon: string; label: string; value: string }[] = [
 		{ icon: 'align-left', label: 'Align left', value: 'left' },
@@ -242,21 +222,16 @@ function openAlignmentDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 	];
 
 	for (const { icon, label, value } of alignments) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
-		const iconSpan = document.createElement('span');
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, icon);
-		item.appendChild(iconSpan);
-		const text = document.createElement('span');
-		text.textContent = label;
-		item.appendChild(text);
+		item.createSpan({ text: label });
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
 			if (ctx) setAlignment(ctx.editor, value);
 			closeDropdowns(plugin);
 		});
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

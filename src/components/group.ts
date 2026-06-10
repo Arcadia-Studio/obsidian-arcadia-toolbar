@@ -1,23 +1,14 @@
 export function addGroup(container: HTMLElement, label: string, buttons: HTMLElement[]): HTMLElement {
-	const group = document.createElement('div');
-	group.className = 'arcadia-group';
+	const group = container.createDiv({ cls: 'arcadia-group' });
 
-	const buttonsRow = document.createElement('div');
-	buttonsRow.className = 'arcadia-group-buttons';
+	const buttonsRow = group.createDiv({ cls: 'arcadia-group-buttons' });
 	for (const btn of buttons) {
 		buttonsRow.appendChild(btn);
 	}
-	group.appendChild(buttonsRow);
 
-	const labelEl = document.createElement('div');
-	labelEl.className = 'arcadia-group-label';
-	labelEl.textContent = label;
-	group.appendChild(labelEl);
+	group.createDiv({ cls: 'arcadia-group-label', text: label });
 
-	const sep = document.createElement('div');
-	sep.className = 'arcadia-group-separator';
-	container.appendChild(group);
-	container.appendChild(sep);
+	container.createDiv({ cls: 'arcadia-group-separator' });
 
 	return group;
 }

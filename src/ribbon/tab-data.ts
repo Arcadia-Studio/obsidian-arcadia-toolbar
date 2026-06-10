@@ -222,16 +222,11 @@ export function buildDataTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu arcadia-table-picker';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu arcadia-table-picker' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Table size';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Table size' });
 
-	const grid = document.createElement('div');
-	grid.className = 'arcadia-table-size-grid';
+	const grid = dropdown.createDiv({ cls: 'arcadia-table-size-grid' });
 
 	const MAX_COLS = 8;
 	const MAX_ROWS = 8;
@@ -243,8 +238,7 @@ function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 	for (let r = 0; r < MAX_ROWS; r++) {
 		cells[r] = [];
 		for (let c = 0; c < MAX_COLS; c++) {
-			const cell = document.createElement('div');
-			cell.className = 'arcadia-table-size-cell';
+			const cell = grid.createDiv({ cls: 'arcadia-table-size-cell' });
 			cell.dataset.row = String(r + 1);
 			cell.dataset.col = String(c + 1);
 
@@ -264,7 +258,6 @@ function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 			});
 
 			cells[r][c] = cell;
-			grid.appendChild(cell);
 		}
 	}
 
@@ -280,12 +273,7 @@ function openTableSizeDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 		}
 	}
 
-	dropdown.appendChild(grid);
-
-	const sizeLabel = document.createElement('div');
-	sizeLabel.className = 'arcadia-table-size-label';
-	sizeLabel.textContent = 'Hover to select size';
-	dropdown.appendChild(sizeLabel);
+	const sizeLabel = dropdown.createDiv({ cls: 'arcadia-table-size-label', text: 'Hover to select size' });
 
 	positionDropdown(plugin, dropdown, anchor);
 }
@@ -308,30 +296,19 @@ function insertSizedTable(plugin: ArcadiaPluginInterface, ctx: EditorContext | n
 function openTableTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Table templates';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Table templates' });
 
 	for (const tmpl of TABLE_TEMPLATES) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, tmpl.icon);
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = tmpl.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: tmpl.name });
 
-		const descSpan = document.createElement('span');
-		descSpan.className = 'arcadia-dropdown-item-hint';
-		descSpan.textContent = tmpl.desc;
-		item.appendChild(descSpan);
+		item.createSpan({ cls: 'arcadia-dropdown-item-hint', text: tmpl.desc });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -342,8 +319,6 @@ function openTableTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTML
 			}
 			closeDropdowns(plugin);
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

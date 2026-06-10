@@ -283,7 +283,7 @@ class FilterTableModal extends Modal {
 			}
 		});
 
-		const btnContainer = contentEl.createEl('div', { cls: 'modal-button-container' });
+		const btnContainer = contentEl.createDiv({ cls: 'modal-button-container' });
 		const submitBtn = btnContainer.createEl('button', { text: 'Filter', cls: 'mod-cta' });
 		submitBtn.addEventListener('click', () => {
 			this.close();
@@ -292,7 +292,7 @@ class FilterTableModal extends Modal {
 		const cancelBtn = btnContainer.createEl('button', { text: 'Cancel' });
 		cancelBtn.addEventListener('click', () => this.close());
 
-		setTimeout(() => inputEl.focus(), 10);
+		activeWindow.setTimeout(() => inputEl.focus(), 10);
 	}
 
 	onClose(): void {

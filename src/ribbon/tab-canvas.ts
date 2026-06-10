@@ -62,7 +62,7 @@ const CANVAS_TEMPLATES: { name: string; icon: string; desc: string; content: str
 	},
 ];
 
-export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
+export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLElement, _ctx: EditorContext | null): void {
 	// ---- Canvas group ----
 	const canvasBtns: HTMLElement[] = [
 		createButton(plugin, {
@@ -154,30 +154,19 @@ export function buildCanvasTab(plugin: ArcadiaPluginInterface, container: HTMLEl
 function openCanvasTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Canvas templates';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Canvas templates' });
 
 	for (const tmpl of CANVAS_TEMPLATES) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, tmpl.icon);
-		item.appendChild(iconSpan);
 
-		const nameSpan = document.createElement('span');
-		nameSpan.textContent = tmpl.name;
-		item.appendChild(nameSpan);
+		item.createSpan({ text: tmpl.name });
 
-		const descSpan = document.createElement('span');
-		descSpan.className = 'arcadia-dropdown-item-hint';
-		descSpan.textContent = tmpl.desc;
-		item.appendChild(descSpan);
+		item.createSpan({ cls: 'arcadia-dropdown-item-hint', text: tmpl.desc });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -195,8 +184,6 @@ function openCanvasTemplatesDropdown(plugin: ArcadiaPluginInterface, anchor: HTM
 				}
 			})();
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

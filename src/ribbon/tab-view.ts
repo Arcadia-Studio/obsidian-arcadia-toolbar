@@ -3,7 +3,7 @@ import { createButton } from '../components/button';
 import { addGroup } from '../components/group';
 import { showDocStats, isReadingView } from '../utils/dom';
 
-export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElement, ctx: EditorContext | null): void {
+export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElement, _ctx: EditorContext | null): void {
 	// ---- TOC group ----
 	const tocBtns: HTMLElement[] = [
 		createButton(plugin, {
@@ -128,8 +128,7 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	];
 
 	// Build a word count display button
-	const wordCountBtn = document.createElement('button');
-	wordCountBtn.className = 'arcadia-btn arcadia-word-count';
+	const wordCountBtn = createEl('button', { cls: 'arcadia-btn arcadia-word-count' });
 	wordCountBtn.setAttribute('title', 'Word count');
 	wordCountBtn.addEventListener('click', (e) => {
 		e.preventDefault();
@@ -141,15 +140,9 @@ export function buildViewTab(plugin: ArcadiaPluginInterface, container: HTMLElem
 	if (activeCtx) {
 		const text = activeCtx.editor.getValue();
 		const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
-		const countSpan = document.createElement('span');
-		countSpan.className = 'arcadia-btn-label';
-		countSpan.textContent = `${wordCount.toLocaleString()} words`;
-		wordCountBtn.appendChild(countSpan);
+		wordCountBtn.createSpan({ cls: 'arcadia-btn-label', text: `${wordCount.toLocaleString()} words` });
 	} else {
-		const countSpan = document.createElement('span');
-		countSpan.className = 'arcadia-btn-label';
-		countSpan.textContent = '-- words';
-		wordCountBtn.appendChild(countSpan);
+		wordCountBtn.createSpan({ cls: 'arcadia-btn-label', text: '-- words' });
 	}
 
 	infoBtns.push(wordCountBtn);

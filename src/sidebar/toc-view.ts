@@ -39,36 +39,36 @@ export class ArcadiaTOCView extends ItemView {
 
 		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (!activeView || !activeView.file) {
-			const empty = content.createEl('div', { cls: 'arcadia-toc-empty' });
-			const iconContainer = empty.createEl('div', { cls: 'arcadia-toc-empty-icon' });
+			const empty = content.createDiv({ cls: 'arcadia-toc-empty' });
+			const iconContainer = empty.createDiv({ cls: 'arcadia-toc-empty-icon' });
 			setIcon(iconContainer, 'file-text');
-			empty.createEl('div', { text: 'Open a document to see its outline', cls: 'arcadia-toc-empty-text' });
+			empty.createDiv({ text: 'Open a document to see its outline', cls: 'arcadia-toc-empty-text' });
 			return;
 		}
 
 		// Header
-		const header = content.createEl('div', { cls: 'arcadia-toc-header' });
-		const titleRow = header.createEl('div', { cls: 'arcadia-toc-title-row' });
-		const iconEl = titleRow.createEl('span', { cls: 'arcadia-toc-header-icon' });
+		const header = content.createDiv({ cls: 'arcadia-toc-header' });
+		const titleRow = header.createDiv({ cls: 'arcadia-toc-title-row' });
+		const iconEl = titleRow.createSpan({ cls: 'arcadia-toc-header-icon' });
 		setIcon(iconEl, 'list-tree');
-		titleRow.createEl('span', { text: 'Contents', cls: 'arcadia-toc-title' });
+		titleRow.createSpan({ text: 'Contents', cls: 'arcadia-toc-title' });
 
-		header.createEl('div', {
+		header.createDiv({
 			text: activeView.file.basename,
 			cls: 'arcadia-toc-filename'
 		});
 
 		const cache = this.app.metadataCache.getFileCache(activeView.file);
 		if (!cache?.headings || cache.headings.length === 0) {
-			const empty = content.createEl('div', { cls: 'arcadia-toc-empty' });
-			empty.createEl('div', { text: 'No headings in this document', cls: 'arcadia-toc-empty-text' });
+			const empty = content.createDiv({ cls: 'arcadia-toc-empty' });
+			empty.createDiv({ text: 'No headings in this document', cls: 'arcadia-toc-empty-text' });
 			return;
 		}
 
 		const editor = activeView.editor;
 		const cursorLine = editor.getCursor().line;
 
-		const list = content.createEl('div', { cls: 'arcadia-toc-list' });
+		const list = content.createDiv({ cls: 'arcadia-toc-list' });
 
 		for (let i = 0; i < cache.headings.length; i++) {
 			const heading = cache.headings[i];
@@ -78,14 +78,14 @@ export class ArcadiaTOCView extends ItemView {
 
 			const isActive = cursorLine >= heading.position.start.line && cursorLine < nextLine;
 
-			const item = list.createEl('div', {
+			const item = list.createDiv({
 				cls: `arcadia-toc-item arcadia-toc-level-${heading.level}${isActive ? ' arcadia-toc-active' : ''}`,
 			});
 
-			const bullet = item.createEl('span', { cls: 'arcadia-toc-bullet' });
+			const bullet = item.createSpan({ cls: 'arcadia-toc-bullet' });
 			bullet.textContent = heading.level <= 2 ? '\u25CF' : '\u25CB';
 
-			item.createEl('span', { text: heading.heading, cls: 'arcadia-toc-text' });
+			item.createSpan({ text: heading.heading, cls: 'arcadia-toc-text' });
 
 			item.addEventListener('click', () => {
 				const line = heading.position.start.line;

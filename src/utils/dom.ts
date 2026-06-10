@@ -62,7 +62,7 @@ export function getUnresolvedLinks(plugin: ArcadiaPluginInterface): Record<strin
 // REVIEW TAB HELPERS
 // ============================================================================
 
-export function showWordCountGoal(plugin: ArcadiaPluginInterface, editor: { getValue(): string }): void {
+export function showWordCountGoal(_plugin: ArcadiaPluginInterface, editor: { getValue(): string }): void {
 	const text = editor.getValue();
 	const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
 	const targets = [250, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];

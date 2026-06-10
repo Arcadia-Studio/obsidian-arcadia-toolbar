@@ -13,27 +13,19 @@ export function addColorButton(
 	currentColor: string,
 	ctx: EditorContext
 ): void {
-	const wrapper = document.createElement('div');
-	wrapper.className = 'arcadia-dropdown-wrapper';
+	const wrapper = createDiv({ cls: 'arcadia-dropdown-wrapper' });
 
-	const btnEl = document.createElement('button');
-	btnEl.className = 'arcadia-btn arcadia-color-btn';
+	const btnEl = wrapper.createEl('button', { cls: 'arcadia-btn arcadia-color-btn' });
 	btnEl.setAttribute('title', tooltip);
 
-	const iconSpan = document.createElement('span');
-	iconSpan.className = 'arcadia-color-icon';
+	const iconSpan = btnEl.createSpan({ cls: 'arcadia-color-icon' });
 	setIcon(iconSpan, iconName);
-	btnEl.appendChild(iconSpan);
 
-	const bar = document.createElement('span');
-	bar.className = 'arcadia-color-bar';
+	const bar = btnEl.createSpan({ cls: 'arcadia-color-bar' });
 	bar.style.setProperty('--arcadia-color-bar-bg', currentColor === 'transparent' ? '#ccc' : currentColor);
-	btnEl.appendChild(bar);
 
-	const arrow = document.createElement('span');
-	arrow.className = 'arcadia-dropdown-arrow';
+	const arrow = btnEl.createSpan({ cls: 'arcadia-dropdown-arrow' });
 	setIcon(arrow, 'chevron-down');
-	btnEl.appendChild(arrow);
 
 	btnEl.addEventListener('click', (e) => {
 		e.preventDefault();
@@ -41,7 +33,6 @@ export function addColorButton(
 		openColorDropdown(plugin, wrapper, type, ctx);
 	});
 
-	wrapper.appendChild(btnEl);
 	group.querySelector('.arcadia-group-buttons')!.appendChild(wrapper);
 }
 
@@ -53,21 +44,18 @@ function openColorDropdown(
 ): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = type === 'font-color' ? 'Font color' : 'Background color';
-	dropdown.appendChild(title);
+	dropdown.createDiv({
+		cls: 'arcadia-dropdown-title',
+		text: type === 'font-color' ? 'Font color' : 'Background color',
+	});
 
 	const colors = type === 'font-color' ? FONT_COLORS : BACKGROUND_COLORS;
-	const grid = document.createElement('div');
-	grid.className = 'arcadia-color-grid';
+	const grid = dropdown.createDiv({ cls: 'arcadia-color-grid' });
 
 	for (const color of colors) {
-		const swatch = document.createElement('button');
-		swatch.className = 'arcadia-color-swatch';
+		const swatch = grid.createEl('button', { cls: 'arcadia-color-swatch' });
 		if (color === 'transparent') {
 			swatch.textContent = '\u2715';
 			swatch.addClass('arcadia-color-swatch-transparent');
@@ -86,9 +74,7 @@ function openColorDropdown(
 			closeDropdowns(plugin);
 			plugin.updateToolbar();
 		});
-		grid.appendChild(swatch);
 	}
 
-	dropdown.appendChild(grid);
 	positionDropdown(plugin, dropdown, wrapper);
 }

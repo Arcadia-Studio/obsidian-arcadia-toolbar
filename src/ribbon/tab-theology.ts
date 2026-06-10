@@ -115,64 +115,42 @@ export function buildTheologyTab(plugin: ArcadiaPluginInterface, container: HTML
 }
 
 function buildLockedPanel(plugin: ArcadiaPluginInterface, container: HTMLElement): void {
-	const panel = document.createElement('div');
-	panel.className = 'arcadia-premium-panel';
+	const panel = container.createDiv({ cls: 'arcadia-premium-panel' });
 
-	const iconEl = document.createElement('span');
-	iconEl.className = 'arcadia-premium-panel-icon';
+	const iconEl = panel.createSpan({ cls: 'arcadia-premium-panel-icon' });
 	setIcon(iconEl, 'lock');
-	panel.appendChild(iconEl);
 
-	const textEl = document.createElement('span');
-	textEl.className = 'arcadia-premium-panel-text';
-	textEl.textContent = 'The theology tab (scripture blocks, hover lookup, commentary) is a premium feature.';
-	panel.appendChild(textEl);
+	panel.createSpan({
+		cls: 'arcadia-premium-panel-text',
+		text: 'The theology tab (scripture blocks, hover lookup, commentary) is a premium feature.',
+	});
 
-	const unlockBtn = document.createElement('button');
-	unlockBtn.className = 'arcadia-btn arcadia-premium-panel-btn';
-	unlockBtn.textContent = 'Unlock premium';
+	const unlockBtn = panel.createEl('button', { cls: 'arcadia-btn arcadia-premium-panel-btn', text: 'Unlock premium' });
 	unlockBtn.addEventListener('click', (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		new PremiumModal(plugin.app, plugin, 'Theology tab').open();
 	});
-	panel.appendChild(unlockBtn);
-
-	container.appendChild(panel);
 }
 
 function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLElement, ctx: EditorContext | null): void {
 	closeDropdowns(plugin);
 
-	const dropdown = document.createElement('div');
-	dropdown.className = 'arcadia-dropdown-menu';
+	const dropdown = createDiv({ cls: 'arcadia-dropdown-menu' });
 
-	const title = document.createElement('div');
-	title.className = 'arcadia-dropdown-title';
-	title.textContent = 'Insert scripture block';
-	dropdown.appendChild(title);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-title', text: 'Insert scripture block' });
 
 	// Current translation indicator
-	const currentEl = document.createElement('div');
-	currentEl.className = 'arcadia-dropdown-subtitle';
-	const currentLabel = document.createElement('span');
-	currentLabel.textContent = `Current: ${plugin.settings.scriptureTranslation}`;
-	currentEl.appendChild(currentLabel);
-	dropdown.appendChild(currentEl);
+	const currentEl = dropdown.createDiv({ cls: 'arcadia-dropdown-subtitle' });
+	currentEl.createSpan({ text: `Current: ${plugin.settings.scriptureTranslation}` });
 
-	const divider = document.createElement('div');
-	divider.className = 'arcadia-dropdown-divider';
-	dropdown.appendChild(divider);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-divider' });
 
 	// Insert block with current translation
-	const insertItem = document.createElement('button');
-	insertItem.className = 'arcadia-dropdown-item';
-	const insertIcon = document.createElement('span');
+	const insertItem = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
+	const insertIcon = insertItem.createSpan();
 	setIcon(insertIcon, 'book-open');
-	insertItem.appendChild(insertIcon);
-	const insertText = document.createElement('span');
-	insertText.textContent = `Insert block (${plugin.settings.scriptureTranslation})`;
-	insertItem.appendChild(insertText);
+	insertItem.createSpan({ text: `Insert block (${plugin.settings.scriptureTranslation})` });
 	insertItem.addEventListener('click', (e) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -180,38 +158,25 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 		if (activeCtx) insertScriptureBlock(plugin, activeCtx.editor);
 		closeDropdowns(plugin);
 	});
-	dropdown.appendChild(insertItem);
 
-	const divider2 = document.createElement('div');
-	divider2.className = 'arcadia-dropdown-divider';
-	dropdown.appendChild(divider2);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-divider' });
 
 	// Translation switcher section
-	const transTitle = document.createElement('div');
-	transTitle.className = 'arcadia-dropdown-section-label';
-	transTitle.textContent = 'Switch translation';
-	dropdown.appendChild(transTitle);
+	dropdown.createDiv({ cls: 'arcadia-dropdown-section-label', text: 'Switch translation' });
 
 	for (const [abbr, fullName] of Object.entries(BIBLE_TRANSLATIONS)) {
-		const item = document.createElement('button');
-		item.className = 'arcadia-dropdown-item';
+		const item = dropdown.createEl('button', { cls: 'arcadia-dropdown-item' });
 
 		if (abbr === plugin.settings.scriptureTranslation) {
 			item.classList.add('arcadia-dropdown-item-active');
 		}
 
-		const iconSpan = document.createElement('span');
+		const iconSpan = item.createSpan();
 		setIcon(iconSpan, abbr === plugin.settings.scriptureTranslation ? 'check' : 'book');
-		item.appendChild(iconSpan);
 
-		const abbrSpan = document.createElement('span');
-		abbrSpan.textContent = abbr;
-		item.appendChild(abbrSpan);
+		item.createSpan({ text: abbr });
 
-		const fullSpan = document.createElement('span');
-		fullSpan.className = 'arcadia-dropdown-item-hint';
-		fullSpan.textContent = fullName;
-		item.appendChild(fullSpan);
+		item.createSpan({ cls: 'arcadia-dropdown-item-hint', text: fullName });
 
 		item.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -222,8 +187,6 @@ function openScriptureDropdown(plugin: ArcadiaPluginInterface, anchor: HTMLEleme
 				closeDropdowns(plugin);
 			});
 		});
-
-		dropdown.appendChild(item);
 	}
 
 	positionDropdown(plugin, dropdown, anchor);

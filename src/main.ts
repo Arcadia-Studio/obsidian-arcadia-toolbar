@@ -11,12 +11,15 @@ import { registerCommands } from './utils/commands';
 import { isPluginEnabled, executeCommand, openInNewLeaf, getActiveEditor, getActiveMarkdownView } from './utils/dom';
 import { validateLicense, isCacheValid, hasActiveLicense } from './license';
 
+/** Shape of the persisted data.json, including the legacy showDrawTab field. */
+type StoredToolbarData = Partial<ArcadiaToolbarSettings> & { showDrawTab?: boolean };
+
 export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPluginInterface {
 	settings!: ArcadiaToolbarSettings;
 	toolbarEl: HTMLElement | null = null;
 	activeDropdown: HTMLElement | null = null;
 	scripturePopupEl: HTMLElement | null = null;
-	hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+	hoverTimeout: number | null = null;
 	scriptureCache = new Map<string, string>();
 	_filteredTableBackup: { start: number; end: number; original: string } | null = null;
 	private debouncedToolbarUpdate: Debouncer<[], void> | null = null;
@@ -36,7 +39,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 		);
 
 		// Close dropdowns on outside click
-		this.registerDomEvent(document, 'click', (e: MouseEvent) => {
+		this.registerDomEvent(activeDocument, 'click', (e: MouseEvent) => {
 			if (this.activeDropdown) {
 				const target = e.target as HTMLElement;
 				if (!target.closest('.arcadia-dropdown-wrapper')) {
@@ -80,11 +83,11 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 	}
 
 	async loadSettings(): Promise<void> {
-		const data = await this.loadData();
+		const data = (await this.loadData()) as StoredToolbarData | null;
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
 		// Migrate showDrawTab -> showCanvasTab for backward compatibility
 		if (data && 'showDrawTab' in data && !('showCanvasTab' in data)) {
-			this.settings.showCanvasTab = (data as Record<string, unknown>).showDrawTab as boolean;
+			this.settings.showCanvasTab = Boolean(data.showDrawTab);
 		}
 		// Migrate activeTab 'draw' -> 'canvas'
 		if (this.settings.activeTab === 'draw') {
@@ -200,7 +203,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 
 	hideScripturePopup(): void {
 		if (this.hoverTimeout) {
-			clearTimeout(this.hoverTimeout);
+			activeWindow.clearTimeout(this.hoverTimeout);
 			this.hoverTimeout = null;
 		}
 		if (this.scripturePopupEl) {

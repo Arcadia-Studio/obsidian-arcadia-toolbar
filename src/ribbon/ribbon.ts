@@ -31,12 +31,10 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 	const ctx: EditorContext | null = isReading ? null : getActiveEditor(plugin);
 
 	// Create ribbon container
-	plugin.toolbarEl = document.createElement('div');
-	plugin.toolbarEl.className = 'arcadia-ribbon';
+	plugin.toolbarEl = createDiv({ cls: 'arcadia-ribbon' });
 
 	// Tab bar
-	const tabBar = document.createElement('div');
-	tabBar.className = 'arcadia-ribbon-tabbar';
+	const tabBar = createDiv({ cls: 'arcadia-ribbon-tabbar' });
 
 	const tabs: { id: string; label: string; icon: string; setting: keyof ArcadiaToolbarSettings }[] = [
 		{ id: 'home', label: 'Home', icon: 'home', setting: 'showHomeTab' },
@@ -55,23 +53,20 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 	for (const tab of tabs) {
 		if (!plugin.settings[tab.setting]) continue;
 
-		const tabBtn = document.createElement('button');
-		tabBtn.className = `arcadia-ribbon-tab${plugin.settings.activeTab === tab.id ? ' arcadia-ribbon-tab-active' : ''}`;
+		const tabBtn = tabBar.createEl('button', {
+			cls: `arcadia-ribbon-tab${plugin.settings.activeTab === tab.id ? ' arcadia-ribbon-tab-active' : ''}`,
+		});
 		tabBtn.dataset.tab = tab.id;
 
-		const iconSpan = document.createElement('span');
-		iconSpan.className = 'arcadia-ribbon-tab-icon';
+		const iconSpan = tabBtn.createSpan({ cls: 'arcadia-ribbon-tab-icon' });
 		setIcon(iconSpan, tab.icon);
-		tabBtn.appendChild(iconSpan);
 
-		tabBtn.appendChild(document.createTextNode(tab.label));
+		tabBtn.appendText(tab.label);
 
 		// Mark premium-gated tabs for free users
 		if (tab.id === 'theology' && !plugin.isPremium) {
-			const lockSpan = document.createElement('span');
-			lockSpan.className = 'arcadia-ribbon-tab-lock';
+			const lockSpan = tabBtn.createSpan({ cls: 'arcadia-ribbon-tab-lock' });
 			setIcon(lockSpan, 'lock');
-			tabBtn.appendChild(lockSpan);
 		}
 
 		tabBtn.addEventListener('click', (e) => {
@@ -84,28 +79,20 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 			}
 			plugin.updateToolbar();
 		});
-
-		tabBar.appendChild(tabBtn);
 	}
 
 	// Wrap tab bar with scroll arrows
-	const tabWrapper = document.createElement('div');
-	tabWrapper.className = 'arcadia-ribbon-tabbar-wrapper';
+	const tabWrapper = plugin.toolbarEl.createDiv({ cls: 'arcadia-ribbon-tabbar-wrapper' });
 
-	const scrollLeft = document.createElement('button');
-	scrollLeft.className = 'arcadia-tab-scroll-btn arcadia-tab-scroll-left';
+	const scrollLeft = tabWrapper.createEl('button', { cls: 'arcadia-tab-scroll-btn arcadia-tab-scroll-left' });
 	setIcon(scrollLeft, 'chevron-left');
 	scrollLeft.addEventListener('click', () => tabBar.scrollBy({ left: -120, behavior: 'smooth' }));
 
-	const scrollRight = document.createElement('button');
-	scrollRight.className = 'arcadia-tab-scroll-btn arcadia-tab-scroll-right';
+	tabWrapper.appendChild(tabBar);
+
+	const scrollRight = tabWrapper.createEl('button', { cls: 'arcadia-tab-scroll-btn arcadia-tab-scroll-right' });
 	setIcon(scrollRight, 'chevron-right');
 	scrollRight.addEventListener('click', () => tabBar.scrollBy({ left: 120, behavior: 'smooth' }));
-
-	tabWrapper.appendChild(scrollLeft);
-	tabWrapper.appendChild(tabBar);
-	tabWrapper.appendChild(scrollRight);
-	plugin.toolbarEl.appendChild(tabWrapper);
 
 	// Update scroll arrow visibility
 	const updateScrollArrows = () => {
@@ -115,17 +102,16 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 		scrollRight.classList.toggle('arcadia-tab-scroll-visible', canScrollR);
 	};
 	tabBar.addEventListener('scroll', updateScrollArrows);
-	setTimeout(updateScrollArrows, 50);
+	activeWindow.setTimeout(updateScrollArrows, 50);
 
 	// Auto-scroll active tab into view
 	const activeTabEl = tabBar.querySelector('.arcadia-ribbon-tab-active') as HTMLElement;
 	if (activeTabEl) {
-		setTimeout(() => activeTabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 60);
+		activeWindow.setTimeout(() => activeTabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 60);
 	}
 
 	// Tab content
-	const content = document.createElement('div');
-	content.className = 'arcadia-ribbon-content';
+	const content = plugin.toolbarEl.createDiv({ cls: 'arcadia-ribbon-content' });
 
 	const editorTabs = ['home', 'insert', 'theology', 'canvas', 'references', 'templates', 'data'];
 	const activeTab = plugin.settings.activeTab;
@@ -146,10 +132,7 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 		}
 	} else {
 		if (editorTabs.includes(activeTab)) {
-			const msg = document.createElement('div');
-			msg.className = 'arcadia-reading-notice';
-			msg.textContent = 'Switch to editing view to use this tab';
-			content.appendChild(msg);
+			content.createDiv({ cls: 'arcadia-reading-notice', text: 'Switch to editing view to use this tab' });
 		} else {
 			switch (activeTab) {
 				case 'navigate': buildNavigateTab(plugin, content, null); break;
@@ -159,8 +142,6 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 			}
 		}
 	}
-
-	plugin.toolbarEl.appendChild(content);
 
 	// Always attach to view.contentEl
 	view.contentEl.insertBefore(plugin.toolbarEl, view.contentEl.firstChild);
