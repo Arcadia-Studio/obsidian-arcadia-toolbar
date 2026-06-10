@@ -102,12 +102,12 @@ export function updateToolbar(plugin: ArcadiaPluginInterface): void {
 		scrollRight.classList.toggle('arcadia-tab-scroll-visible', canScrollR);
 	};
 	tabBar.addEventListener('scroll', updateScrollArrows);
-	activeWindow.setTimeout(updateScrollArrows, 50);
+	window.setTimeout(updateScrollArrows, 50);
 
 	// Auto-scroll active tab into view
 	const activeTabEl = tabBar.querySelector('.arcadia-ribbon-tab-active') as HTMLElement;
 	if (activeTabEl) {
-		activeWindow.setTimeout(() => activeTabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 60);
+		window.setTimeout(() => activeTabEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 60);
 	}
 
 	// Tab content

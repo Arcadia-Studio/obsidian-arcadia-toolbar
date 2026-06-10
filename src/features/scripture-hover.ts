@@ -8,9 +8,9 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 	const ref = parseScriptureRef(refText);
 	if (!ref) return;
 
-	if (plugin.hoverTimeout) activeWindow.clearTimeout(plugin.hoverTimeout);
+	if (plugin.hoverTimeout) window.clearTimeout(plugin.hoverTimeout);
 
-	plugin.hoverTimeout = activeWindow.setTimeout(() => { void (async () => {
+	plugin.hoverTimeout = window.setTimeout(() => { void (async () => {
 		plugin.hideScripturePopup();
 
 		const popup = createDiv({ cls: 'arcadia-scripture-popup' });
@@ -41,7 +41,7 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 		popup.style.top = `${rect.bottom + 6}px`;
 		popup.style.left = `${rect.left}px`;
 
-		requestAnimationFrame(() => {
+		window.requestAnimationFrame(() => {
 			const popRect = popup.getBoundingClientRect();
 			if (popRect.right > window.innerWidth - 12) {
 				popup.style.left = `${window.innerWidth - popRect.width - 12}px`;
@@ -55,14 +55,14 @@ export function showScripturePopup(plugin: ArcadiaPluginInterface, anchorEl: HTM
 		const hideHandler = (e: MouseEvent) => {
 			const target = e.relatedTarget as HTMLElement;
 			if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target))) return;
-			activeWindow.setTimeout(() => {
+			window.setTimeout(() => {
 				if (popup.matches(':hover') || anchorEl.matches(':hover')) return;
 				plugin.hideScripturePopup();
 				popup.removeEventListener('mouseleave', hideHandler);
 				anchorEl.removeEventListener('mouseleave', hideHandler);
 			}, 300);
 		};
-		popup.addEventListener('mouseenter', () => { if (plugin.hoverTimeout) activeWindow.clearTimeout(plugin.hoverTimeout); });
+		popup.addEventListener('mouseenter', () => { if (plugin.hoverTimeout) window.clearTimeout(plugin.hoverTimeout); });
 		popup.addEventListener('mouseleave', hideHandler);
 		anchorEl.addEventListener('mouseleave', hideHandler);
 
@@ -141,7 +141,7 @@ export function setupScriptureHover(plugin: ArcadiaPluginInterface, registerMark
 				span.addEventListener('mouseleave', (e) => {
 					const related = e.relatedTarget as HTMLElement;
 					if (related && related.closest('.arcadia-scripture-popup')) return;
-					activeWindow.setTimeout(() => {
+					window.setTimeout(() => {
 						if (plugin.scripturePopupEl && !plugin.scripturePopupEl.matches(':hover')) {
 							plugin.hideScripturePopup();
 						}

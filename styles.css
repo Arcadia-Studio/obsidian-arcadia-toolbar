@@ -661,13 +661,13 @@
    TOOLBAR PIN BUTTON
    ============================================================================ */
 
-.arcadia-toolbar-pin {
-	padding: 6px 8px !important;
+.arcadia-toolbar-pin.arcadia-toolbar-pin {
+	padding: 6px 8px;
 }
 
-.arcadia-toolbar-pin.arcadia-btn-active {
-	background: var(--interactive-accent) !important;
-	color: var(--text-on-accent) !important;
+.arcadia-toolbar-pin.arcadia-btn-active.arcadia-btn-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
 }
 
 /* ============================================================================
@@ -764,8 +764,8 @@
    ============================================================================ */
 
 @media print {
-	.arcadia-ribbon {
-		display: none !important;
+	body .arcadia-ribbon.arcadia-ribbon {
+		display: none;
 	}
 }
 
@@ -845,9 +845,7 @@
    ============================================================================ */
 
 .arcadia-scripture-ref {
-	text-decoration-line: underline;
-	text-decoration-style: dotted;
-	text-decoration-color: var(--interactive-accent);
+	text-decoration: underline dotted var(--interactive-accent);
 	text-underline-offset: 3px;
 	cursor: help;
 	border-radius: 2px;
@@ -929,9 +927,9 @@
 }
 
 /* Active toggle button */
-.arcadia-btn-active {
-	background: var(--interactive-accent) !important;
-	color: var(--text-on-accent) !important;
+.arcadia-btn-active.arcadia-btn-active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
 }
 .arcadia-btn-active svg {
 	color: var(--text-on-accent);

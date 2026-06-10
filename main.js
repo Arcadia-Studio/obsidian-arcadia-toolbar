@@ -392,7 +392,7 @@ var init_table_operations = __esm({
         });
         const cancelBtn = btnContainer.createEl("button", { text: "Cancel" });
         cancelBtn.addEventListener("click", () => this.close());
-        activeWindow.setTimeout(() => inputEl.focus(), 10);
+        window.setTimeout(() => inputEl.focus(), 10);
       }
       onClose() {
         this.contentEl.empty();
@@ -1500,7 +1500,7 @@ function positionDropdown(plugin, dropdown, anchor) {
   const rect = anchor.getBoundingClientRect();
   dropdown.style.top = `${rect.bottom + 4}px`;
   dropdown.style.left = `${rect.left}px`;
-  requestAnimationFrame(() => {
+  window.requestAnimationFrame(() => {
     const dropRect = dropdown.getBoundingClientRect();
     if (dropRect.right > window.innerWidth - 8) {
       dropdown.style.left = `${window.innerWidth - dropRect.width - 8}px`;
@@ -4140,10 +4140,10 @@ function updateToolbar(plugin) {
     scrollRight.classList.toggle("arcadia-tab-scroll-visible", canScrollR);
   };
   tabBar.addEventListener("scroll", updateScrollArrows);
-  activeWindow.setTimeout(updateScrollArrows, 50);
+  window.setTimeout(updateScrollArrows, 50);
   const activeTabEl = tabBar.querySelector(".arcadia-ribbon-tab-active");
   if (activeTabEl) {
-    activeWindow.setTimeout(() => activeTabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }), 60);
+    window.setTimeout(() => activeTabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }), 60);
   }
   const content = plugin.toolbarEl.createDiv({ cls: "arcadia-ribbon-content" });
   const editorTabs = ["home", "insert", "theology", "canvas", "references", "templates", "data"];
@@ -4212,7 +4212,11 @@ var import_obsidian21 = require("obsidian");
 var MAX_CACHE_ENTRIES = 200;
 function cacheSet(plugin, key, value) {
   if (plugin.scriptureCache.size >= MAX_CACHE_ENTRIES) {
-    const oldest = plugin.scriptureCache.keys().next().value;
+    let oldest;
+    for (const key2 of plugin.scriptureCache.keys()) {
+      oldest = key2;
+      break;
+    }
     if (oldest !== void 0)
       plugin.scriptureCache.delete(oldest);
   }
@@ -4345,8 +4349,8 @@ function showScripturePopup(plugin, anchorEl, refText) {
   if (!ref)
     return;
   if (plugin.hoverTimeout)
-    activeWindow.clearTimeout(plugin.hoverTimeout);
-  plugin.hoverTimeout = activeWindow.setTimeout(() => {
+    window.clearTimeout(plugin.hoverTimeout);
+  plugin.hoverTimeout = window.setTimeout(() => {
     void (async () => {
       plugin.hideScripturePopup();
       const popup = createDiv({ cls: "arcadia-scripture-popup" });
@@ -4367,7 +4371,7 @@ function showScripturePopup(plugin, anchorEl, refText) {
       const rect = anchorEl.getBoundingClientRect();
       popup.style.top = `${rect.bottom + 6}px`;
       popup.style.left = `${rect.left}px`;
-      requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
         const popRect = popup.getBoundingClientRect();
         if (popRect.right > window.innerWidth - 12) {
           popup.style.left = `${window.innerWidth - popRect.width - 12}px`;
@@ -4380,7 +4384,7 @@ function showScripturePopup(plugin, anchorEl, refText) {
         const target = e.relatedTarget;
         if (target && (popup.contains(target) || target === anchorEl || anchorEl.contains(target)))
           return;
-        activeWindow.setTimeout(() => {
+        window.setTimeout(() => {
           if (popup.matches(":hover") || anchorEl.matches(":hover"))
             return;
           plugin.hideScripturePopup();
@@ -4390,7 +4394,7 @@ function showScripturePopup(plugin, anchorEl, refText) {
       };
       popup.addEventListener("mouseenter", () => {
         if (plugin.hoverTimeout)
-          activeWindow.clearTimeout(plugin.hoverTimeout);
+          window.clearTimeout(plugin.hoverTimeout);
       });
       popup.addEventListener("mouseleave", hideHandler);
       anchorEl.addEventListener("mouseleave", hideHandler);
@@ -4464,7 +4468,7 @@ function setupScriptureHover(plugin, registerMarkdownPostProcessor, registerEdit
           const related = e.relatedTarget;
           if (related && related.closest(".arcadia-scripture-popup"))
             return;
-          activeWindow.setTimeout(() => {
+          window.setTimeout(() => {
             if (plugin.scripturePopupEl && !plugin.scripturePopupEl.matches(":hover")) {
               plugin.hideScripturePopup();
             }
@@ -4816,7 +4820,7 @@ var ArcadiaToolbarPlugin = class extends import_obsidian22.Plugin {
   }
   hideScripturePopup() {
     if (this.hoverTimeout) {
-      activeWindow.clearTimeout(this.hoverTimeout);
+      window.clearTimeout(this.hoverTimeout);
       this.hoverTimeout = null;
     }
     if (this.scripturePopupEl) {

@@ -292,7 +292,7 @@ class FilterTableModal extends Modal {
 		const cancelBtn = btnContainer.createEl('button', { text: 'Cancel' });
 		cancelBtn.addEventListener('click', () => this.close());
 
-		activeWindow.setTimeout(() => inputEl.focus(), 10);
+		window.setTimeout(() => inputEl.focus(), 10);
 	}
 
 	onClose(): void {

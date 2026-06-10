@@ -203,7 +203,7 @@ export default class ArcadiaToolbarPlugin extends Plugin implements ArcadiaPlugi
 
 	hideScripturePopup(): void {
 		if (this.hoverTimeout) {
-			activeWindow.clearTimeout(this.hoverTimeout);
+			window.clearTimeout(this.hoverTimeout);
 			this.hoverTimeout = null;
 		}
 		if (this.scripturePopupEl) {

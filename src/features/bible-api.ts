@@ -15,7 +15,11 @@ interface BibleApiResponse {
 
 function cacheSet(plugin: ArcadiaPluginInterface, key: string, value: string): void {
 	if (plugin.scriptureCache.size >= MAX_CACHE_ENTRIES) {
-		const oldest = plugin.scriptureCache.keys().next().value;
+		let oldest: string | undefined;
+		for (const key of plugin.scriptureCache.keys()) {
+			oldest = key;
+			break;
+		}
 		if (oldest !== undefined) plugin.scriptureCache.delete(oldest);
 	}
 	plugin.scriptureCache.set(key, value);

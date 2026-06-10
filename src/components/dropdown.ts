@@ -41,7 +41,7 @@ export function positionDropdown(plugin: ArcadiaPluginInterface, dropdown: HTMLE
 	dropdown.style.top = `${rect.bottom + 4}px`;
 	dropdown.style.left = `${rect.left}px`;
 
-	requestAnimationFrame(() => {
+	window.requestAnimationFrame(() => {
 		const dropRect = dropdown.getBoundingClientRect();
 		if (dropRect.right > window.innerWidth - 8) {
 			dropdown.style.left = `${window.innerWidth - dropRect.width - 8}px`;
